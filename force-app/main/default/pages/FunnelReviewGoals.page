@@ -1,0 +1,712 @@
+<apex:page docType="html-5.0"    sidebar="false" controller="FunnelReviewGoals_Controller" action="{!checkThemeAndNavigate}" extensions="FunnelInstallation">
+     
+    <apex:form id="pageForm" >
+        
+            <html   lang="en">
+            
+            <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/jquery-1.12.4.js')}"/>
+            <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/jquery-ui.js')}"/>
+            
+             
+            
+            
+        
+            <apex:stylesheet value="{!URLFOR($Resource.SldsCss,'SldsResources/styles/salesforce-lightning-design-system.css')}"/>
+            <apex:stylesheet value="{!URLFOR($Resource.SldsCss,'SldsResources/styles/salesforce-lightning-design-system.min')}"/>
+             
+            <apex:stylesheet value="{!URLFOR($Resource.FunnelScriptFolder,'Design/css/newall.css')}"/>
+            
+            <apex:stylesheet value="{!URLFOR($Resource.FunnelScriptFolder,'Design/css/3.3.7.bootstrap.min.css')}"/>
+            <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/js/3.3.7.bootstrap.min.js')}"/>                               
+              
+         <style>
+         body { font-size: 75%; }
+         html{font-size: 100% !important;}
+        .noSidebarCell, .sidebarCell .fixed { padding: 10px; font-family: sldsFont; }
+        
+         @font-face {
+         font-family: sldsFont;
+             src: url({!URLFOR($Resource.SldsCss,'SldsResources/fonts/SalesforceSans-Light.ttf')});
+         }
+         
+         
+         .bPageHeader .phHeader td.left{display: block;}
+        .navigation{display: table; width: 100%; text-align: center;}
+        
+        .navigation ul{margin: 0; padding: 0;}
+        .navigation ul li{display: inline-block; padding: 0 8px; border-left: 2px solid #7e8793; line-height: 17px; margin-left: 0;}
+        .navigation ul li a{color: #7e8793; font-size: 17px; font-weight: bold;}
+        .navigation ul li a:hover{color: #66cc33; text-decoration: none;}
+        .navigation ul li a:focus{outline: none; text-decoration: none;}
+        .navigation ul li {color: #7e8793; font-size: 17px; font-weight: bold;}
+        .navigation ul li:hover{color: #66cc33; text-decoration: none;}
+        .navigation ul li.selected a{color: #66cc33;}
+        .navigation ul li.home{border: none; padding-left: 0; margin-bottom: 10px;}
+        .navigation ul li.home a{color: #00b2ee;}
+        .navigation ul li.help{border-left: 2px solid #7e8793; padding-left: 5px; margin-left: 5px; margin-bottom: 10px;}
+        .navigation ul li.help a{color: #00b2ee;}
+        .navigation ul li:last-child{padding-right: 0;}
+        
+        .navigation ul li.scorenav a{background: url({!$Resource.CertificationNavigationIcon}) no-repeat; padding: 0 0 0 25px; background-position: 0 0; height: 19px; width: 20px;}
+        .navigation ul li.scorenav a:hover {background-position: 0 -23px;}
+        
+        .navigation ul li.funnelanalyticsnav > a{background: url({!$Resource.AnalyticsNavigationIcon}) no-repeat; padding: 0 0 0 25px; background-position: 0 5px; height: 19px; width: 20px; color: #7e8793;}
+        .navigation ul li.funnelanalyticsnav > a:hover{background-position: 0 -17px; color: #66cc33;}
+        
+        .navigation ul li.checklisticon{border-right: 2px solid #7e8793; color: #00b2ee; border-left: 0; margin-right: 5px; cursor: pointer;}
+
+        .navigation ul li.checklisticon a{color: #00b2ee;}
+        
+        .myapp{min-width: 500px; font-family: sldsFont;background-color: #fff; }
+        .slds-modal {background: none;}
+        
+        .navigation ul li.reportnav{position: relative; display: inline-block;cursor: pointer;}
+        .navigation ul li.reportnav ul.subnav{position: absolute; z-index: 1; width: 240px; background: #fff; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); display: none;}
+        .navigation ul li.reportnav ul.subnav li{display: block; text-align: left; border: none; padding: 0;}
+        .navigation ul li.reportnav ul.subnav li a {color: #7e8793; padding: 10px; display: block; width: 100%;}
+        .navigation ul li.reportnav ul.subnav li a:hover{background: #66cc33; color: #fff;}
+        .navigation ul li.reportnav:hover ul.subnav {display: block;}
+        
+        .navigation ul li.reportnav ul.subnavlast{right:0; position: absolute; z-index: 1; width: 240px; background: #fff; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); display: none;}
+        .navigation ul li.reportnav ul.subnavlast li{display: block; text-align: left; border: none; padding: 0;}
+        .navigation ul li.reportnav ul.subnavlast li a {color: #7e8793; padding: 10px; display: block; width: 100%;}
+        .navigation ul li.reportnav ul.subnavlast li a:hover{background: #66cc33; color: #fff;}
+        .navigation ul li.reportnav:hover ul.subnavlast{display: block;}
+        
+        .navigation ul li.reportnav.active{color: #66cc33;}
+        button a:hover{text-decoration: none;}
+        button a:focus{text-decoration: none; outline: none;}
+         select{background: url('{!URLFOR($Resource.Selectarrow )}') no-repeat right -20px center #fff !important; -moz-appearance: none; -webkit-appearance: none;}
+       
+       .slds-size_1-of-8, .slds-size--1-of-8 {width: 16.5%;}
+       .slds-checkbox [type=checkbox]:checked+.slds-checkbox--faux:after, 
+       .slds-checkbox [type=checkbox]:checked+.slds-checkbox__label .slds-checkbox--faux:after, 
+       .slds-checkbox [type=checkbox]:checked+.slds-checkbox__label .slds-checkbox_faux:after, 
+       .slds-checkbox [type=checkbox]:checked+.slds-checkbox_faux:after, 
+       .slds-checkbox [type=checkbox]:checked~.slds-checkbox--faux:after, 
+       .slds-checkbox [type=checkbox]:checked~.slds-checkbox_faux:after{border-bottom: 2px solid #ff9900; border-left: 2px solid #ff9900;}
+    </style>
+    <style>
+        body { font-size: 75%;padding-right: 0 !important }
+         
+         html{font-size: 100% !important;}
+        .noSidebarCell, .sidebarCell .fixed { padding: 10px; font-family: sldsFont; }
+        
+         @font-face {
+         font-family: sldsFont;
+             src: url({!URLFOR($Resource.SldsCss,'SldsResources/fonts/SalesforceSans-Light.ttf')});
+         }
+         .bPageHeader .phHeader td.left{display: block;}
+         .top-strip{background: #7e8793; padding: 10px;}
+         .top-strip h1{font-size: 24px; color: #fff; font-weight: 700;}
+         .desc-block{padding: 65px;}
+         .desc-block p{font-size: 18px; color: #333333; font-weight: 700; text-align: center; margin: 0;}
+         .desc-block p+p{margin-bottom: 10px;}
+         .confirm-goals-table{padding-bottom: 25px;}
+         .confirm-goals-table .slds-table{border: none; border-bottom: 1px solid #dddbda;}
+         .confirm-goals-table .slds-table thead th{background: #fff; font-size: 16px; font-weight: 700; color: #333333; line-height: 20px;}
+         .confirm-goals-table .slds-table td{font-size: 16px; font-weight: 400; color: #333333; font-family: inherit; padding: 15px 10px;}
+         .enable-strip{background: #f7f5fb;}
+         .enable-strip p{font-size: 18px; font-weight: 700; color: #333333; margin: 0; padding: 15px 30px;}
+         .enable-strip p i{color: #fc9727; margin-right: 5px;}
+         
+         .greyClass{color:#7e8793;}
+                                                }
+    </style>
+    <style>
+     /*Start Delete modal CSS*/
+             /*.modal-lg{width: 1100px;}*/
+             
+             .modal.in .modal-dialog {-webkit-transform: translate(0,0);-ms-transform: translate(0,0);-o-transform: translate(0,0);transform: translate(0,0);width: 90%;max-width: none;min-width: 40rem;display: flex;flex-direction: column;height: 100%;padding: 3rem 0;}
+             .modal-content { border-radius: 0;padding: 20px;overflow: hidden;overflow-y: auto;}
+             .modal-header{padding: 0;border: none;}
+             .modal-header .close{right: 10px; margin: 0; top: 10px; opacity: 1; border: none;background: transparent; color: #7e8793; font-size: 44px; width: 25px; height: 20px; line-height: 18px;}
+             .modal-header h4{background: #BFB178;}
+             .modal-header h4 ul{padding: 0; margin: 0; display: table; width: 100%;}
+             .modal-header h4 ul li{display: table-cell; font-size: 24px; color: #333333; width: 50%; padding: 10px; border: none; text-align: left; font-weight: bold;font-family: sldsfont;}
+             .modal-body{padding: 0;}
+             .modal-body .delete-content-block{padding: 0px;}
+             .modal-body .delete-content-block label{font-size: 21px; color: #00b2ee;font-family: sldsfont;font-weight: normal;}
+             .modal-body .delete-content-block p{margin: 0; font-size: 16px;  color: #777;}
+             .modal-footer{border: none; padding: 20px 30px;}
+             .modal-footer .btn-block{display: table; width: auto; margin: 0 auto;}
+             .modal-footer a{background-color: #7e8793;color: #fff;padding: 15px 100px;border-radius: 30px;font-size: 24px;border: none;margin-left: 18px;}
+             .modal-footer a:hover{color: #fff; text-decoration: none;}
+             .modal-footer a.save{background: #ff9900;}
+             .modal-footer a i{color: #fff;}
+             
+            /*End Delete modal CSS*/
+            
+           
+         .k-widget { padding: 0; border: none;font-family: arial; }
+    </style> 
+            <!--Navigation-->    
+            <apex:outputPanel id="detailsPanel">
+                <div class="slds-scope">
+                    <div class="myapp" style="background: #f5f5f9;">
+                        <!--Navigation-->
+                        <div class="slds-grid slds-wrap slds-form-element slds-p-around_small">
+                            <div class="slds-size_1-of-1">
+                                <div class="navigation">
+                                   <ul>
+                                        <li class="checklisticon" >
+                                            <apex:outputPanel rendered="{!(admin && wizardComp && (!checkListComp))}">
+                                                <apex:commandLink action="{!navigateToChecklistPage}"><i class="fa fa-check-circle" aria-hidden="true"></i></apex:commandLink>
+                                            </apex:outputPanel>
+                                        </li>
+                                        <li class="home"><apex:commandLink action="{!navigateToHomePage}"><i class="fas fa-home"></i></apex:commandLink></li>
+                                        
+                                        <li class="scorenav"><apex:commandLink action="{!navigateToCertification}"> FUNNELOCITY SCORING</apex:commandLink></li>
+                                        <li><apex:commandLink action="{!navigateToDashboard}"><span><i class="fas fa-tachometer-alt"></i></span> PERFORMANCE DASHBOARD</apex:commandLink></li>
+                                        
+                                        <li class=" reportnav"> <i class="fas fa-chart-bar"></i> REPORTING 
+                                            <ul class="subnav">
+                                                <!--li><apex:commandLink action="{!navigateToCertificateReports}">Funnelocity Reports</apex:commandLink></li-->
+                                                <li><apex:commandLink action="{!navigateToReportsPage}">Sales Management Reports</apex:commandLink></li>
+                                                <li><apex:commandLink action="{!navigateToAnnualizationDashboard}">Tenured and New Hire Performance Dashboard</apex:commandLink></li>
+                                        <li><apex:commandLink action="{!navigateToTrendingByRep}">Trending By Rep Dashboard</apex:commandLink></li>
+                                        <li><apex:commandLink action="{!navigateToTrendingBySkill}">Trending By Metric/Skill Dashboard</apex:commandLink></li>
+                                            </ul>
+                                        </li>
+                                         
+                                        <li class="reportnav funnelanalyticsnav " >   <a> FUNNELOCITY ANALYTICS </a>  
+                                            <ul class="subnav">
+                                                <li><apex:commandLink action="{!navigateToFunnelAnalytic}">Funnelocity Analytics Dashboard</apex:commandLink></li>
+                                                <!--li><apex:commandLink action="{!navigateToFunnelAnalyticQualitative}">Funnelocity Qualitative Scoring</apex:commandLink></li-->
+                                                <li><apex:commandLink action="{!navigateToSalesPipeline}">Funnelocity Sales Pipeline</apex:commandLink></li>
+                                            </ul>
+                                       </li>                                                                      
+                                        <li style="display:none"><apex:commandLink ><i class="fas fa-star"></i> TERRITORY PLAN</apex:commandLink></li>
+                                        <apex:outputPanel rendered="{!displayMetricCalculator}">
+                                            <li><apex:commandLink action="{!navigateToCalculator}"><i class="fas fa-calculator"></i> METRICS CALCULATOR</apex:commandLink></li>
+                                        </apex:outputPanel>
+                                        <apex:outputPanel rendered="{!appSetup = ''}">
+                                            <li class=" reportnav active"> <i class="fas fa-chart-bar"></i> ADMIN 
+                                                <ul class="subnavlast">
+                                                    <li><apex:commandLink action="{!navigateToFunnelAddEditSRP}" rendered="{!adminUser}">Sales Rep Profiles and Hierarchy</apex:commandLink></li>
+                                                    <li><apex:commandLink action="{!navigateToAppSetup}" rendered="{!adminUser}">Metrics and Skills</apex:commandLink></li>
+                                                    <li><apex:commandLink action="{!navigateToGoals}">Goal Management</apex:commandLink></li>
+                                                    <li><apex:commandLink action="{!navigateToFunnelSetup}" rendered="{!adminUser}">Custom Updates</apex:commandLink></li>                                        
+                                                </ul>
+                                            </li>
+                                       </apex:outputPanel>
+                                       <!--Added for Help Menu - Rohit-->
+                                       <li class="help">
+                                           <apex:commandLink target="_blank" action="{!navigateToHelpMenu}"><i class="fas fa-question-circle"></i></apex:commandLink>
+                                       </li>
+                                       
+                                    </ul> 
+                                </div>
+                            </div>
+                        </div> 
+                        <!--Navigation-->    
+                        <div class="slds-wrap slds-p-around_medium">
+                            <div class="slds-grid">
+                                <style>
+                                    .slds-scope .slds-tabs--default__item.slds-active:after, .slds-scope .slds-tabs--default__item.slds-is-active:after, .slds-scope .slds-tabs_default__item.slds-active:after, .slds-scope .slds-tabs_default__item.slds-is-active:after{background: none;}
+                                    .slds-scope .slds-tabs--default__item:hover:after, .slds-scope .slds-tabs_default__item:hover:after{background: none;}
+                                </style>
+                                <apex:actionFunction id="ratings" name="ratings" action="{!navigateToRatings}"></apex:actionFunction>
+                                <apex:actionFunction id="assignRole" name="assignRole" action="{!navigateToAssignRole}"></apex:actionFunction>
+                                <apex:actionFunction id="custommetric" name="custommetric" action="{!navigateToCustomMetric}"></apex:actionFunction>
+                                <apex:actionFunction id="notificationPage" name="notificationPage" action="{!navigateToNotifications}"></apex:actionFunction>
+                                <apex:actionFunction id="evaluationGuidelines" name="evaluationGuidelines" action="{!navigateToFunnelEvaluationGuidelines}"></apex:actionFunction>
+                                <apex:actionFunction id="setup" name="setup" action="{!navigateToFunnelSetup}"></apex:actionFunction>
+                                
+                                <apex:actionFunction id="goalmanagement" name="goalmanagement" action="{!navigateToFunnelReviewGoals}"></apex:actionFunction>
+                                <apex:actionFunction id="teamgoals" name="teamgoals" action="{!navigateToFunnelManagerUpdate}"></apex:actionFunction>
+                                <div class="slds-tabs_default">
+                                    <div style="background: #f5f5f9; display: table; width: 100%; padding-bottom: 30px;">
+                                        
+                                        <ul class="slds-tabs_default__nav slds-m-top_x-large slds-m-bottom_large" role="tablist" style="justify-content: center;background: #7e8793; height: 40px; border: none; margin-top: 0;">
+                                       <!--     <li class="slds-tabs_default__item" title="CREATE AND EDIT RATINGS" role="presentation" style="margin-right: 45px;"><a class="slds-tabs_default__link" onclick="categoryPage()" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-3" id="tab-default-3__item" style="color: #fff; font-size: 18px; font-weight: bold;">ADD AND EDIT CATEGORIES</a></li> -->
+                                            <!--<apex:outputPanel rendered="{!adminPer}"><li class="slds-tabs_default__item" role="presentation" style="margin-left: 0; margin-right: 0;"><a class="slds-tabs_default__link" onclick="ratings()" role="tab" tabindex="0" aria-selected="true" aria-controls="tab-default-1" id="tab-default-1__item" style="color: #fff; font-size: 16px; padding: 0; display: block; font-weight: bold; text-transform: none;">Create &#38; Edit Metrics/Measures</a></li></apex:outputPanel>
+                                            <apex:outputPanel rendered="{!adminPer}"><li class="slds-tabs_default__item" role="presentation" style="margin-right: 0; margin-left: 0;"><a class="slds-tabs_default__link" onclick="custommetric()" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-2" id="tab-default-2__item" style="color: #fff; font-size: 16px; font-weight: bold; text-transform: none;">Custom Metrics</a></li></apex:outputPanel>
+                                            
+                                            <apex:outputPanel rendered="{!adminPer}"><li class="slds-tabs_default__item" role="presentation" style="margin-right: 0; margin-left: 0;"><a class="slds-tabs_default__link" onclick="assignRole()" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-2" id="tab-default-2__item" style="color: #fff; font-size: 16px; padding: 0; display: block; font-weight: bold; text-transform: none;">Assign Measures</a></li></apex:outputPanel>
+                                            <apex:outputPanel rendered="{!adminPer}"><li class="slds-tabs_default__item" role="presentation" style="margin-right: 0; margin-left: 0;"><a class="slds-tabs_default__link" onclick="evaluationGuidelines()" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-3" id="tab-default-3__item" style="color: #fff; font-size: 16px; font-weight: bold; text-transform: none;">Evaluation Guidelines</a></li></apex:outputPanel>-->
+                                            
+                                            <apex:outputPanel rendered="{!adminUser}"><li class="slds-tabs_default__item" role="presentation" style="margin-right: 0; margin-left: 0; background: #00b2ee; border-radius: 55px; margin-top: -10px;"><a class="slds-tabs_default__link"   role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-2" id="tab-default-2__item"  style="color: #fff; font-size: 16px; padding: 10px 10px; display: block; font-weight: bold; overflow: visible; height: auto; text-transform: none;">Goal Management</a></li></apex:outputPanel>
+                                            <apex:outputPanel rendered="{!(adminUser || isManger)}"><li class="slds-tabs_default__item" role="presentation" style="margin-right: 0; margin-left: 0;"><a class="slds-tabs_default__link" onclick="teamgoals()" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-3" id="tab-default-3__item" style="color: #fff; font-size: 16px; font-weight: bold; text-transform: none;">Team Goals</a></li></apex:outputPanel>
+                                            
+                                            <!--<apex:outputPanel rendered="{!adminPer}"><li class="slds-tabs_default__item" role="presentation" style="margin-right: 0; margin-left: 0;"><a class="slds-tabs_default__link" onclick="setup()" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-3" id="tab-default-3__item" style="color: #fff; font-size: 16px; font-weight: bold; text-transform: none;">Installation</a></li></apex:outputPanel>
+                                            <apex:outputPanel rendered="{!adminPer}"><li class="slds-tabs_default__item" role="presentation" style="margin-right: 0; margin-left: 0;" ><a class="slds-tabs_default__link" onclick="notificationPage()" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-3" id="tab-default-3__item" style="color: #fff; font-size: 16px; font-weight: bold; text-transform: none;">Settings</a></li></apex:outputPanel>-->
+                                        </ul>
+                                    </div>
+                                    <div id="tab-default-1" class="slds-tabs_default__content slds-show" role="tabpanel" aria-labelledby="tab-default-1__item" style="padding: 0;">
+                                         <apex:outputPanel id="pg">
+                                            <div class="slds-grid slds-gutters slds-wrap">
+                                                <!--<div class="slds-col slds-size_1-of-1">
+                                                    <div class="top-strip"><h1 class="slds-align_absolute-center slds-flex">Step 8 - Confirm Goals</h1></div>
+                                                </div> -->
+                                                <div class="slds-col slds-size_1-of-1">
+                                                    <div class="desc-block">
+                                                        <p>Our Goal Automation process has defined the following goals for the current fiscal year.</p> 
+                                                        <p>Please confirm or adjust these as needed. After confirming, enable updates for managers.</p>
+                                                     <div class="slds-col " style="text-align: right; font-size: 18px; color: #333333; font-weight: 700;padding-top: 10px;">
+                                                  
+                                                </div>
+                                                    </div>
+                                                    
+                                                </div>
+                                               
+                                                <div class="slds-col slds-size_1-of-1">
+                                                    <div class="confirm-goals-table">
+                                                    
+                                                        
+                                                        <table class="slds-table slds-table_bordered slds-table_col-bordered">
+                                                            <thead>
+                                                                <tr class="">
+                                                                    <th class="slds-cell-wrap" scope="col" style="width:15%;">
+                                                                        <div class="slds-truncate"> </div>
+                                                                    </th>
+                                                               <!--     <th class="slds-cell-wrap" scope="col" style="width:10%;">
+                                                                        <div title="Annual Quota">Annual Quota</div>
+                                                                    </th> -->
+                                                                    <th class="slds-cell-wrap" scope="col" style="width:17.5%;">
+                                                                        <div title="Average Selling Price">Average Selling Price</div>
+                                                                    </th>
+                                                                    <th class="slds-cell-wrap" scope="col" style="width:10%;">
+                                                                        <div title="Lead Conversion Rate">Lead Conversion Rate</div>
+                                                                    </th>
+                                                                    <th class="slds-cell-wrap" scope="col" style="width:10%;">
+                                                                        <div title="Opportunity Close Rate">Opportunity Close Rate</div>
+                                                                    </th>
+                                                                    <th class="slds-cell-wrap" scope="col" style="width:10%;">
+                                                                        <div title="$ Close Rate">$ Close Rate</div>
+                                                                    </th>
+                                                                    <th class="slds-cell-wrap" scope="col" style="width:10%;">
+                                                                        <div title="Average Length of Sales Cycle">Average Length of Sales Cycle</div>
+                                                                    </th>
+                                                                    <th class="slds-cell-wrap" scope="col" style="width:10%;">
+                                                                        <div title="Number of Monthly Meetings">Number of Monthly Meetings</div>
+                                                                    </th>
+                                                                    <th class="slds-cell-wrap" scope="col" style="width:17.5%;">
+                                                                        <div title="Average Deal Size">Average Deal Size</div>
+                                                                    </th>
+                                                                    
+                                                                </tr>
+                                                            </thead>
+                                                            <apex:actionFunction action="{!onEdit}" name="edit" reRender="editFields,readFields">
+                                                                <apex:param name="edit" value="" assignTo="{!goalRec}e"/>
+                                                            </apex:actionFunction>
+                                                            <tbody>
+                                                                 
+                                                                <!--<apex:repeat var="c" value="{!goalsLst}">
+                                                                    <tr class="slds-hint-parent">
+                                                                        <td class="slds-cell-wrap" data-label="Wrapped, line clamped" style="font-weight: 700;">
+                                                                            <div class="slds-line-clamp" title="{!c.Role__c}">{!c.Role__c}</div>
+                                                                        </td>
+                                                                                
+                                                                                <td data-label="Typical Column Header">
+                                                                                    <div title="{!c.X12_month_avg_selling_price__c}">$ {!c.X12_month_avg_selling_price__c} </div>
+                                                                                </td>
+                                                                                 
+                                                                                <td data-label="Typical Column Header">
+                                                                                    <div title="{!c.X12_month_rolling_lead_to_opp_conv_rate__c}">{!c.X12_month_rolling_lead_to_opp_conv_rate__c} %</div>
+                                                                                </td>
+                                                                                <td data-label="Typical Column Header">
+                                                                                    <div title="{!c.X12_month_rolling_opp_close_rate__c}"> {!c.X12_month_rolling_opp_close_rate__c}%</div>
+                                                                                </td>
+                                                                                <td data-label="Typical Column Header">
+                                                                                    <div title="{!c.X12_month_rolling_amt_close_rate__c}">{!c.X12_month_rolling_amt_close_rate__c}%</div>
+                                                                                </td>
+                                                                                <td data-label="Typical Column Header">
+                                                                                    <div title="{!c.X12_month_rolling_avg_sales_cycle__c}"> {!c.X12_month_rolling_avg_sales_cycle__c} </div>
+                                                                                </td>
+                                                                                <td data-label="Typical Column Header">
+                                                                                    <div title="{!c.Number_of_monthly_meetings__c}"> {!c.Number_of_monthly_meetings__c} </div>
+                                                                                </td>
+                                                                                <td data-label="Typical Column Header">
+                                                                                    <div title="{!c.X12_month_rolling_avg_deal_size__c}">$ {!c.X12_month_rolling_avg_deal_size__c} </div>
+                                                                                </td>
+                                                                                 
+                                                                                <td>  
+                                                                                    <apex:commandLink action="{!displayModal}" rerender="pop" html-data-toggle="modal" html-data-target="#goalmodal" >
+                                                                                      <i aria-hidden="true" class="fas fa-pencil-alt " style="color: #333333; font-size: 15px;"></i>       
+                                                                                      <apex:param name="recordId" assignTo="{!recordId}" value="{!c.id}"/>
+                                                                                    </apex:commandLink>     
+                                                                                </td>
+                                        
+                                                                    </tr>
+                                                                </apex:repeat>-->
+                                                                
+                                                                 <apex:repeat var="c" value="{!wrList}">
+                                                                    <tr class="slds-hint-parent">
+                                                                        <td class="slds-cell-wrap" data-label="Wrapped, line clamped" style="font-weight: 700;">
+                                                                            <div class="slds-line-clamp" title="{!c.Role}">{!c.Role}</div>
+                                                                        </td>
+                                                                                                             
+                                                                            <!--    <td data-label="Typical Column Header">
+                                                                                    <div title="{!c.Annual_quota_amount__c}"><apex:outputText value="{!c.Annual_quota_amount__c}"></apex:outputText></div>
+                                                                                </td> -->
+                                                                                
+                                                                                <td data-label="Typical Column Header">
+                                                                                    <div  >$ {!c.sellPrice} 
+                                                                                        <apex:commandLink action="{!displayModal}" rerender="pop" html-data-toggle="modal" html-data-target="#goalmodal" Style="float: right;">
+                                                                                            <i aria-hidden="true" class="fas fa-pencil-alt " style="color: #333333; font-size: 15px;"></i>       
+                                                                                            <apex:param name="recordId" assignTo="{!recordId}" value="{!c.recId}"/>
+                                                                                            <apex:param name="gval" assignTo="{!gval}" value="sp"/>
+                                                                                        </apex:commandLink>  
+                                                                                     </div>
+                                                                                     
+                                                                                </td>
+                                                                                 
+                                                                                <td data-label="Typical Column Header">
+                                                                                    <div  >{!c.convRate} %
+                                                                                        <apex:commandLink action="{!displayModal}" rerender="pop" html-data-toggle="modal" html-data-target="#goalmodal" Style="float: right;">
+                                                                                            <i aria-hidden="true" class="fas fa-pencil-alt " style="color: #333333; font-size: 15px;"></i>       
+                                                                                            <apex:param name="recordId" assignTo="{!recordId}" value="{!c.recId}"/>
+                                                                                            <apex:param name="gval" assignTo="{!gval}" value="lc"/>
+                                                                                        </apex:commandLink>  
+                                                                                    </div>
+                                                                                    
+                                                                                </td>
+                                                                                <td data-label="Typical Column Header">
+                                                                                    <div  > {!c.closeRate}%
+                                                                                        <apex:commandLink action="{!displayModal}" rerender="pop" html-data-toggle="modal" html-data-target="#goalmodal" Style="float: right;">
+                                                                                            <i aria-hidden="true" class="fas fa-pencil-alt " style="color: #333333; font-size: 15px;"></i>       
+                                                                                            <apex:param name="recordId" assignTo="{!recordId}" value="{!c.recId}"/>
+                                                                                            <apex:param name="gval" assignTo="{!gval}" value="ocr"/>
+                                                                                        </apex:commandLink>  
+                                                                                    </div>
+                                                                                </td>
+                                                                                <td data-label="Typical Column Header">
+                                                                                    <div  >{!c.amtCloseRate}%
+                                                                                        <apex:commandLink action="{!displayModal}" rerender="pop" html-data-toggle="modal" html-data-target="#goalmodal" Style="float: right;">
+                                                                                            <i aria-hidden="true" class="fas fa-pencil-alt " style="color: #333333; font-size: 15px;"></i>       
+                                                                                            <apex:param name="recordId" assignTo="{!recordId}" value="{!c.recId}"/>
+                                                                                            <apex:param name="gval" assignTo="{!gval}" value="acr"/>
+                                                                                        </apex:commandLink>  
+                                                                                    </div>
+                                                                                </td>
+                                                                                <td data-label="Typical Column Header">
+                                                                                    <div  > {!c.salesCycle} 
+                                                                                        <apex:commandLink action="{!displayModal}" rerender="pop" html-data-toggle="modal" html-data-target="#goalmodal" Style="float: right;">
+                                                                                            <i aria-hidden="true" class="fas fa-pencil-alt " style="color: #333333; font-size: 15px;"></i>       
+                                                                                            <apex:param name="recordId" assignTo="{!recordId}" value="{!c.recId}"/>
+                                                                                            <apex:param name="gval" assignTo="{!gval}" value="alsc"/>
+                                                                                        </apex:commandLink>  
+                                                                                    </div>
+                                                                                </td>
+                                                                                <td data-label="Typical Column Header">
+                                                                                    <div  > {!c.monthlyMeetings} 
+                                                                                        <apex:commandLink action="{!displayModal}" rerender="pop" html-data-toggle="modal" html-data-target="#goalmodal" Style="float: right;">
+                                                                                            <i aria-hidden="true" class="fas fa-pencil-alt " style="color: #333333; font-size: 15px;"></i>       
+                                                                                            <apex:param name="recordId" assignTo="{!recordId}" value="{!c.recId}"/>
+                                                                                            <apex:param name="gval" assignTo="{!gval}" value="nm"/>
+                                                                                        </apex:commandLink>  
+                                                                                    </div>
+                                                                                </td>
+                                                                                <td data-label="Typical Column Header">
+                                                                                    <div  >$ {!c.dealSize} 
+                                                                                        <apex:commandLink action="{!displayModal}" rerender="pop" html-data-toggle="modal" html-data-target="#goalmodal" Style="float: right;">
+                                                                                            <i aria-hidden="true" class="fas fa-pencil-alt " style="color: #333333; font-size: 15px;"></i>       
+                                                                                            <apex:param name="recordId" assignTo="{!recordId}" value="{!c.recId}"/>
+                                                                                            <apex:param name="gval" assignTo="{!gval}" value="ads"/>
+                                                                                        </apex:commandLink>  
+                                                                                    </div>
+                                                                                </td>
+                                                                                 
+                                                                                 
+                                                                                                                                                    
+                                                                    </tr>
+                                                                </apex:repeat>
+                                                            </tbody>
+                                                        </table>
+                                                         
+                                                            
+                                                        
+                                                    </div>
+                                                </div>
+                                                <div class="slds-col slds-size_1-of-1">
+                                                    <div class="enable-strip slds-clearfix">
+                                                        <div class="slds-float_right">
+                                                            <p>
+                                                            <apex:outputPanel id="managerUpdate">
+                                                        <apex:outputPanel rendered="{!managerUpdate.Enable_Manger_Goal_Update__c }">
+                                                            <apex:commandLink reRender="managerUpdate"  action="{!activedeactiveUpate}" >
+                                                                 <i class="fas fa-lock-open"  ></i>
+                                                             </apex:commandLink>
+                                                        </apex:outputPanel>
+                                                     
+                                                
+                                                        <apex:outputPanel rendered="{!!managerUpdate.Enable_Manger_Goal_Update__c }">
+                                                            <apex:commandLink reRender="managerUpdate" action="{!activedeactiveUpate}"  >
+                                                                 <i  class="fas fa-lock"  ></i>
+                                                                
+                                                            </apex:commandLink>
+                                                        </apex:outputPanel>
+                                                    </apex:outputPanel>
+                                                           
+                                                            
+                                                            Enable Update for Managers
+                                                            
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                             
+                                            </apex:outputPanel> 
+                                    </div>
+                                    <div id="tab-default-2" class="slds-tabs_default__content slds-hide" role="tabpanel" aria-labelledby="tab-default-2__item">Item Two Content</div>
+                                    <div id="tab-default-3" class="slds-tabs_default__content slds-hide" role="tabpanel" aria-labelledby="tab-default-3__item">Item Three Content</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </apex:outputPanel>
+            
+                    
+               <apex:actionFunction id="save" name="save" action="{!saveUpdate}"  reRender="pg,appAll"  oncomplete="closeModal();" >
+                            
+    </apex:actionFunction> 
+    <!-- Goal Modal Start  -->
+                 
+                    <div class="modal fade " id="goalmodal" role="dialog">
+                        <div class="modal-dialog" style="width: 55%;">
+                         <apex:actionRegion >
+                            <div class="modal-content">
+                             
+                                <div class="modal-header">
+                                    
+                                    <h4 class="modal-title">
+                                        <button type="button" class="close" data-dismiss="modal" >&times;</button>
+                                    </h4>
+                                </div>
+                            
+                                <div class="modal-body">
+                                
+                                    <div class="delete-content-block" style="font-size: 15px; color: #333333;font-weight: normal;">
+                                    Update the individual metric for all salespeople in this Sales Role
+                                    <br/><br/>
+                                    Note: All reps in this Sales Role (who have this default goal or less) will have their goal updated to the input value. Select the checkbox if you wish to overwrite ALL reps, including those who have a higher goal set. 
+If you do not wish to update ALL reps, use the Team Goals page instead to update individual metric goals for selected salespeople. 
+                                            <apex:outputPanel id="pop">                                                
+                                                <div class="slds-grid slds-grid_align-center" style="margin: 0px 0px 0px 0px;">
+                                                <!--<apex:repeat value="{!roleGoal}" var="r">-->
+                                                
+                                                 <!--   <div class="slds-size_1-of-3">
+                                                        <div class="slds-form-element__control slds-p-around_small">
+                                                           <label class="slds-form-element__label slds-p-around_small" for="text-input-id-11" style="color: #00b2ee; font-size: 21px; padding-left: 0; font-weight: bold; margin: 0; padding-bottom: 0;">Annual quota amount</label>
+                                                        </div>
+                                                        <div class="slds-form-element__control slds-p-around_small">
+                                                             <apex:inputField value="{!goalRec.Annual_quota_amount__c}"  style="color: #333333; font-size: 18px; resize: none; border-radius:0; width: 100%; padding: 8px; border: 1px solid #dddbda;"    html-min="0" html-placeholder="Enter Goal"/>
+                                                         </div>                                         
+                                                    </div> -->
+                                                    
+                                                    <div class="slds-col slds-size_1-of-10">
+                                                    <apex:outputPanel rendered="{!sp}">
+                                                        <div class="slds-form-element__control slds-p-around_small slds-p-bottom_none">
+                                                           <label class="slds-form-element__label slds-p-around_small" for="text-input-id-11" style="color: #00b2ee; font-size: 18px; padding-left: 0; font-weight: bold; margin: 0; padding-bottom: 0;">12 month avg selling price</label>
+                                                        </div>
+                                                        <div class="slds-form-element__control slds-p-around_small slds-p-bottom_none">
+                                                             <apex:inputField type="text" value="{!goalRec.X12_month_avg_selling_price__c}"  style="color: #333333; font-size: 18px; resize: none; border-radius:0; width: 100%; padding: 8px; border: 1px solid #dddbda;"    html-min="0" html-placeholder="Enter Goal"/>
+                                                         </div>  
+                                                         <div class="slds-form-element slds-p-around_small slds-p-top_none">
+                                                            <label class="slds-checkbox">
+                                                                <apex:inputCheckbox styleClass="slds-input" value="{!applyAll12MonthAvgSellingPrice}" id="appAll1"/>
+                                                                <span class="slds-checkbox--faux"></span>             
+                                                                <span class="slds-form-element__label" style="font-size: 14px; color: #333333;font-weight: normal; margin: 0 0 0 -5px;">Apply to All (including those who currently have a higher goal)</span>    
+                                                            </label>
+                                                        </div>  
+                                                    </apex:outputPanel>
+                                                    <apex:outputPanel rendered="{!lc}">
+                                                        <div class="slds-form-element__control slds-p-around_small slds-p-bottom_none">
+                                                           <label class="slds-form-element__label slds-p-around_small" for="text-input-id-11" style="color: #00b2ee; font-size: 18px; padding-left: 0; font-weight: bold; margin: 0; padding-bottom: 0;">12 month rolling lead to opp conv rate</label>
+                                                        </div>
+                                                        <div class="slds-form-element__control slds-p-around_small slds-p-bottom_none">
+                                                             <apex:inputField type="text" value="{!goalRec.X12_month_rolling_lead_to_opp_conv_rate__c}"  style="color: #333333; font-size: 18px; resize: none; border-radius:0; width: 100%; padding: 8px; border: 1px solid #dddbda;"    html-min="0" html-placeholder="Enter Goal"/>
+                                                         </div>  
+                                                         <div class="slds-form-element slds-p-around_small slds-p-top_none">
+                                                            <label class="slds-checkbox">
+                                                                <apex:inputCheckbox styleClass="slds-input" value="{!applyAll12MonthLeadToOpp}" id="appAll2"/>
+                                                                <span class="slds-checkbox--faux"></span>             
+                                                                <span class="slds-form-element__label" style="font-size: 14px; color: #333333;font-weight: normal; margin: 0 0 0 -5px;">Apply to All (including those who currently have a higher goal)</span>    
+                                                            </label>
+                                                        </div>
+                                                    </apex:outputPanel>
+                                                    <apex:outputPanel rendered="{!ocr}">
+                                                        <div class="slds-form-element__control slds-p-around_small slds-p-bottom_none">
+                                                           <label class="slds-form-element__label slds-p-around_small" for="text-input-id-11" style="color: #00b2ee; font-size: 18px; padding-left: 0; font-weight: bold; margin: 0; padding-bottom: 0;">12 month rolling opp close rate</label>
+                                                        </div>
+                                                        <div class="slds-form-element__control slds-p-around_small slds-p-bottom_none">
+                                                             <apex:inputField type="text" value="{!goalRec.X12_month_rolling_opp_close_rate__c}"  style="color: #333333; font-size: 18px; resize: none; border-radius:0; width: 100%; padding: 8px; border: 1px solid #dddbda;"    html-min="0" html-placeholder="Enter Goal"/>
+                                                         </div>      
+                                                         <div class="slds-form-element slds-p-around_small slds-p-top_none">
+                                                            <label class="slds-checkbox">
+                                                                <apex:inputCheckbox styleClass="slds-input" value="{!applyAll12MonthOppCloserate}" id="appAll3"/>
+                                                                <span class="slds-checkbox--faux"></span>             
+                                                                <span class="slds-form-element__label" style="font-size: 14px; color: #333333;font-weight: normal; margin: 0 0 0 -5px;">Apply to All (including those who currently have a higher goal)</span>    
+                                                            </label>
+                                                        </div>
+                                                    </apex:outputPanel>   
+                                                    <apex:outputPanel rendered="{!acr}">
+                                                        <div class="slds-form-element__control slds-p-around_small slds-p-bottom_none">
+                                                           <label class="slds-form-element__label slds-p-around_small" for="text-input-id-11" style="color: #00b2ee; font-size: 18px; padding-left: 0; font-weight: bold; margin: 0; padding-bottom: 0;">12 month rolling amt close rate</label>
+                                                        </div>
+                                                        <div class="slds-form-element__control slds-p-around_small slds-p-bottom_none">
+                                                             <apex:inputField type="text" value="{!goalRec.X12_month_rolling_amt_close_rate__c}"  style="color: #333333; font-size: 18px; resize: none; border-radius:0; width: 100%; padding: 8px; border: 1px solid #dddbda;"    html-min="0" html-placeholder="Enter Goal"/>
+                                                         </div>   
+                                                         <div class="slds-form-element slds-p-around_small slds-p-top_none">
+                                                            <label class="slds-checkbox">
+                                                                <apex:inputCheckbox styleClass="slds-input" value="{!applyAll12MonthAmtCloserate}" id="appAll4"/>
+                                                                <span class="slds-checkbox--faux"></span>             
+                                                                <span class="slds-form-element__label" style="font-size: 14px; color: #333333;font-weight: normal; margin: 0 0 0 -5px;">Apply to All (including those who currently have a higher goal)</span>    
+                                                            </label>
+                                                        </div>  
+                                                    </apex:outputPanel>   
+                                                    <apex:outputPanel rendered="{!alsc}">
+                                                        <div class="slds-form-element__control slds-p-around_small slds-p-bottom_none">
+                                                           <label class="slds-form-element__label slds-p-around_small" for="text-input-id-11" style="color: #00b2ee; font-size: 18px; padding-left: 0; font-weight: bold; margin: 0; padding-bottom: 0;">12 month rolling avg sales cycle</label>
+                                                        </div>
+                                                        <div class="slds-form-element__control slds-p-around_small slds-p-bottom_none">
+                                                             <apex:inputField type="text" value="{!goalRec.X12_month_rolling_avg_sales_cycle__c}"  style="color: #333333; font-size: 18px; resize: none; border-radius:0; width: 100%; padding: 8px; border: 1px solid #dddbda;"    html-min="0" html-placeholder="Enter Goal"/>
+                                                         </div>                        
+                                                         <div class="slds-form-element slds-p-around_small slds-p-top_none">
+                                                            <label class="slds-checkbox">
+                                                                <apex:inputCheckbox styleClass="slds-input" value="{!applyAll12MonthSalesCycle}" id="appAll5"/>
+                                                                <span class="slds-checkbox--faux"></span>             
+                                                                <span class="slds-form-element__label" style="font-size: 14px; color: #333333;font-weight: normal; margin: 0 0 0 -5px;">Apply to All (including those who currently have a higher goal)</span>    
+                                                            </label>
+                                                        </div>  
+                                                    </apex:outputPanel> 
+                                                    <apex:outputPanel rendered="{!nm}">
+                                                        <div class="slds-form-element__control slds-p-around_small slds-p-bottom_none">
+                                                           <label class="slds-form-element__label slds-p-around_small" for="text-input-id-11" style="color: #00b2ee; font-size: 21px; padding-left: 0; font-weight: bold; margin: 0; padding-bottom: 0;">Number of monthly meetings</label>
+                                                        </div>
+                                                        <div class="slds-form-element__control slds-p-around_small slds-p-bottom_none">
+                                                             <apex:inputField type="text" value="{!goalRec.Number_of_monthly_meetings__c}"  style="color: #333333; font-size: 18px; resize: none; border-radius:0; width: 100%; padding: 8px; border: 1px solid #dddbda;"    html-min="0" html-placeholder="Enter Goal"/>
+                                                         </div>  
+                                                         <div class="slds-form-element slds-p-around_small slds-p-top_none">
+                                                            <label class="slds-checkbox">
+                                                                <apex:inputCheckbox styleClass="slds-input" value="{!applyAllNumberOFMonthlyMeeting}" id="appAll6"/>
+                                                                <span class="slds-checkbox--faux"></span>             
+                                                                <span class="slds-form-element__label" style="font-size: 14px; color: #333333;font-weight: normal; margin: 0 0 0 -5px;">Apply to All (including those who currently have a higher goal)</span>    
+                                                            </label>
+                                                        </div>      
+                                                    </apex:outputPanel> 
+                                                    <apex:outputPanel rendered="{!ads}">
+                                                        <div class="slds-form-element__control slds-p-around_small slds-p-bottom_none">
+                                                           <label class="slds-form-element__label slds-p-around_small" for="text-input-id-11" style="color: #00b2ee; font-size: 21px; padding-left: 0; font-weight: bold; margin: 0; padding-bottom: 0;">12 month rolling avg deal size</label>
+                                                        </div>
+                                                        <div class="slds-form-element__control slds-p-around_small slds-p-bottom_none">
+                                                             <apex:inputField type="text" value="{!goalRec.X12_month_rolling_avg_deal_size__c}"  style="color: #333333; font-size: 18px; resize: none; border-radius:0; width: 100%; padding: 8px; border: 1px solid #dddbda;"    html-min="0" html-placeholder="Enter Goal"/>
+                                                         </div>                          
+                                                         <div class="slds-form-element slds-p-around_small slds-p-top_none">
+                                                            <label class="slds-checkbox">
+                                                                <apex:inputCheckbox styleClass="slds-input" value="{!applyAll12MonthAvgDealSize}" id="appAll7"/>
+                                                                <span class="slds-checkbox--faux"></span>             
+                                                                <span class="slds-form-element__label" style="font-size: 14px; color: #333333;font-weight: normal; margin: 0 0 0 -5px;">Apply to All (including those who currently have a higher goal)</span>    
+                                                            </label>
+                                                        </div> 
+                                                    </apex:outputPanel>                                  
+                                                    </div>
+                                                     
+                                                    
+                                                     
+                                                      
+                                                <!--</apex:repeat>-->
+                                                </div>
+                                                
+                                                 
+                                                 
+                                        </apex:outputPanel>  
+                                          
+                                    </div>
+                                    
+                                </div>
+                                <div class="modal-footer">
+                                     
+                                 <!--   <div class="slds-grid">
+                                        <div class="slds-size_8-of-8">
+                                            <span>
+                                             <apex:inputCheckbox value="{!applyAll}" id="appAll"/> Apply goal for the reps
+                                            </span>
+                                        </div>
+                                    </div>
+                                    -->
+                                    <div class="btn-block">
+                                        <a data-dismiss="modal"  class="cancel" style="background-color: #7e8793; color: #fff; padding: 8px 50px; border-radius: 30px; font-size: 20px; border: none; margin-left: 0;"  > Close</a>
+                                         
+                                         
+                                        <a onclick="openModal()"  style="background-color: #ff9900;text-decoration: none; color: #fff; padding: 8px 50px; border-radius: 30px; font-size: 20px; border: none;">
+                                        
+                                            
+                                               Save
+                                           </a>
+                                         
+                                    </div>
+                                </div>
+                            </div>
+                        </apex:actionRegion>
+                              
+                        </div>
+                    </div> 
+                    <!-- Goal Modal End  -->
+                    
+                    <!-- Confrim Modal Start  -->
+                 
+                    <div class="modal fade " id="confrimmodal" role="dialog">
+                        <div class="modal-dialog modal-lg" Style="width: 55%;">
+                         <apex:actionRegion >
+                            <div class="modal-content">
+                             
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" >&times;</button>
+                                </div>
+                            
+                                <div class="modal-body">
+                                
+                                    <div class="delete-content-block">
+                                                                                         
+                                                <div class="slds-grid slds-wrap desc-block slds-align_absolute-center slds-flex" style="margin: 25px 0px 0px 0px;padding:10px !important">
+                                                
+                                                    
+                                               <p>    Please note, you are making a change that could override custom goals set by managers. 
+                                               <br/>Are you sure you want to proceed? </p>
+                                                    
+                                                <!--</apex:repeat>-->
+                                                </div>
+                                                
+                                                 
+                                               
+                                          
+                                    </div>
+                                    
+                                </div>
+                                <div class="modal-footer">
+                                    <div class="btn-block">
+                                        <a data-dismiss="modal" style="background-color: #7e8793; color: #fff; padding: 8px 50px; border-radius: 30px; font-size: 20px; border: none; margin-left: 0;"  class="cancel"  > Cancel</a>
+                                         
+                                        <a onclick="save()"  style="background-color: #ff9900;text-decoration: none; color: #fff; padding: 8px 50px; border-radius: 30px; font-size: 20px; border: none;">
+                                            
+                                             Yes
+                                       </a>
+                                         
+                                    </div>
+                                </div>
+                            </div>
+                        </apex:actionRegion>
+                              
+                        </div>
+                    </div> 
+                    <!-- Confrim Modal End  -->
+            <script>
+    function openModal(){
+         $('#goalmodal').modal('toggle');
+         $('#confrimmodal').modal('toggle');
+     }
+     function closeModal(){
+         $('#confrimmodal').modal('toggle');
+          
+     }
+    </script>
+      
+        </html>
+         
+    </apex:form>
+    
+</apex:page>

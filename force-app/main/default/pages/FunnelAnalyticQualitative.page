@@ -1,0 +1,2 @@
+<apex:page sidebar="false" controller="FunnelAnalyticQualitativeController" extensions="FunnelInstallation" >
+</apex:page>

@@ -1,0 +1,1092 @@
+<apex:page docType="html-5.0" sidebar="false" controller="FunnelAddEditSrp" extensions="FunnelInstallation">
+    
+    <style>
+        .slds-scope .slds-button a:focus{text-decoration: none;}
+        .slds-modal__container .slds-form-element__label{padding-top: 0; margin-bottom: 0;}
+        .slds-select[disabled], .slds-select.slds-is-disabled {background-color: #ecebea !important;}
+        .select:disabled {background-color:: #ecebea !important;}
+        .slds-scope .slds-checkbox [type=checkbox]:checked+.slds-checkbox--faux:after, .slds-scope .slds-checkbox [type=checkbox]:checked+.slds-checkbox__label .slds-checkbox--faux:after, .slds-scope .slds-checkbox [type=checkbox]:checked+.slds-checkbox__label .slds-checkbox_faux:after, .slds-scope .slds-checkbox [type=checkbox]:checked+.slds-checkbox_faux:after, .slds-scope .slds-checkbox [type=checkbox]:checked~.slds-checkbox--faux:after, .slds-scope .slds-checkbox [type=checkbox]:checked~.slds-checkbox_faux:after{border-bottom: 2px solid #ff9900; border-left: 2px solid #ff9900;}
+       
+        .select2-container--default .select2-selection--single .select2-selection__clear{margin-right: 13px;font-size: 38px; color: #6c757f;}
+    </style>
+    <style>
+        /* Add this attribute to the element that needs a tooltip */
+        [data-tooltip] {
+        position: relative;
+        z-index: 2;
+        cursor: pointer;
+        }
+        /* Hide the tooltip content by default */
+        [data-tooltip]:before,
+        [data-tooltip]:after {
+        visibility: hidden;
+        -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+        filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=0);
+        opacity: 0;
+        pointer-events: none;
+        }
+        /* Position tooltip above the element */
+        .metrictable [data-tooltip]:before {width: 120px; }
+        [data-tooltip]:before {
+        position: absolute;
+        bottom: 100%;
+        left: 45%;
+        margin-bottom: 5px;
+        margin-left: -70px;
+        padding: 10px;
+        width: 200px; 
+        -webkit-border-radius: 0;
+        -moz-border-radius: 0;
+        border-radius: 5px;
+        background-color: #66cc33;
+        /*background-color: hsla(0, 0%, 20%, 0.9);*/
+        color: #fff;
+        content: attr(data-tooltip);
+        text-align: center;
+        font-size: 14px;
+        line-height: 18px;
+        border: 2px solid #66cc33;
+        }
+        /* Triangle hack to make tooltip look like a speech bubble */
+        [data-tooltip]:after {
+        position: absolute;
+        bottom: 100%;
+        left: 48%;
+        margin-left: -5px;
+        width: 0;
+        border-top: 5px solid #66cc33;
+        /*border-top: 5px solid hsla(0, 0%, 20%, 0.9);*/
+        border-right: 5px solid transparent;
+        border-left: 5px solid transparent;
+        content: " ";
+        font-size: 0;
+        line-height: 0;
+        }
+        /* Show tooltip content on hover */
+        [data-tooltip]:hover:before,
+        [data-tooltip]:hover:after {
+        visibility: visible;
+        -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+        filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=100);
+        opacity: 1;
+        }
+        
+        .select2-container{width: 100% !important;}
+    .select2-container--default .select2-selection--single{border-radius: 0 !important; padding: 9px 0 !important; height: auto !important; border: 1px solid #dddbda !important; background: url(/resource/1530538190000/Selectarrow) no-repeat right -20px center #fff !important;}
+    .select2-container--default .select2-selection--single .select2-selection__arrow{display: none !important;}
+    .select2-container--default .select2-selection--single .select2-selection__placeholder{color: #333333 !important; font-size: 18px !important;}
+    .select2-container--default .select2-selection--single .select2-selection__rendered{color: #333333 !important; font-size: 18px !important;}
+    .select2-results__option{color: #333333 !important; font-size: 18px !important; margin: 0 !important;}
+    .select2-search--dropdown .select2-search__field{padding: 8px 4px !important;}
+    .select2-container--default .select2-search--dropdown .select2-search__field{color: #333333 !important; font-size: 18px !important; border: 1px solid #dddbda !important;}
+    .select2-dropdown{border: 1px solid #dddbda !important; border-radius: 0 !important;}
+    select{background: url('{!URLFOR($Resource.Selectarrow )}') no-repeat right -20px center #fff !important; -moz-appearance: none; -webkit-appearance: none;}
+ 
+    </style>
+    <apex:form id="pageForm" >
+        <apex:actionRegion >
+            <html   lang="en">
+                <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/jquery-1.12.4.js')}"/>
+                <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/jquery-ui.js')}"/>
+                
+                <apex:stylesheet value="{!URLFOR($Resource.FunnelScriptFolder,'Design/css/4.0.7.select2.min.css')}"/>    
+                <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/js/4.0.7.select2.min.js')}"/>
+                <apex:stylesheet value="{!URLFOR($Resource.SldsCss,'SldsResources/styles/salesforce-lightning-design-system.css')}"/>
+                <apex:stylesheet value="{!URLFOR($Resource.SldsCss,'SldsResources/styles/salesforce-lightning-design-system.min')}"/>
+                <!--<apex:stylesheet value="{!URLFOR($Resource.FunnelScriptFolder,'Design/css/font-awesome.min.css')}"/>
+                    <apex:stylesheet value="{!URLFOR($Resource.FunnelScriptFolder,'Design/css/all.css')}"/>-->
+                
+                <apex:stylesheet value="{!URLFOR($Resource.FunnelScriptFolder,'Design/css/v5.0.8-fontawesome.css')}"/>
+                <apex:stylesheet value="{!URLFOR($Resource.FunnelScriptFolder,'Design/css/v5.0.8-solid.css')}"/>
+                
+                <apex:stylesheet value="{!URLFOR($Resource.FunnelScriptFolder,'Design/css/3.3.7.bootstrap.min.css')}"/>
+                <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/js/3.3.7.bootstrap.min.js')}"/>
+                
+                <!--<apex:stylesheet value="{!URLFOR($Resource.FunnelScriptFolder,'Design/css/v3.3.7.bootstrap.min.css')}"/>
+                <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/js/v3.3.7.js')}"/>-->
+                
+               
+                                            
+                <style>
+                    body { font-size: 75%; }
+                    html{font-size: 100% !important;}
+                    .noSidebarCell, .sidebarCell .fixed { padding: 10px; font-family: sldsFont; }
+                    @font-face {
+                    font-family: sldsFont;
+                    src: url({!URLFOR($Resource.SldsCss,'SldsResources/fonts/SalesforceSans-Light.ttf')});
+                    }
+                    .bPageHeader .phHeader td.left{display: block;}
+                    .navigation{display: table; width: 100%; text-align: center;}
+                    .navigation ul{margin: 0; padding: 0;}
+                    .navigation ul li{display: inline-block; padding: 0 8px; border-left: 2px solid #7e8793; line-height: 17px; margin-left: 0;}
+                    .navigation ul li a{color: #7e8793; font-size: 17px; font-weight: bold;}
+                    .navigation ul li a:hover{color: #66cc33; text-decoration: none;}
+                    .navigation ul li a:focus{outline: none; text-decoration: none;}
+                    .navigation ul li {color: #7e8793; font-size: 17px; font-weight: bold;}
+                    .navigation ul li:hover{color: #66cc33; text-decoration: none;}
+                    .navigation ul li.selected a{color: #66cc33;}
+                    .navigation ul li.home{border: none; padding-left: 0; margin-bottom: 10px;}
+                    .navigation ul li.home a{color: #00b2ee;}
+                    .navigation ul li.help{border-left: 2px solid #7e8793; padding-left: 5px; margin-left: 5px; margin-bottom: 10px;}
+                    .navigation ul li.help a{color: #00b2ee;}
+                    .navigation ul li:last-child{padding-right: 0;}
+                    .navigation ul li.scorenav a{background: url({!$Resource.CertificationNavigationIcon}) no-repeat; padding: 0 0 0 25px; background-position: 0 0; height: 19px; width: 20px;}
+                    .navigation ul li.scorenav a:hover {background-position: 0 -23px;}
+                    .navigation ul li.funnelanalyticsnav > a{background: url({!$Resource.AnalyticsNavigationIcon}) no-repeat; padding: 0 0 0 25px; background-position: 0 5px; height: 19px; width: 20px; color: #7e8793;}
+                    .navigation ul li.funnelanalyticsnav > a:hover{background-position: 0 -17px; color: #66cc33;}
+                    .navigation ul li.checklisticon{border-right: 2px solid #7e8793; color: #00b2ee; border-left: 0; margin-right: 5px; cursor: pointer;}
+                    .navigation ul li.checklisticon a{color: #00b2ee;}
+                    .myapp{min-width: 500px; font-family: sldsFont;background-color: #fff; }
+                    .slds-modal {background: none;}
+                    .navigation ul li.reportnav{position: relative; display: inline-block;cursor: pointer;}
+                    .navigation ul li.reportnav ul.subnav{position: absolute; z-index: 1; width: 240px; background: #fff; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); display: none;}
+                    .navigation ul li.reportnav ul.subnav li{display: block; text-align: left; border: none; padding: 0;}
+                    .navigation ul li.reportnav ul.subnav li a {color: #7e8793; padding: 10px; display: block; width: 100%;}
+                    .navigation ul li.reportnav ul.subnav li a:hover{background: #66cc33; color: #fff;}
+                    .navigation ul li.reportnav:hover ul.subnav {display: block;}
+                    
+                    .navigation ul li.reportnav ul.subnavlast{right:0; position: absolute; z-index: 1; width: 240px; background: #fff; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); display: none;}
+                    .navigation ul li.reportnav ul.subnavlast li{display: block; text-align: left; border: none; padding: 0;}
+                    .navigation ul li.reportnav ul.subnavlast li a {color: #7e8793; padding: 10px; display: block; width: 100%;}
+                    .navigation ul li.reportnav ul.subnavlast li a:hover{background: #66cc33; color: #fff;}
+                    .navigation ul li.reportnav:hover ul.subnavlast{display: block;}
+                    button a:hover{text-decoration: none;}
+                    button a:focus{text-decoration: none; outline: none;}
+                    .arr select{background: url('{!URLFOR($Resource.Selectarrow )}') no-repeat right -20px center #fff !important; -moz-appearance: none; -webkit-appearance: none;}
+                    .slds-size_1-of-8, .slds-size--1-of-8 {width: 16.5%;}
+                    .navigation ul li.reportnav.active{color: #66cc33;}
+                </style>
+                <style>
+                    .fixed-table-container th{
+                    border-bottom: 1px solid #dddbda;
+                    }
+                    .fixed-table-container th + th {
+                    border-left: 1px solid #dddbda;
+                    }
+                    .fixed-table-container td {
+                    border-bottom: 1px solid #dddbda;
+                    padding: 10px 5px;
+                    text-align: center; /* IE */
+                    font-size: 16px;
+                    color: #333333;
+                    background: none;
+                    }
+                    .fixed-table-container td + td {
+                    border-left: 1px solid #dddbda;
+                    }
+                    .fixed-table-container th {
+                    padding: 10px 5px;
+                    text-align: center; /* IE */
+                    font-size: 16px;
+                    color: #00b2ee;
+                    }
+                    /* above this is decorative, not part of the test */
+                    .fixed-table-container {
+                    width: 100%;
+                    /*border: 1px solid black;*/
+                    margin: 10px auto;
+                    /*background-color: white;*/
+                    /* above is decorative or flexible */
+                    position: relative; /* could be absolute or relative */
+                    padding-top: 0; /* height of header */
+                    }
+                    .fixed-table-container-inner {
+                    overflow-x: hidden;
+                    overflow-y: auto;
+                    height: 100%;
+                    /*  max-height: 350px;*/
+                    }
+                    .header-background {
+                    /*background-color: #fff;*/
+                    height: 50px; /* height of header */
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    left: 0;
+                    }
+                    table {
+                    /*background-color: white;*/
+                    width: 100%;
+                    overflow-x: hidden;
+                    overflow-y: auto;
+                    }
+                    .th-inner {
+                    position: absolute;
+                    top: 0;
+                    line-height: 50px; /* height of header */
+                    text-align: center;
+                    border-left: 1px solid #ccc;
+                    padding-left: 5px;
+                    margin-left: -5px;
+                    }
+                    .first .th-inner {
+                    border-left: none;
+                    padding-left: 6px;
+                    }
+                    /* extra-wrap */
+                    .extrawrap th {
+                    text-align: center;
+                    }
+                    .extra-wrap {
+                    width: 100%;
+                    }
+                    }
+                </style>
+                <style>
+                    div.hideCurrDate span.dateInput span.dateFormat{
+                    display:none;
+                    }
+                    .datePicker{ z-index: 9999;position:fixed;}
+                    
+                   
+                </style>
+                <style>
+                    /*Start Delete modal CSS*/
+                    /*.modal-lg{width: 1100px;}*/
+                    #confirm .modal-dialog {width: 50%;}
+                    .modal.in .modal-dialog {-webkit-transform: translate(0,0);-ms-transform: translate(0,0);-o-transform: translate(0,0);transform: translate(0,0);width: 80%;max-width: none;min-width: 40rem;display: flex;flex-direction: column;height: 100%;padding: 3rem 0;}
+                    .modal-content { border-radius: 0;padding: 0;overflow: hidden;overflow-y: auto;}
+                    .modal-header{padding: 0;border: none; background: #7e8793;}
+                    .modal-header .close{position: absolute; right: 10px; margin: 0; top: 10px; opacity: 1; border: none;background: transparent; color: #fff; font-size: 44px; width: 25px; height: 20px; line-height: 18px;}
+                    .modal-header h4{background: #BFB178;}
+                    .modal-header h4 ul{padding: 0; margin: 0; display: table; width: 100%;}
+                    .modal-header h4 ul li{display: table-cell; font-size: 24px; color: #fff; width: 50%; padding: 10px; border: none; text-align: center; font-weight: bold;font-family: sldsfont;}
+                    .modal-body{padding: 0;}
+                    .modal-body .delete-content-block{padding: 10px;}
+                    .modal-body .delete-content-block label{font-size: 21px; color: #00b2ee;font-family: sldsfont;font-weight: normal;}
+                    .modal-body .delete-content-block p{margin: 0; font-size: 18px;  color: #777; text-align: center;}
+                    .modal-footer{border: none; padding: 20px 30px;}
+                    .modal-footer .btn-block{display: table; width: auto; margin: 0 auto;}
+                    .modal-footer a{background-color: #7e8793;color: #fff;padding: 15px 100px;border-radius: 30px;font-size: 24px;border: none;margin-left: 18px;}
+                    .modal-footer a:hover{color: #fff; text-decoration: none;}
+                    .modal-footer a.save{background: #ff9900;}
+                    .modal-footer a i{color: #fff;}
+                    /*End Delete modal CSS*/
+                    .k-widget { padding: 0; border: none;font-family: arial; }
+                    .topsection{display: flex; justify-content: space-between; align-items: center;}
+                    .topsection .topsectionleft input{border: 1px solid #7e8793; padding: 10px; border-radius: 25px; margin: 0 0 0 5px; font-size: 18px; font-weight: 400;}
+                    .topsection .topsectionleft input::placeholder{font-size: 18px; font-weight: 400;}
+                    .topsection .topsectionright a{background-color: #ff9900; color: #fff; padding: 15px 40px; border-radius: 30px; font-size: 20px; font-weight: bold;}
+                    .topsection .topsectionright a:hover{text-decoration: none;}
+                    .topsection h4 { font-family: sldsFont !important; font-size: 18px; font-weight: bold; color: #5f666f;}
+                    .manager .lookupInput{display: flex; flex-direction: row-reverse;border: 1px solid #7e8793; border-radius: 25px; overflow: hidden;}
+                    .manager .lookupInput a{width: auto; border: none;}
+                    .manager .lookupInput a img{background: url('{!URLFOR($Resource.FMSearchIcon)}') no-repeat left center #fff !important; margin-left: 9px;    margin-top: 5px;}
+                    .manager .lookupInput input{border: none;}
+                </style>
+                <style>
+                    .tabletopstrip{background-color: #7e8793; color: #fff; text-align: center; font-size: 24px; font-weight: bold;}
+                    .salerepresentativestable{padding: 20px 50px;}
+                    .salerepresentativestable table th{font-size: 18px; font-weight: bold; color: #5f666f; font-family: sldsFont; padding: 15px;}
+                    .salerepresentativestable table th:last-child{text-align: center;}
+                    .salerepresentativestable table td{font-size: 18px; font-weight: normal; color: #5f666f; font-family: sldsFont; padding: 15px 15px; border: 1px solid #5f666f; border-left: none; border-right: none; width: 23%;}
+                    .salerepresentativestable table td:last-child{width: 8%; text-align: center; font-size: 16px; color: #ff9900;}
+                    .modal-section-title{color: #5f666f; font-size: 24px; font-family: sldsFont; font-weight: bold;}
+                    .modal-body .delete-content-block p.modal-section-text{text-align: left;}
+                    .annual-quota-table table td{font-size: 18px; font-weight: normal; color: #5f666f; font-family: sldsFont; padding: 15px 10px; border: 1px solid #5f666f; border-left: none; border-right: none; width: 33.33%;}
+                    .annual-quota-table table td .value{ color: #5f666f; font-family: sldsFont; margin-left: 10px;}
+                    .hideCurrDate input{text-align: left; width: 100%; border: 1px solid #dddbda; color: #333333; font-size: 18px; border-radius: 0; padding: 0.5rem;}
+                    .hideCurrDate input:focus{outline: 0; border-color: #1589ee; background-color: white; box-shadow: 0 0 3px #0070d2;}
+                    .slds-checkbox [type=checkbox]:checked + .slds-checkbox--faux:after, .slds-checkbox [type=checkbox]:checked ~ .slds-checkbox--faux:after{border-bottom: 2px solid #66cc33; border-left: 2px solid #66cc33;}
+               
+                   .manager .lookupInput input{border: none;pointer-events: none;}
+                </style>
+                 <script>
+                     var adjustDatePicker = function(e){
+                         e.preventDefault();
+                         var picker = document.getElementById('datePicker');
+                         var scrollContainer = document.getElementById('autoSaveConfirm');
+                         
+                         console.log(picker.style.top);
+                         picker.style.top = (parseInt(picker.style.top) - scrollContainer.scrollTop) + 'px';
+                         console.log(picker.style.top);
+                     };
+                </script>
+                <!--Navigation-->    
+                <apex:outputPanel id="detailsPanel">
+                    <div class="slds-scope">
+                        <div class="myapp" style="background: #f5f5f9;">
+                            <!--Navigation-->
+                            <div class="slds-grid slds-wrap slds-form-element slds-p-around_small">
+                                <div class="slds-size_1-of-1">
+                                    <div class="navigation">
+                                       <ul>
+                                            <li class="checklisticon" >
+                                                <apex:outputPanel rendered="{!(admin && wizardComp && (!checkListComp))}">
+                                                    <apex:commandLink action="{!navigateToChecklistPage}"><i class="fa fa-check-circle" aria-hidden="true"></i></apex:commandLink>
+                                                </apex:outputPanel>
+                                            </li>
+                                            <li class="home">
+                                                <apex:commandLink action="{!navigateToHomePage}"><i class="fas fa-home"></i></apex:commandLink>
+                                            </li>
+                                            <li class="scorenav">
+                                                <apex:commandLink action="{!navigateToCertification}"> FUNNELOCITY SCORING</apex:commandLink>
+                                            </li>
+                                            <li>
+                                                <apex:commandLink action="{!navigateToDashboard}"><span><i class="fas fa-tachometer-alt"></i></span> PERFORMANCE DASHBOARD</apex:commandLink>
+                                            </li>
+                                             
+                                            <li class=" reportnav">
+                                                <i class="fas fa-chart-bar"></i> REPORTING 
+                                                <ul class="subnav">
+                                                    <!--li>
+                                                        <apex:commandLink action="{!navigateToCertificateReports}">Funnelocity Reports</apex:commandLink>
+                                                    </li-->
+                                                    <li>
+                                                        <apex:commandLink action="{!navigateToReportsPage}">Sales Management Reports</apex:commandLink>
+                                                    </li>
+                                                    <li>
+                                                        <apex:commandLink action="{!navigateToAnnualizationDashboard}">Tenured and New Hire Performance Dashboard</apex:commandLink>
+                                                    </li>
+                                                    <li><apex:commandLink action="{!navigateToTrendingByRep}">Trending By Rep Dashboard</apex:commandLink></li>
+                                                    <li><apex:commandLink action="{!navigateToTrendingBySkill}">Trending By Metric/Skill Dashboard</apex:commandLink></li>
+                                                </ul>
+                                            </li>
+                                             
+                                            <li class="reportnav funnelanalyticsnav " >
+                                                <a> FUNNELOCITY ANALYTICS </a>  
+                                                <ul class="subnav">
+                                                    <li><apex:commandLink action="{!navigateToFunnelAnalytic}">Funnelocity Analytics Dashboard</apex:commandLink></li>
+                                                    <!--li><apex:commandLink action="{!navigateToFunnelAnalyticQualitative}">Funnelocity Qualitative Scoring</apex:commandLink></li-->
+                                                    <li><apex:commandLink action="{!navigateToSalesPipeline}">Funnelocity Sales Pipeline</apex:commandLink></li>
+                                                </ul>
+                                            </li>
+                                            <li style="display:none">
+                                                <apex:commandLink ><i class="fas fa-star"></i> TERRITORY PLAN</apex:commandLink>
+                                            </li>
+                                            <apex:outputPanel rendered="{!displayMetricCalculator}">
+                                                <li><apex:commandLink action="{!navigateToCalculator}"><i class="fas fa-calculator"></i> METRICS CALCULATOR</apex:commandLink></li>
+                                            </apex:outputPanel>
+                                
+                                            <apex:outputPanel rendered="{!appSetup = ''}">
+                                                <li class=" reportnav active"> <i class="fas fa-chart-bar"></i> ADMIN 
+                                                    <ul class="subnavlast">
+                                                        <li><apex:commandLink action="{!navigateToFunnelAddEditSRP}" rendered="{!adminUser}">Sales Rep Profiles and Hierarchy</apex:commandLink></li>
+                                                        <li><apex:commandLink action="{!navigateToAppSetup}" rendered="{!adminUser}">Metrics and Skills</apex:commandLink></li>
+                                                        <li><apex:commandLink action="{!navigateToGoals}">Goal Management</apex:commandLink></li>
+                                                        <li><apex:commandLink action="{!navigateToFunnelSetup}" rendered="{!adminUser}">Custom Updates</apex:commandLink></li>                                        
+                                                    </ul>
+                                                </li>
+                                            </apex:outputPanel>
+                                           <!--Added for Help Menu - Rohit-->
+                                            <li class="help">
+                                                <apex:commandLink target="_blank" action="{!navigateToHelpMenu}"><i class="fas fa-question-circle" style="color: #00b2ee"></i></apex:commandLink>
+                                            </li>
+                                        </ul>  
+                                    </div>
+                                </div>
+                            </div>
+                            <!--Navigation-->    
+                            <div class="slds-wrap slds-p-around_medium">
+                                <div class="slds-grid">
+                                    <style>
+                                        .slds-scope .slds-tabs--default__item.slds-active:after, .slds-scope .slds-tabs--default__item.slds-is-active:after, .slds-scope .slds-tabs_default__item.slds-active:after, .slds-scope .slds-tabs_default__item.slds-is-active:after{background: none;}
+                                        .slds-scope .slds-tabs--default__item:hover:after, .slds-scope .slds-tabs_default__item:hover:after{background: none;}
+                                    </style>
+                                    <apex:actionFunction id="assignRole" name="assignRole" action="{!navigateToAssignRole}"></apex:actionFunction>
+                                    <apex:actionFunction id="custommetric" name="custommetric" action="{!navigateToCustomMetric}"></apex:actionFunction>
+                                    <apex:actionFunction id="notificationPage" name="notificationPage" action="{!navigateToNotifications}"></apex:actionFunction>
+                                    <apex:actionFunction id="evaluationGuidelines" name="evaluationGuidelines" action="{!navigateToFunnelEvaluationGuidelines}"></apex:actionFunction>
+                                    <apex:actionFunction id="setup" name="setup" action="{!navigateToFunnelSetup}"></apex:actionFunction>
+                                    <apex:actionFunction id="goalmanagement" name="goalmanagement" action="{!navigateToFunnelReviewGoals}"></apex:actionFunction>
+                                    <apex:actionFunction id="teamgoals" name="teamgoals" action="{!navigateToFunnelManagerUpdate}"></apex:actionFunction>
+                                    <apex:actionFunction id="addEditCm" name="addEditCm" action="{!navigateToFunnelAddEditCompanyLevel}"></apex:actionFunction>
+                                    <apex:actionFunction id="addEditr" name="addEditr" action="{!navigateToFunnelAddEditRole}"></apex:actionFunction>
+                                    <div class="slds-tabs_default">
+                                        <div style="background: #f5f5f9; display: table; width: 100%; padding-bottom: 30px;">
+                                            <ul class="slds-tabs_default__nav slds-m-top_x-large slds-m-bottom_large" role="tablist" style="justify-content: center;background: #7e8793; height: 40px; border: none; margin-top: 0;">
+                                                <!--     <li class="slds-tabs_default__item" title="CREATE AND EDIT RATINGS" role="presentation" style="margin-right: 45px;"><a class="slds-tabs_default__link" onclick="categoryPage()" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-3" id="tab-default-3__item" style="color: #fff; font-size: 18px; font-weight: bold;">ADD AND EDIT CATEGORIES</a></li> -->
+                                                <apex:outputPanel rendered="{!adminPer}">
+                                                    <li class="slds-tabs_default__item" role="presentation" style="margin-left: 0; margin-right: 0; background: #00b2ee; border-radius: 55px; margin-top: -10px;"><a class="slds-tabs_default__link"  role="tab" tabindex="0" aria-selected="true" aria-controls="tab-default-1" id="tab-default-1__item" style="color: #fff; font-size: 16px; padding: 10px 10px; display: block; font-weight: bold; overflow: visible; height: auto; text-transform: none;">Sales Rep Profiles</a></li>
+                                                </apex:outputPanel>
+                                                <apex:outputPanel rendered="{!adminPer}">
+                                                    <li class="slds-tabs_default__item" role="presentation" style="margin-right: 0; margin-left: 0;"><a class="slds-tabs_default__link" onclick="addEditCm()" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-2" id="tab-default-2__item" style="color: #fff; font-size: 16px; font-weight: bold; text-transform: none;">Company Level</a></li>
+                                                </apex:outputPanel>
+                                                <apex:outputPanel rendered="{!adminPer}">
+                                                    <li class="slds-tabs_default__item" role="presentation" style="margin-right: 0; margin-left: 0;"><a class="slds-tabs_default__link" onclick="addEditr()" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-2" id="tab-default-2__item" style="color: #fff; font-size: 16px; font-weight: bold; text-transform: none;">Roles</a></li>
+                                                </apex:outputPanel>
+                                                 
+                                            </ul>
+                                        </div>
+                                        <div id="tab-default-1" class="slds-tabs_default__content slds-show" role="tabpanel" aria-labelledby="tab-default-1__item" style="padding: 0;">
+                                            <div class="slds-wrap" style="background: #fff;">
+                                                
+                                                <div class="slds-grid">
+                                                    <div class="slds-size_8-of-8 " style="margin-top: 15px;">
+                                                        <div class="slds-p-around_medium salerepresentativestable">
+                                                            <style>
+                                                                .slds-scope a{color:#fff;text-decoration:none;}
+                                                                .slds-scope a:hover{color:#fff;text-decoration:none !important;}
+                                                            </style>
+                                                            <div class="topsection">
+                                                                <div class="topsectionleft">
+                                                                    <h4>Search your Funnelocity users.</h4>
+                                                                    <input id="searchInput" placeholder="Type To Filter" onkeyup="myFunction(this)"></input>
+                                                                </div>
+                                                                <div class="topsectionright">
+                                                                    <a style="background-color: #ff9900; color: #fff; padding: 8px 30px; border-radius: 30px; font-size: 17px; font-weight: bold;" onclick="displayAddEditSrp();mod();" >    
+                                                                    <span class="color:#fff;">ADD NEW PROFILE</span>
+                                                                    </a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="slds-grid">
+                                                    <div class="slds-size_8-of-8 slds-p-around_medium salerepresentativestable">
+                                                        <apex:outputPanel id="sList">
+                                                        <table id="usrTable" >
+                                                            <tr>
+                                                                <th>Name</th>
+                                                                <th>User Name</th>
+                                                                <th>Profile Type</th>
+                                                                <th>Manager</th>
+                                                                <th>Edit</th>
+                                                            </tr>
+                                                            <apex:repeat value="{!srpList}" var="s" >
+                                                                <tr class="rowName">
+                                                                    <td>{!s.Name}</td>
+                                                                    <td>{!s.User_Record_Name__r.username}</td>
+                                                                    <td>{!IF(s.Profile_Type__c !='',s.Profile_Type__c,'None')}  </td>
+                                                                    <td>{!s.Sales_Manager__r.Name} </td>
+                                                                    <td>
+                                                                        <apex:commandLink action="{!displayAddEditSrp}" reRender="modalid"  html-data-toggle="modal" html-data-target="#autoSaveConfirm" status="loadStatus">
+                                                                            <i aria-hidden="true" class="fas fa-pencil-alt " style="color: #ff9900; font-size: 20px;"></i>
+                                                                            <apex:param name="srpId " assignTo="{!srpId }" value="{!s.id}"/>
+                                                                        </apex:commandLink>
+                                                                    </td>
+                                                                </tr>
+                                                            </apex:repeat>
+                                                        </table>
+                                                        </apex:outputPanel>
+                                                    </div>
+                                                </div>
+                                                <apex:actionFunction id="displayAddEditSrp" name="displayAddEditSrp" action="{!displayAddEditSrp}"  reRender="modalid" status="loadStatus"/>
+                                                <apex:actionFunction id="hideAddEditSrp" name="hideAddEditSrp" action="{!hideAddEditSrp}"  reRender="modalid" />
+                                            </div>
+                                        </div>
+                                        <div id="tab-default-2" class="slds-tabs_default__content slds-hide" role="tabpanel" aria-labelledby="tab-default-2__item">Item Two Content</div>
+                                        <div id="tab-default-3" class="slds-tabs_default__content slds-hide" role="tabpanel" aria-labelledby="tab-default-3__item">Item Three Content</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </apex:outputPanel>
+                <div class="modal fade " id="autoSaveConfirm" role="dialog" >
+                    <div class="modal-dialog modal-md">
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" onclick="hideAddEditSrp();">&times;</button>
+                                <h4 class="modal-title">
+                                    <ul>
+                                        <li>Add Sales Rep Profile</li>
+                                    </ul>
+                                </h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="delete-content-block">
+                                    <apex:outputPanel id="modalid">
+                                        <div class="slds-grid">
+                                            <div class="slds-size_8-of-8">
+                                                <div class="slds-p-around_small">
+                                                    <h4 class="modal-section-title slds-p-left_small">User Details</h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="slds-grid">
+                                            <div class="slds-size_8-of-8">
+                                                <div class="slds-p-around_small slds-grid">
+                                                    <div class="slds-form-element slds-size_1-of-2">
+                                                        <label class="slds-form-element__label slds-p-around_small" for="text-input-id-1" style="color: #00b2ee; font-size: 21px;"><span style="color: #ff9900; font-size: 30px; float: left; height: 20px;">*</span>Sales Rep Profile Name</label> 
+                                                        <div class="slds-form-element__control slds-p-left_small slds-p-right_small">
+                                                            <apex:inputField value="{!srpSelected.Name}" style="color: #333333; font-size: 18px; border-radius:0;" styleClass="slds-input slds-p-around_x-small" label="" id="SrpName"/>
+                                                            <apex:outputText style="color:red;display:none; margin: 0px 0px 0px 0px; font-size: 15px;" value="Enter   Name" id="validname"></apex:outputText>
+                                                        </div>
+                                                    </div>
+                                                    <div class="slds-form-element slds-size_1-of-2">
+                                                        <div style="display: flex;">
+                                                            <div>
+                                                                <label class="slds-form-element__label slds-p-around_small" for="text-input-id-2" style="color: #00b2ee; font-size: 21px;">&nbsp;</label>
+                                                                <div class="slds-form-element__control slds-p-left_small slds-p-right_small">
+                                                                    <label class="slds-checkbox">
+                                                                        <span class="slds-form-element__label" style="font-size: 16px; color: #333333;">Active</span> 
+                                                                        <apex:inputCheckbox styleClass="slds-input" value="{!srpSelected.Active__c}"/>
+                                                                        <span class="slds-checkbox--faux"></span>             
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div>
+                                                                <label class="slds-form-element__label slds-p-around_small" for="text-input-id-2" style="color: #00b2ee; font-size: 21px;">&nbsp;</label>
+                                                                <div class="slds-form-element__control slds-p-left_small slds-p-right_small">
+                                                                    <label class="slds-checkbox">
+                                                                        <span class="slds-form-element__label" style="font-size: 16px; color: #333333;">Placeholder</span> 
+                                                                        <apex:inputCheckbox styleClass="slds-input" value="{!srpSelected.Placeholder__c}"  id="isPlaceholder"/>
+                                                                         
+                                                                        <span class="slds-checkbox--faux"></span>             
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <!--div>
+                                                                <label class="slds-form-element__label slds-p-around_small" for="text-input-id-2" style="color: #00b2ee; font-size: 21px;">&nbsp;</label>
+                                                                <div class="slds-form-element__control slds-p-left_small slds-p-right_small">
+                                                                    <label class="slds-checkbox">
+                                                                        <span class="slds-form-element__label" style="font-size: 16px; color: #333333;">Don&#39;t send to model</span> 
+                                                                        <apex:inputCheckbox styleClass="slds-input" value="{!srpSelected.Dont_send_to_model__c}"/>
+                                                                        <span class="slds-checkbox--faux"></span>             
+                                                                    </label>
+                                                                </div>
+                                                            </div-->
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="slds-grid">
+                                            <div class="slds-size_8-of-8">
+                                                <div class="slds-p-around_small slds-grid">
+                                                    <div class="slds-form-element slds-size_1-of-2">
+                                                        <label class="slds-form-element__label slds-p-around_small"   style="color: #00b2ee; font-size: 21px;">User Record Name</label>
+                                                        <div class="slds-form-element__control slds-p-left_small slds-p-right_small">
+                                                            <div class="manager">
+                                                            <!--       <apex:inputField value="{!srpSelected.User_Record_Name__c}"  style="color: #333333; font-size: 18px; border-radius:0; height: 48px;"  styleClass="slds-select slds-p-around_x-small mnp" id="recordName"/>
+                                                             -->   
+                                                                 <apex:selectList style="color: #333333; font-size: 18px; border-radius:0;" styleClass="slds-input slds-p-around_x-small " value="{!srpSelected.User_Record_Name__c}" size="1" id="recordName" multiselect="false"  >
+                                                                    
+                                                                    <apex:selectOptions value="{!u1}"/> 
+                                                                    <apex:selectOptions value="{!u2}"/> 
+                                                                    <apex:selectOptions value="{!u3}"/>
+                                                                    <apex:selectOptions value="{!u4}"/> 
+                                                                    <apex:selectOptions value="{!u5}"/> 
+                                                                    <apex:selectOptions value="{!u6}"/>
+                                                                    <apex:selectOptions value="{!u7}"/>
+                                                                    <apex:selectOptions value="{!deactiveUser}"/>
+                                                                </apex:selectList>
+                                                                <apex:outputText style="color:red;display:none; margin: 0px 0px 0px 0px; font-size: 15px;" value="User Record Name cannot be blank. If it's a placeholder records check placeholder field" id="validRcname"></apex:outputText>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="slds-form-element slds-size_1-of-2">
+                                                        <label class="slds-form-element__label slds-p-around_small" for="text-input-id-2" style="color: #00b2ee; font-size: 21px;">Start date</label>
+                                                        <div class="slds-form-element__control slds-p-left_small slds-p-right_small">
+                                                            <div  class="hideCurrDate" >
+                                                                <apex:inputfield html-data-lpignore="true" value="{!srpSelected.Rep_Start_Date__c }" id="st"  onclick="adjustDatePicker(event);"> 
+                                                                    <apex:actionSupport event="onchange" action="{!QuotaChange}" reRender="QuotaGoal"/>
+                                                                </apex:inputfield>
+                                                            </div>
+                                                        </div>
+                                                        <!--<div class="slds-form-element__control slds-p-left_small slds-p-right_small"  >
+                                                            <apex:inputField value="{!srpSelected.Rep_Start_Date__c}" style="color: #333333; font-size: 18px; border-radius:0; height: 48px;" styleClass="slds-select slds-p-around_x-small" id="select-03"  />  
+                                                                
+                                                            </div>-->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="slds-grid">
+                                            <div class="slds-size_8-of-8">
+                                                <div class="slds-p-around_small slds-grid">
+                                                    <div class="slds-form-element slds-size_1-of-2">
+                                                        <label class="slds-form-element__label slds-p-around_small" for="select-11" style="color: #00b2ee; font-size: 21px;">Profile Type</label>
+                                                        <div class="slds-form-element__control slds-p-left_small slds-p-right_small">
+                                                            <div class="arr">
+                                                                <apex:inputField value="{!srpSelected.Profile_Type__c}" style="color: #333333; font-size: 18px; border-radius:0; height: 48px;" styleClass="slds-select slds-p-around_x-small" id="select-11"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="slds-form-element slds-size_1-of-2">
+                                                        <label class="slds-form-element__label slds-p-around_small" for="text-input-id-12" style="color: #00b2ee; font-size: 21px;">Onboarded?</label>
+                                                        <div class="slds-form-element__control slds-p-left_small slds-p-right_small arr"  >
+                                                            <apex:inputField value="{!srpSelected.Rep_Staus__c}" style="color: #333333; font-size: 18px; border-radius:0; height: 48px;" styleClass="RemoveNoneValue slds-select slds-p-around_x-small " id="select-12"  />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="slds-grid">
+                                            <div class="slds-size_8-of-8">
+                                                <div class="slds-p-around_small slds-grid">
+                                                    <div class="slds-form-element slds-size_1-of-2">
+                                                        <label class="slds-form-element__label slds-p-around_small" for="text-input-id-2" style="color: #00b2ee; font-size: 21px;"><span style="color: #ff9900; font-size: 30px; float: left; height: 20px;">*</span>Role</label>
+                                                        <div class="slds-form-element__control slds-p-left_small slds-p-right_small arr" >
+                                                            <apex:inputField value="{!srpSelected.Role__c}" style="color: #333333; font-size: 18px; border-radius:0; height: 48px;" styleClass="slds-select slds-p-around_x-small" id="roleVal">
+                                                                <apex:actionSupport event="onchange" action="{!RoleChange}" reRender="roleGoal"/>
+                                                            </apex:inputField>
+                                                            <apex:outputText style="color:red;display:none; margin: 0px 0px 0px 0px; font-size: 15px;" value="Select Role" id="validRole"></apex:outputText>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="slds-grid">
+                                            <div class="slds-size_8-of-8">
+                                                <div class="slds-p-around_small slds-grid">
+                                                    <div class="slds-form-element slds-size_1-of-2">
+                                                        <label class="slds-form-element__label slds-p-around_small" for="select-02" style="color: #00b2ee; font-size: 21px;"><span style="color: #ff9900; font-size: 30px; float: left; height: 20px;">*</span>Sales Manager</label>
+                                                        <div class="slds-form-element__control slds-p-left_small slds-p-right_small">
+                                                            <div class="manager">
+                                                                <!--<apex:inputField value="{!srpSelected.Sales_Manager__c}" style="color: #333333; font-size: 18px; border-radius:0; height: 48px;" styleClass="slds-select slds-p-around_x-small mnp" id="srpManager" />
+                                                                -->
+                                                                <apex:selectList style="color: #333333; font-size: 18px; border-radius:0;" styleClass="slds-input slds-p-around_x-small " value="{!srpSelected.Sales_Manager__c}" size="1" id="srpManager" multiselect="false"  >
+                                                                    <apex:selectOptions value="{!SrpsList}"/>
+                                                                     
+                                                                </apex:selectList>
+                                                                <apex:outputText style="color:red;display:none; margin: 0px 0px 0px 0px; font-size: 15px;" value="Select Manager" id="validMng"></apex:outputText>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="slds-form-element slds-size_1-of-2">
+                                                        <label class="slds-form-element__label slds-p-around_small" for="select-02" style="color: #00b2ee; font-size: 21px;"><span style="color: #ff9900; font-size: 30px; float: left; height: 20px;"> </span>Interim Manager</label>
+                                                        <div class="slds-form-element__control slds-p-left_small slds-p-right_small">
+                                                            <div class="manager">
+                                                                 <apex:selectList style="color: #333333; font-size: 18px; border-radius:0;" styleClass="slds-input slds-p-around_x-small " value="{!srpSelected.Interim_Manager__c}" size="1" id="intManager"  multiselect="false"  >
+                                                                    <apex:selectOptions value="{!SrpsList}"/>
+                                                                     
+                                                                </apex:selectList>
+                                                               
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="slds-grid">
+                                            <div class="slds-size_8-of-8">
+                                                <div class="slds-p-around_small">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="slds-grid">
+                                            <div class="slds-size_8-of-8">
+                                                <div class="slds-p-around_large">
+                                                    <p class="slds-border_top" style="border-color: #d8dde6;"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="slds-grid">
+                                            <div class="slds-size_8-of-8">
+                                                <div class="slds-p-around_small">
+                                                    <h4 class="modal-section-title slds-p-left_small">Quota</h4>
+                                                </div>
+                                                <div class="slds-p-around_small">
+                                                    <p class="modal-section-text slds-p-left_small">Please enter the Annual Quota for this user. <br/>
+                                                    Updates to annual quota will be distributed evenly throughout the fiscal months. To make updates to certain months, please adjust the fields below.</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <apex:outputPanel id="AQ">
+                                            <div class="slds-grid">
+                                                <div class="slds-size_8-of-8">
+                                                    <div class="slds-p-around_small">
+                                                        <div class="slds-form-element slds-size_1-of-3">
+                                                            <label class="slds-form-element__label slds-p-around_small" for="select-03" style="color: #00b2ee; font-size: 21px;">Annual Quota
+                                                                <span class="slds-icon_container slds-icon-utility-info" style="height: 16px;" data-tooltip="Distribution based on fiscal period."> 
+                                                                     <i aria-hidden="true" class="fa fa-info-circle" style="color:#66cc33; font-size: 16px; " ></i>
+                                                                 </span>
+                                                            </label>
+                                                            <div class="slds-form-element__control slds-p-left_small slds-p-right_small">
+                                                                <div class="" id="b">
+                                                                    <apex:input html-min="0" type="number" value="{!annualQuota}" style="color: #333333; font-size: 18px; border-radius:0;" styleClass="slds-input slds-p-around_x-small" >
+                                                                        <apex:actionSupport event="onkeyup" action="{!QuotaChange}" reRender="QuotaGoal"/>
+                                                                         <apex:actionSupport event="onchange" action="{!QuotaChange}" reRender="QuotaGoal"/>
+                                                                    </apex:input>
+                                                                     
+                                                                    <!-- <apex:inputField value="{!srpSelected.Calculation_type__c}" style="color: #333333; font-size: 18px; border-radius:0; height: 48px;" styleClass="slds-input slds-p-around_x-small" id="select-06"  > 
+                                                                        <apex:actionSupport event="onchange" rerender="bucketPanel,EvaluationPanel"/>
+                                                                        </apex:inputField> -->
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </apex:outputPanel>
+                                        <div class="slds-grid">
+                                            <div class="slds-size_8-of-8">
+                                                <div class="slds-p-around_small">
+                                                    <div class="slds-size_1-of-1 annual-quota-table">
+                                                    <apex:outputPanel id="QuotaGoal">
+                                                        <table>
+                                                            <tr>
+                                                                <td>
+                                                                    <span>Month 1</span>
+                                                                    <span class="value">
+                                                                        <apex:inputField value="{!srpSelected.Month_1_Quota_Amount__c}" styleClass="slds-input slds-p-around_x-small" style="width:66%">
+                                                                            <apex:actionSupport event="onkeyup" action="{!updateAQ}" reRender="AQ"/>
+                                                                             
+                                                                       </apex:inputField> 
+                                                                         
+                                                                    </span>
+                                                                </td>
+                                                                <td>
+                                                                    <span>Month 2</span>
+                                                                    <span class="value">
+                                                                       <apex:inputField value="{!srpSelected.Month_2_Quota_Amount__c}" styleClass="slds-input slds-p-around_x-small" style="width:66%">
+                                                                            <apex:actionSupport event="onkeyup" action="{!updateAQ}" reRender="AQ"/>
+                                                                             
+                                                                       </apex:inputField>  
+                                                                    </span>
+                                                                </td>
+                                                                <td>
+                                                                    <span>Month 3</span>
+                                                                    <span class="value">
+                                                                        <apex:inputField value="{!srpSelected.Month_3_Quota_Amount__c}" styleClass="slds-input slds-p-around_x-small" style="width:66%">
+                                                                            <apex:actionSupport event="onkeyup" action="{!updateAQ}" reRender="AQ"/>
+                                                                             
+                                                                       </apex:inputField>  
+                                                                    </span>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <span>Month 4</span>
+                                                                    <span class="value">
+                                                                        <apex:inputField value="{!srpSelected.Month_4_Quota_Amount__c}" styleClass="slds-input slds-p-around_x-small" style="width:66%">
+                                                                            <apex:actionSupport event="onkeyup" action="{!updateAQ}" reRender="AQ"/>
+                                                                             
+                                                                       </apex:inputField>  
+                                                                    </span>
+                                                                </td>
+                                                                <td>
+                                                                    <span>Month 5</span>
+                                                                    <span class="value">
+                                                                        <apex:inputField value="{!srpSelected.Month_5_Quota_Amount__c}" styleClass="slds-input slds-p-around_x-small" style="width:66%">
+                                                                            <apex:actionSupport event="onkeyup" action="{!updateAQ}" reRender="AQ"/>
+                                                                             
+                                                                       </apex:inputField>  
+                                                                    </span>
+                                                                </td>
+                                                                <td>
+                                                                    <span>Month 6</span>
+                                                                    <span class="value">
+                                                                        <apex:inputField value="{!srpSelected.Month_6_Quota_Amount__c}" styleClass="slds-input slds-p-around_x-small" style="width:66%">
+                                                                            <apex:actionSupport event="onkeyup" action="{!updateAQ}" reRender="AQ"/>
+                                                                             
+                                                                       </apex:inputField>  
+                                                                    </span>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <span>Month 7</span>
+                                                                    <span class="value">
+                                                                        <apex:inputField value="{!srpSelected.Month_7_Quota_Amount__c}" styleClass="slds-input slds-p-around_x-small" style="width:66%">
+                                                                            <apex:actionSupport event="onkeyup" action="{!updateAQ}" reRender="AQ"/>
+                                                                            
+                                                                       </apex:inputField>  
+                                                                    </span>
+                                                                </td>
+                                                                <td>
+                                                                    <span>Month 8</span>
+                                                                    <span class="value">
+                                                                        <apex:inputField value="{!srpSelected.Month_8_Quota_Amount__c}" styleClass="slds-input slds-p-around_x-small" style="width:66%">
+                                                                            <apex:actionSupport event="onkeyup" action="{!updateAQ}" reRender="AQ"/>
+                                                                             
+                                                                       </apex:inputField>  
+                                                                    </span>
+                                                                </td>
+                                                                <td>
+                                                                    <span>Month 9</span>
+                                                                    <span class="value">
+                                                                        <apex:inputField value="{!srpSelected.Month_9_Quota_Amount__c}" styleClass="slds-input slds-p-around_x-small" style="width:66%">
+                                                                            <apex:actionSupport event="onkeyup" action="{!updateAQ}" reRender="AQ"/>
+                                                                             
+                                                                       </apex:inputField>  
+                                                                    </span>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <span>Month 10</span>
+                                                                    <span class="value">
+                                                                       <apex:inputField value="{!srpSelected.Month_10_Quota_Amount__c}" styleClass="slds-input slds-p-around_x-small" style="width:66%">
+                                                                            <apex:actionSupport event="onkeyup" action="{!updateAQ}" reRender="AQ"/>
+                                                                             
+                                                                       </apex:inputField>  
+                                                                    </span>
+                                                                </td>
+                                                                <td>
+                                                                    <span>Month 11</span>
+                                                                    <span class="value">
+                                                                        <apex:inputField value="{!srpSelected.Month_11_Quota_Amount__c}" styleClass="slds-input slds-p-around_x-small" style="width:66%">
+                                                                            <apex:actionSupport event="onkeyup" action="{!updateAQ}" reRender="AQ"/>
+                                                                             
+                                                                       </apex:inputField>  
+                                                                    </span>
+                                                                </td>
+                                                                <td>
+                                                                    <span>Month 12</span>
+                                                                    <span class="value">
+                                                                        <apex:inputField value="{!srpSelected.Month_12_Quota_Amount__c}" styleClass="slds-input slds-p-around_x-small" style="width:66%">
+                                                                            <apex:actionSupport event="onkeyup" action="{!updateAQ}" reRender="AQ"/>
+                                                                              
+                                                                       </apex:inputField>  
+                                                                    </span>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                        </apex:outputPanel>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="slds-grid">
+                                            <div class="slds-size_8-of-8">
+                                                <div class="slds-p-around_large">
+                                                    <p class="slds-border_top" style="border-color: #d8dde6;"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="slds-grid">
+                                            <div class="slds-size_8-of-8">
+                                                <div class="slds-p-around_small">
+                                                    <h4 class="modal-section-title slds-p-left_small">Goals</h4>
+                                                </div>
+                                                <div class="slds-p-around_small">
+                                                    <p class="modal-section-text slds-p-left_small">Please review and adjust the goals here</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <apex:outputPanel id="roleGoal">
+                                            <div class="slds-grid">
+                                                <div class="slds-size_8-of-8">
+                                                    <div class="slds-p-around_small slds-grid">
+                                                        <div class="slds-form-element slds-size_1-of-3">
+                                                            <label class="slds-form-element__label slds-p-around_small" for="text-input-id-1" style="color: #00b2ee; font-size: 21px;">Average Selling Price</label> 
+                                                            <div class="slds-form-element__control slds-p-left_small slds-p-right_small">
+                                                                <apex:inputField style="color: #333333; font-size: 18px; border-radius:0;" styleClass="slds-input slds-p-around_x-small" value="{!srpSelected.Goal_12m_Avg_Selling_Price__c }" id="metric1"/>
+                                                            </div>
+                                                        </div>
+                                                        <div class="slds-form-element slds-size_1-of-3">
+                                                            <label class="slds-form-element__label slds-p-around_small" for="text-input-id-1" style="color: #00b2ee; font-size: 21px;">Lead Conversion Rate</label> 
+                                                            <div class="slds-form-element__control slds-p-left_small slds-p-right_small">
+                                                                <apex:inputField style="color: #333333; font-size: 18px; border-radius:0;" styleClass="slds-input slds-p-around_x-small" value="{!srpSelected.Goal_12m_Lead_To_Opp_Conv_Rate__c}" id="metric2"/>
+                                                            </div>
+                                                        </div>
+                                                        <div class="slds-form-element slds-size_1-of-3">
+                                                            <label class="slds-form-element__label slds-p-around_small" for="text-input-id-1" style="color: #00b2ee; font-size: 21px;">Opportunity Close Rate</label> 
+                                                            <div class="slds-form-element__control slds-p-left_small slds-p-right_small">
+                                                                <apex:inputField style="color: #333333; font-size: 18px; border-radius:0;" styleClass="slds-input slds-p-around_x-small" value="{!srpSelected.Goal_12m_rolling_close_rate__c}" id="metric3"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="slds-grid">
+                                                <div class="slds-size_8-of-8">
+                                                    <div class="slds-p-around_small slds-grid">
+                                                        <div class="slds-form-element slds-size_1-of-3">
+                                                            <label class="slds-form-element__label slds-p-around_small" for="text-input-id-1" style="color: #00b2ee; font-size: 21px;">$ Close Rate</label> 
+                                                            <div class="slds-form-element__control slds-p-left_small slds-p-right_small">
+                                                                <apex:inputField style="color: #333333; font-size: 18px; border-radius:0;" styleClass="slds-input slds-p-around_x-small" value="{!srpSelected.Goal_12m_rolling_amt_close_rate__c}" id="metric4"/>
+                                                            </div>
+                                                        </div>
+                                                        <div class="slds-form-element slds-size_1-of-3">
+                                                            <label class="slds-form-element__label slds-p-around_small" for="text-input-id-1" style="color: #00b2ee; font-size: 21px;">Average Length of Sales Cycle</label> 
+                                                            <div class="slds-form-element__control slds-p-left_small slds-p-right_small">
+                                                                <apex:inputField style="color: #333333; font-size: 18px; border-radius:0;" styleClass="slds-input slds-p-around_x-small" value="{!srpSelected.Goal_12m_length_of_sales_cycle__c}" id="metric5"/>
+                                                            </div>
+                                                        </div>
+                                                        <div class="slds-form-element slds-size_1-of-3">
+                                                            <label class="slds-form-element__label slds-p-around_small" for="text-input-id-1" style="color: #00b2ee; font-size: 21px;">Number of Monthly Meetings</label> 
+                                                            <div class="slds-form-element__control slds-p-left_small slds-p-right_small">
+                                                                <apex:inputField style="color: #333333; font-size: 18px; border-radius:0;" styleClass="slds-input slds-p-around_x-small" value="{!srpSelected.Goal_of_monthly_meetings__c}" id="metric6"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="slds-grid">
+                                                <div class="slds-size_8-of-8">
+                                                    <div class="slds-p-around_small slds-grid">
+                                                        <div class="slds-form-element slds-size_1-of-3">
+                                                            <label class="slds-form-element__label slds-p-around_small" for="text-input-id-1" style="color: #00b2ee; font-size: 21px;">Average Deal Size</label> 
+                                                            <div class="slds-form-element__control slds-p-left_small slds-p-right_small">
+                                                                <apex:inputField style="color: #333333; font-size: 18px; border-radius:0;" styleClass="slds-input slds-p-around_x-small" value="{!srpSelected.Goal_Average_Deal_Size__c}" id="metric7"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </apex:outputPanel>
+                                        <script type="text/javascript">
+                                          $('select.RemoveNoneValue option[value= ""]').remove();
+                                          $("[id*='srpManager']").select2({placeholder:'Select'}); 
+                                          $("[id*='intManager']").select2({placeholder:'Select',allowClear: true}); 
+                                          $("[id*='roleVal']").select2({placeholder:'Select'});  
+                                          
+                                                                  
+                                         $("[id*='recordName']").select2({placeholder:'Select',allowClear: true}); 
+                                        </script>
+                                    </apex:outputPanel>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <div class="btn-block">
+                                    <apex:actionFunction action="{!save}" name="save" reRender="sList" status="loadStatus"/>
+                                    <!--<a data-dismiss="modal"  class="cancel"   onclick="hideAddEditSrp();">  CANCEL</a>-->
+                                    <a onclick="saveSrp();" style="background-color: #ff9900; color: #fff; padding: 15px 100px; border-radius: 30px; font-size: 24px; border: none;">
+                                    SAVE
+                                    </a >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Modal --  autosave -- end -->
+                <!-- Modal --  autosave -- end -->
+                <apex:outputPanel id="mn">
+                </apex:outputPanel>
+                <script type="text/javascript">
+                      
+                    function saveSrp(){
+                        console.log('saveSrp');
+                        console.log('{!srpSelected }');
+                        var b = true;
+                        
+                        $=jQuery;
+                        
+                    
+                          
+                          
+                          var inp = $(" [id*='SrpName']").val();
+                         if( inp.length == 0 || inp == null || jQuery.trim(inp).length==0){
+                             $(" span[id*='validname']").css("display", "block");
+                             b = false;
+                             $(" [id*='SrpName']").focus();
+                         } else{
+                             $(" span[id*='validname']").css("display", "none");
+                             
+                         }
+                         
+                         var inp1 = $(" [id*='recordName']").val();
+                         var isPlace = $(" [id*='isPlaceholder']").is(':checked');
+                         if( (inp1 == '000000000000000' || inp1.length == 0 || inp1 == null || jQuery.trim(inp1).length==0 ) && !isPlace ){
+                             $(" span[id*='validRcname']").css("display", "block");
+                             b = false;
+                             $(" [id*='recordName']").focus();
+                         }else{
+                             $(" span[id*='validRcname']").css("display", "none");
+                         }
+                         
+                          var inp2 = $(" [id*='roleVal']").val();
+                         if( inp2.length == 0 || inp2 == null || jQuery.trim(inp2).length==0){
+                             $(" span[id*='validRole']").css("display", "block");
+                             b = false;
+                             $(" [id*='roleVal']").focus();
+                         }else{
+                             $(" span[id*='validRole']").css("display", "none");
+                         }
+                         
+                         var inp3 = $(" [id*='srpManager']").val();
+                         if(inp3 == '000000000000000' || inp3.length == 0 || inp3 == null || jQuery.trim(inp3).length==0){
+                             $(" span[id*='validMng']").css("display", "block");
+                             b = false;
+                             $(" [id*='srpManager']").focus();
+                         }else{
+                             $(" span[id*='validMng']").css("display", "none");
+                         }
+                         
+                          if(b){
+                              console.log('save');
+                              save();
+                              
+                              $('#autoSaveConfirm').modal('hide'); 
+                              
+                          }
+                         
+                    }
+                </script>
+                <script type="text/javascript">
+                 
+                    $(document).ready(function () {
+                        $('select.RemoveNoneValue option[value= ""]').remove();   
+                          
+                       
+                                                
+                   });
+                         
+                         
+                         function mod(){
+                             
+                             $(" span[id*='validname']").css("display", "none");
+                             $(" span[id*='validRcname']").css("display", "none");
+                             $(" span[id*='validRole']").css("display", "none");
+                             $(" span[id*='validMng']").css("display", "none");
+                             //displayAddEditSrp();
+                             $('#autoSaveConfirm').modal('show'); 
+                             
+                             
+                         }
+                         
+                         $("#autoSaveConfirm").on("hidden.bs.modal", function () {
+                                 hideAddEditSrp();
+                         });
+                         
+                          
+                     
+                </script>
+                <script>
+                    function myFunction(_elem){
+                        var value = _elem.value;
+                       // console.log(value);
+                        $("[id$='usrTable']").find('.rowName').each(function(){
+                            if($(this).text().toLowerCase().includes(value.toLowerCase()))
+                                $(this).show();
+                            else
+                                $(this).hide();
+                        });
+                        
+                        
+                    }
+                </script> 
+                  
+            </html>
+        </apex:actionRegion>
+    </apex:form>
+    <apex:actionStatus onstart="startLoading();" onstop="stopLoading();" id="loadStatus" />
+    <style>
+        .overlay {
+            display: none;
+            height: 100%;
+            left: 0;
+            position: fixed;
+            top: 0;
+            opacity: 0.3;
+            -moz-opacity: 0.3;
+            width: 100%;
+            -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+            filter: alpha(opacity=30);
+            background: #000;
+            -khtml-opacity: 0.3;
+            z-index: 999999999;
+        }
+ 
+        .loader {
+            background: url('/img/loading32.gif') scroll no-repeat 0 0;
+            width: 32px;
+            height: 32px;
+            position: absolute;
+            left: 50%;
+            z-index: 999999999;
+        }
+    </style>
+ 
+    
+     
+    <script type="text/javascript">
+ 
+        function startLoading() {
+           $('#load_scrl').css('top', $(document).scrollTop() + 500);
+            $('.loadingBox').show();
+        }
+ 
+        function stopLoading() {
+            $('.loadingBox').hide();
+        }
+        
+    </script>
+    <div id="load_scrl" class="loadingBox loader" style="display:none;"> </div>
+    <div class="loadingBox overlay"> </div> 
+</apex:page>

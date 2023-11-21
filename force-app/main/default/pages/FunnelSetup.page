@@ -1,0 +1,513 @@
+<apex:page docType="html-5.0" controller="FunnelSetupController" extensions="FunnelHistController,FunnelInstallation"  sidebar="false" >
+     <apex:form id="setup">
+    <html  xmlns:xlink="http://www.w3.org/1999/xlink" lang="en">
+    <apex:stylesheet value="{!URLFOR($Resource.SldsCss,'SldsResources/styles/salesforce-lightning-design-system.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.SldsCss,'SldsResources/styles/salesforce-lightning-design-system.min')}"/>
+    <!--Navigation-->
+    <apex:stylesheet value="{!URLFOR($Resource.FunnelScriptFolder,'Design/css/v5.0.8-fontawesome.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.FunnelScriptFolder,'Design/css/v5.0.8-solid.css')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/jquery-1.12.4.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/jquery-ui.js')}"/>
+    <style>
+         body { font-size: 75%; }
+        .noSidebarCell, .sidebarCell .fixed { padding: 10px; font-family: sldsFont; }
+        
+         @font-face {
+         font-family: sldsFont;
+             src: url({!URLFOR($Resource.SldsCss,'SldsResources/fonts/SalesforceSans-Light.ttf')});
+         }
+         
+         
+         .bPageHeader .phHeader td.left{display: block;}
+        .navigation{display: table; width: 100%; text-align: center;}
+        
+        .navigation ul{margin: 0; padding: 0;}
+        .navigation ul li{display: inline-block; padding: 0 8px; border-left: 1px solid #7e8793; line-height: 17px; margin-left: 0;}
+        .navigation ul li a{color: #7e8793; font-size: 17px; font-weight: bold;}
+        .navigation ul li a:hover{color: #66cc33; text-decoration: none;}
+        .navigation ul li a:focus{outline: none; text-decoration: none;}
+        .navigation ul li {color: #7e8793; font-size: 17px; font-weight: bold;}
+        .navigation ul li:hover{color: #66cc33; text-decoration: none;}
+        .navigation ul li.selected a{color: #66cc33;}
+        .navigation ul li.home{border: none; padding-left: 0; padding-bottom: 10px;}
+        .navigation ul li.home a{color: #00b2ee;}
+        .navigation ul li.help{border-left: 2px solid #7e8793; padding-left: 5px; margin-left: 5px; margin-bottom: 10px;}
+        .navigation ul li.help a{color: #00b2ee;}
+        .navigation ul li:last-child{padding-right: 0;}
+        
+        .navigation ul li.scorenav a{background: url({!$Resource.CertificationNavigationIcon}) no-repeat; padding: 0 0 0 25px; background-position: 0 0; height: 19px; width: 20px;}
+        .navigation ul li.scorenav a:hover {background-position: 0 -23px;}
+        
+        .navigation ul li.funnelanalyticsnav > a{background: url({!$Resource.AnalyticsNavigationIcon}) no-repeat; padding: 0 0 0 25px; background-position: 0 5px; height: 19px; width: 20px; color: #7e8793;}
+        .navigation ul li.funnelanalyticsnav > a:hover{background-position: 0 -17px; color: #66cc33;}
+        
+        .navigation ul li.checklisticon{border-right: 2px solid #7e8793; color: #00b2ee; border-left: 0; margin-right: 5px; cursor: pointer;}
+
+        .navigation ul li.checklisticon a{color: #00b2ee;}
+        
+        .myapp{min-width: 500px; font-family: sldsFont;background-color: #fff; }
+        
+        .navigation ul li.reportnav{position: relative; display: inline-block;cursor: pointer;}
+        .navigation ul li.reportnav ul.subnav{position: absolute; z-index: 1; width: 240px; background: #fff; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); display: none;}
+        .navigation ul li.reportnav ul.subnav li{display: block; text-align: left; border: none; padding: 0;}
+        .navigation ul li.reportnav ul.subnav li a {color: #7e8793; padding: 10px; display: block; width: 100%;}
+        .navigation ul li.reportnav ul.subnav li a:hover{background: #66cc33; color: #fff;}
+        .navigation ul li.reportnav:hover ul.subnav {display: block;}
+        
+        .navigation ul li.reportnav ul.subnavlast{right:0; position: absolute; z-index: 1; width: 240px; background: #fff; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); display: none;}
+        .navigation ul li.reportnav ul.subnavlast li{display: block; text-align: left; border: none; padding: 0;}
+        .navigation ul li.reportnav ul.subnavlast li a {color: #7e8793; padding: 10px; display: block; width: 100%;}
+        .navigation ul li.reportnav ul.subnavlast li a:hover{background: #66cc33; color: #fff;}
+        .navigation ul li.reportnav:hover ul.subnavlast{display: block;}
+        
+        .navigation ul li.reportnav.active{color: #66cc33;}
+        button a:hover{text-decoration: none;}
+        button a:focus{text-decoration: none; outline: none;}
+        select{background: url('{!URLFOR($Resource.Selectarrow )}') no-repeat right -20px center #fff !important; -moz-appearance: none; -webkit-appearance: none;}
+       
+       .funnelsetup-block {font-size: 18px; color: #333333; font-weight: bold; font-family: sldsFont;}
+       .funnelsetup-block h1{font-size: 16px; color: #7e8793; font-weight: normal; font-family: sldsFont;}
+       .funnelsetup-block h1 span{color: #ff9900; font-weight: bold;}
+       .funnelsetup-block .btn{width: 166px;background: #ff9900; color: #fff; padding: 9px 15px; border-radius: 30px; font-size: 14px; border: none; font-weight: 700; text-transform: uppercase; font-family: sldsFont;}
+       .funnelsetup-block a{text-align: center;display: block;width: 166px;background: #ff9900; color: #fff; padding: 9px 15px; border-radius: 30px; font-size: 14px; border: none; font-weight: 700; text-transform: uppercase; font-family: sldsFont;}
+       .funnelsetup-block .btn:focus{outline: none;}
+       .funnelsetup-block input[type="date"]{font-weight: 300; border: 1px solid #dddbda; padding: 6px; width: 250px; color: #7e8793;}
+       .funnelsetup-block input[type="date"]:hover, .funnelsetup-block input[type="date"]:focus{outline: none;}
+       .funnelsetup-block .ortext{font-size: 16px; color: #7e8793; font-weight: normal; padding: 0 5px;}
+       
+       .msg{width: 100%; z-index: 1; position:fixed;    bottom: 0; }
+       
+       input[type="date"] {
+    position: relative;
+}
+
+/* create a new arrow, because we are going to mess up the native one
+see "List of symbols" below if you want another, you could also try to add a font-awesome icon.. */
+input[type="date"]:after {
+    font-family: "Font Awesome 5 Free";
+    font-weight: 100; 
+    content: "\f073";
+    color: #ff9900;
+    padding: 0 5px;
+}
+
+/* change color of symbol on hover */
+input[type="date"]:hover:after {
+    color: #ff9900;
+}
+
+/* make the native arrow invisible and stretch it over the whole field so you can click anywhere in the input field to trigger the native datepicker*/
+input[type="date"]::-webkit-calendar-picker-indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: auto;
+    height: auto;
+    color: transparent;
+    background: transparent;
+}
+
+/* adjust increase/decrease button */
+input[type="date"]::-webkit-inner-spin-button {
+    z-index: 1;
+}
+
+ /* adjust clear button */
+ input[type="date"]::-webkit-clear-button {
+     z-index: 1;
+ }
+ .slds-tabs_default__item{list-style: none;}
+    </style>
+    <!--Navigation--> 
+    
+    
+    
+    <apex:outputPanel id="timerPanel">
+        <apex:actionPoller reRender="messagePanel"  interval="5"  enabled="{!timer}"   action="{!timerOff}"/> 
+    </apex:outputPanel>
+    <apex:outputPanel id="timerPanelS">
+        <apex:actionPoller reRender="messagePanel"  interval="5"  enabled="{!timerS}"   action="{!timerOffS}"/> 
+    </apex:outputPanel>
+   
+    <style>
+        .msgIcon {
+            display: none!important
+        }
+        .customMessage * {
+            color: #fff!important
+        }
+        .customMessage {
+            margin: 5px 0!important;
+             min-height: 70px;
+            opacity: 1!important;
+            width: 94%;
+            font-size: 15px;
+            border: 0px;
+            padding-left: 10px;
+        }
+        .message {
+            opacity: .1
+        }
+    </style>
+    <apex:actionFunction name="clearMessage"  action="{!timerOff}"  reRender="messagePanel"/>
+    <div class="slds-scope">
+        <div class="myapp" style="background: #f5f5f9;">
+            <!--Navigation-->
+            <div class="slds-grid slds-wrap slds-form-element slds-p-around_small">
+                <div class="slds-size_1-of-1">
+                    <div class="navigation">
+                        <ul>
+                            <li class="checklisticon" >
+                                <apex:outputPanel rendered="{!(admin && wizardComp && (!checkListComp))}">
+                                    <apex:commandLink action="{!navigateToChecklistPage}"><i class="fa fa-check-circle" aria-hidden="true"></i></apex:commandLink>
+                                </apex:outputPanel>
+                            </li>
+                            <li class="home"><apex:commandLink action="{!navigateToHomePage}"><i class="fas fa-home"></i></apex:commandLink></li>
+                            <li class="scorenav"><apex:commandLink action="{!navigateToCertification}"> FUNNELOCITY SCORING</apex:commandLink></li>
+                            <li><apex:commandLink action="{!navigateToDashboard}"><span><i class="fas fa-tachometer-alt"></i></span> PERFORMANCE DASHBOARD</apex:commandLink></li>
+                            <li class=" reportnav"> <i class="fas fa-chart-bar"></i> REPORTING 
+                                <ul class="subnav">
+                                    <!--li><apex:commandLink action="{!navigateToCertificateReports}">Funnelocity Reports</apex:commandLink></li-->
+                                    <li><apex:commandLink action="{!navigateToReportsPage}">Sales Management Reports</apex:commandLink></li>
+                                    <li><apex:commandLink action="{!navigateToAnnualizationDashboard}">Tenured and New Hire Performance Dashboard</apex:commandLink></li>
+                                        <li><apex:commandLink action="{!navigateToTrendingByRep}">Trending By Rep Dashboard</apex:commandLink></li>
+                                        <li><apex:commandLink action="{!navigateToTrendingBySkill}">Trending By Metric/Skill Dashboard</apex:commandLink></li>
+                                </ul>
+                            </li>
+                             <li class="reportnav funnelanalyticsnav " >   <a> FUNNELOCITY ANALYTICS </a>  
+                                <ul class="subnav">
+                                    <li><apex:commandLink action="{!navigateToFunnelAnalytic}">Funnelocity Analytics Dashboard</apex:commandLink></li>
+                                    <!--li><apex:commandLink action="{!navigateToFunnelAnalyticQualitative}">Funnelocity Qualitative Scoring</apex:commandLink></li-->
+                                    <li><apex:commandLink action="{!navigateToSalesPipeline}">Funnelocity Sales Pipeline</apex:commandLink></li>
+                                 </ul>
+                            </li>                                                                       
+                             
+                            <li style="display:none"><apex:commandLink ><i class="fas fa-star"></i> TERRITORY PLAN</apex:commandLink></li>                            
+                            <apex:outputPanel rendered="{!displayMetricCalculator}">
+                                <li><apex:commandLink action="{!navigateToCalculator}"><i class="fas fa-calculator"></i> METRICS CALCULATOR</apex:commandLink></li>
+                            </apex:outputPanel>
+                                
+                            <apex:outputPanel rendered="{!appSetup = ''}">
+                                <li class=" reportnav active"> <i class="fas fa-chart-bar"></i> ADMIN 
+                                    <ul class="subnavlast">
+                                        <li><apex:commandLink action="{!navigateToFunnelAddEditSRP}" rendered="{!adminUser}">Sales Rep Profiles and Hierarchy</apex:commandLink></li>
+                                        <li><apex:commandLink action="{!navigateToAppSetup}" rendered="{!adminUser}">Metrics and Skills</apex:commandLink></li>
+                                        <li><apex:commandLink action="{!navigateToGoals}">Goal Management</apex:commandLink></li>
+                                        <li><apex:commandLink action="{!navigateToFunnelSetup}" rendered="{!adminUser}">Custom Updates</apex:commandLink></li>                                        
+                                    </ul>
+                                </li>
+                            </apex:outputPanel>
+                            <!--Added for Help Menu - Rohit-->
+                            <li class="help">
+                                <apex:commandLink target="_blank" action="{!navigateToHelpMenu}"><i class="fas fa-question-circle"></i></apex:commandLink>
+                            </li>                            
+                            
+                        </ul> 
+                    </div>
+                </div>
+            </div> 
+            <!--Navigation-->
+            <div class="slds-wrap slds-p-around_medium">
+                <div class="slds-grid">
+                    <style>
+                        .slds-scope .slds-tabs--default__item.slds-active:after, .slds-scope .slds-tabs--default__item.slds-is-active:after, .slds-scope .slds-tabs_default__item.slds-active:after, .slds-scope .slds-tabs_default__item.slds-is-active:after{background: none;}
+                        .slds-scope .slds-tabs--default__item:hover:after, .slds-scope .slds-tabs_default__item:hover:after{background: none;}
+                        
+                        .slds-scope .slds-checkbox [type=checkbox]:checked+.slds-checkbox--faux:after, .slds-scope .slds-checkbox [type=checkbox]:checked+.slds-checkbox__label .slds-checkbox--faux:after, .slds-scope .slds-checkbox [type=checkbox]:checked+.slds-checkbox__label .slds-checkbox_faux:after, .slds-scope .slds-checkbox [type=checkbox]:checked+.slds-checkbox_faux:after, .slds-scope .slds-checkbox [type=checkbox]:checked~.slds-checkbox--faux:after, .slds-scope .slds-checkbox [type=checkbox]:checked~.slds-checkbox_faux:after{border-bottom: 2px solid #ff9900; border-left: 2px solid #ff9900;}
+                    </style>
+                    
+                    <apex:actionFunction id="ratings" name="ratings" action="{!navigateToRatings}"></apex:actionFunction>
+                    <apex:actionFunction id="assignRole" name="assignRole" action="{!navigateToAssignRole}"></apex:actionFunction>
+                    <apex:actionFunction id="categoryPage" name="categoryPage" action="{!navigateToCategories}"></apex:actionFunction>
+                    <apex:actionFunction id="custommetric" name="custommetric" action="{!navigateToCustomMetric}"></apex:actionFunction>
+                    <apex:actionFunction id="evaluationGuidelines" name="evaluationGuidelines" action="{!navigateToFunnelEvaluationGuidelines}"></apex:actionFunction>
+                    <apex:actionFunction id="notificationPage" name="notificationPage" action="{!navigateToNotifications}"></apex:actionFunction>
+                    <apex:actionFunction id="goalmanagement" name="goalmanagement" action="{!navigateToFunnelReviewGoals}"></apex:actionFunction>
+                    <apex:actionFunction id="teamgoals" name="teamgoals" action="{!navigateToFunnelManagerUpdate}"></apex:actionFunction>
+                    <div class="slds-tabs_default">
+                        
+                        <div id="tab-default-1" class="slds-tabs_default__content slds-show" role="tabpanel" aria-labelledby="tab-default-1__item" style="padding: 0;">
+                            <div class="slds-wrap slds-p-around_medium" style="background: #fff;">
+                                <apex:outputPanel styleClass="msg" id="messagePanel"  onclick="clearMessage(); " >
+                                       <apex:pageMessages id="messaAge"></apex:pageMessages>
+                                    </apex:outputPanel>
+                                <div class="slds-grid">
+                                    
+                                    <div class="slds-size_8-of-8">
+                                    
+                                        <div>
+                                        <apex:outputPanel >
+                                            <div class="slds-form-element funnelsetup-block">
+                                               <div class="slds-grid slds-grid--align-spread slds-grid--vertical-align-center slds-p-around_medium" style="border-bottom: 2px solid #7e8793;">
+                                                    <div><h1 style="font-size: 24px; color: #5f666f; font-weight: bold;">Implementation</h1></div>
+                                                </div>  
+                                                
+                                                <!--<div class="slds-grid slds-grid--align-spread slds-grid--vertical-align-center slds-p-around_medium" style="border-bottom: 1px solid #dddbda;">
+                                                    <div><h1><span>1.</span> Create Salesprofile</h1></div>
+                                                    <div>
+                                                        <apex:outputPanel rendered="{!createSrp}"><apex:commandButton action="{!CreateSalesprofile}" value="Create" reRender="setup" StyleClass="button" /></apex:outputPanel>
+                                                        <apex:outputPanel rendered="{!!createSrp}"><apex:commandButton value="Create" reRender="setup" StyleClass="button" style="background: grey;"/></apex:outputPanel>
+                                                    </div>
+                                                </div>-->
+                                                
+                                                <div class="slds-grid slds-grid--align-spread slds-grid--vertical-align-center slds-p-around_medium" style="border-bottom: 1px solid #dddbda;">
+                                                    <div><h1><span>1.</span> Create historical data</h1></div>
+                                                    <div>                   
+                                                        <apex:outputPanel rendered="{! If(AND(createHisSrp,createHisSrpMid ),true,false) }"><apex:commandButton action="{!CreateHD}" value="Create Now" reRender="setup" StyleClass="button" />  <span class="ortext">OR</span> <apex:commandButton action="{!CreateHDMidnight}" value="Create At Midnight" reRender="setup" StyleClass="button"/></apex:outputPanel> 
+                                                        <apex:outputPanel rendered="{! If(OR(!createHisSrp,!createHisSrpMid ),true,false) }" ><apex:commandButton value="Create Now" reRender="setup" StyleClass="button" style="background: grey;" />  <span class="ortext">OR</span> <apex:commandButton value="Create at Midnight" reRender="setup" StyleClass="button" style="background: grey;"/></apex:outputPanel> 
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="slds-grid slds-grid--align-spread slds-grid--vertical-align-center slds-p-around_medium" style="border-bottom: 1px solid #dddbda;">
+                                                    <div><h1><span>2.</span> Setup qualitative measures for initial input</h1></div>
+                                                    <div>
+                                                        <apex:commandButton action="{!updateQualAnswers}" value="setup" reRender="setup" StyleClass="button"/>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="slds-grid slds-grid--align-spread slds-grid--vertical-align-center slds-p-around_medium" style="border-bottom: 1px solid #dddbda;">
+                                                    <div><h1><span>3.</span> Schedule monthly batch</h1></div>
+                                                    <div>       
+                                                        <apex:outputPanel rendered="{!schMonBatch}"><apex:commandButton action="{!scheduleMonthlyBatch}" value="Schedule " reRender="setup" StyleClass="button"/></apex:outputPanel>
+                                                        <apex:outputPanel rendered="{!!schMonBatch}"><apex:commandButton value="Schedule " reRender="setup" StyleClass="button" style="background: grey;"/></apex:outputPanel>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="slds-grid slds-grid--align-spread slds-grid--vertical-align-center slds-p-around_medium" style="border-bottom: 1px solid #dddbda;">
+                                                    <div><h1><span>4.</span> Schedule daily batch</h1></div>
+                                                    <div>       
+                                                        <apex:outputPanel rendered="{!schDayBatch}"><apex:commandButton action="{!scheduleDailyBatch}" value="Schedule " reRender="setup" StyleClass="button"/></apex:outputPanel>
+                                                        <apex:outputPanel rendered="{!!schDayBatch}"><apex:commandButton value="Schedule " reRender="setup" StyleClass="button" style="background: grey;"/></apex:outputPanel>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!--div class="slds-grid slds-grid--align-spread slds-grid--vertical-align-center slds-p-around_medium" style="border-bottom: 1px solid #dddbda;">
+                                                    <div><h1><span>5.</span> Schedule data pull</h1></div>
+                                                    <div>         
+                                                        <apex:outputPanel rendered="{!schDataPullBatch}"><apex:commandButton action="{!scheduleDataPull}" value="Schedule" reRender="setup" StyleClass="button"/></apex:outputPanel>
+                                                        <apex:outputPanel rendered="{!!schDataPullBatch}"><apex:commandButton value="Schedule" reRender="setup" StyleClass="button" style="background: grey;"/></apex:outputPanel>
+                                                    </div>
+                                                </div-->
+                                                
+                                                <div class="slds-grid slds-grid--align-spread slds-grid--vertical-align-center slds-p-around_medium" style="border-bottom: 1px solid #dddbda;">
+                                                    <div><h1><span>5.</span> Schedule Update Picklist Value batch <span>(This must be run by a System Administrator)</span></h1></div>
+                                                    <div>
+                                                        <apex:commandButton action="{!scheduleUpdatePickBatch}" value="Schedule" reRender="setup" StyleClass="button"/>
+                                                    </div>
+                                                    
+                                                </div> 
+                                                
+                                                <div class="slds-grid slds-grid--align-spread slds-grid--vertical-align-center slds-p-around_medium" style="border-bottom: 1px solid #dddbda;">
+                                                    <div><h1><span>6.</span> Activate triggers</h1></div>
+                                                    <div>
+                                                        <apex:commandButton action="{!createMT}" value="Activate" reRender="setup" styleClass="button" StyleClass="button"/>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="slds-grid slds-grid--align-spread slds-grid--vertical-align-center slds-p-around_medium" style="border-bottom: 1px solid #dddbda;">
+                                                    <div><h1><span>7.</span> Deactivate triggers</h1></div>
+                                                    <div>
+                                                        <apex:commandButton action="{!deactiveTrigger}" value="Deactivate" reRender="setup" StyleClass="button"/>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="slds-grid slds-grid--align-spread slds-grid--vertical-align-center slds-p-around_medium" style="border-bottom: 1px solid #dddbda;">
+                                                    <div><h1 style="font-size: 24px; color: #5f666f; font-weight: bold;">Custom Updates</h1></div>
+                                                </div>
+                                                
+                                                <!--<div class="slds-grid slds-grid--align-spread slds-grid--vertical-align-center slds-p-around_medium" style="border-bottom: 1px solid #dddbda;">
+                                                    <div><h1><span>9.</span> Create customer in postgres</h1></div>
+                                                    <div>         
+                                                        <apex:commandButton action="{!createCustomer}" value="Create" reRender="setup" StyleClass="button"/>
+                                                    </div>
+                                                </div> -->
+                                                
+                                                <div class="slds-grid slds-grid--align-spread slds-grid--vertical-align-center slds-p-around_medium" style="border-bottom: 1px solid #dddbda;">
+                                                    <div><h1><span>8.</span> Create historical data for the selected date</h1></div>
+                                                    <div> 
+                                                        <apex:input type="date" value="{!histDateValue}"/>&nbsp; &nbsp; &nbsp;
+                                                        <apex:commandButton action="{!createHistData}" value="Create" reRender="setup" StyleClass="button"/>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!--<div class="slds-grid slds-grid--align-spread slds-grid--vertical-align-center slds-p-around_medium" style="border-bottom: 1px solid #dddbda;">
+                                                    <div><h1><span>10.</span> Push qual and quant definitions</h1></div>
+                                                    <div>          
+                                                        <apex:commandButton action="{!pushDefinitions}" value="Push" reRender="setup" StyleClass="button"/>
+                                                    </div>
+                                                </div>-->
+                                                
+                                                <!--div class="slds-grid slds-grid--align-spread slds-grid--vertical-align-center slds-p-around_medium" style="border-bottom: 1px solid #dddbda;">
+                                                    <div><h1><span>9.</span> Push quant data</h1></div>
+                                                    <div>
+                                                        <apex:input type="date" value="{!quantDateValue}"/> &nbsp; &nbsp; &nbsp;
+                                                        <apex:commandButton action="{!pushQuantData}" value="Push" reRender="setup" StyleClass="button"/>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="slds-grid slds-grid--align-spread slds-grid--vertical-align-center slds-p-around_medium" style="border-bottom: 1px solid #dddbda;">
+                                                    <div><h1><span>10.</span> Push qual data</h1></div>
+                                                    <div> 
+                                                        <apex:input type="date" value="{!qualDateValue}"/> &nbsp; &nbsp; &nbsp;
+                                                        <apex:commandButton action="{!pushQualData}" value="Push" reRender="setup" StyleClass="button"/>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="slds-grid slds-grid--align-spread slds-grid--vertical-align-center slds-p-around_medium" style="border-bottom: 1px solid #dddbda;">
+                                                    <div><h1><span>11.</span> Pull scores</h1></div>
+                                                    <div>
+                                                        <apex:commandButton action="{!pullScores}" value="Pull" reRender="setup" StyleClass="button"/>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="slds-grid slds-grid--align-spread slds-grid--vertical-align-center slds-p-around_medium" style="border-bottom: 1px solid #dddbda;">
+                                                    <div><h1><span>12.</span> Pull qual ratings</h1></div>
+                                                    <div>
+                                                        <apex:commandButton action="{!pullQualRatings}" value="Pull" reRender="setup" StyleClass="button"/>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="slds-grid slds-grid--align-spread slds-grid--vertical-align-center slds-p-around_medium" style="border-bottom: 1px solid #dddbda;">
+                                                    <div><h1><span>13.</span> Pull quant ratings</h1></div>
+                                                    <div>
+                                                        <apex:commandButton action="{!pullQuantRatings}" value="Pull" reRender="setup" StyleClass="button"/>
+                                                    </div>
+                                                </div-->
+                                                
+                                                <div class="slds-grid slds-grid--align-spread slds-grid--vertical-align-center slds-p-around_medium" style="border-bottom: 1px solid #dddbda;">
+                                                    <div><h1><span>9.</span> Update fiscal year</h1></div>
+                                                    <div>
+                                                        <apex:input type="date" value="{!csDt}"/> &nbsp; &nbsp; &nbsp;
+                                                        <apex:commandButton action="{!changeCSDt}" value="Update" reRender="setup" StyleClass="button"/>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="slds-grid slds-grid--align-spread slds-grid--vertical-align-center slds-p-around_medium" style="border-bottom: 1px solid #dddbda;">
+                                                    <div><h1><span>10.</span> Goal batch</h1></div>
+                                                    <div>
+                                                        <apex:input type="date" value="{!goalDateValue}"/> &nbsp; &nbsp; &nbsp;
+                                                        <apex:commandButton action="{!createGoals}" value="Create goal" reRender="setup" StyleClass="button"/>
+                                                    </div>
+                                                </div>
+                                                
+                                                
+                                                 <!--div class="slds-grid slds-grid--align-spread slds-grid--vertical-align-center slds-p-around_medium" style="border-bottom: 1px solid #dddbda;">
+                                                    <div><h1><span>16.</span> Send roles to model</h1></div>
+                                                    <div>
+                                                         
+                                                        <apex:commandButton action="{!sendRolesToS3}" value="Send Roles" reRender="setup" StyleClass="button"/>
+                                                    </div>
+                                                </div>
+                                                
+                                                 <div class="slds-grid slds-grid--align-spread slds-grid--vertical-align-center slds-p-around_medium" style="border-bottom: 1px solid #dddbda;">
+                                                    <div><h1><span>17.</span> Delete model data</h1></div>
+                                                    <div>
+                                                         
+                                                        <apex:commandButton action="{!deleteS3Folder}" value="Delete" reRender="setup" StyleClass="button"/>
+                                                    </div>
+                                                </div-->
+                                                
+                                                <div class="slds-grid slds-grid--align-spread slds-grid--vertical-align-center slds-p-around_medium" style="border-bottom: 1px solid #dddbda;">
+                                                    <div><h1><span>11.</span> Delete snapshot data</h1></div> 
+                                                    
+                                                       
+                                                    <div style="flex-wrap: wrap;display: flex;">  
+                                                    <apex:actionStatus id="up2">
+                                                            <apex:facet name="start">
+                                                             <apex:image value="/img/loading32.gif"  style="vertical-align: middle;    height: 24px;margin: 7px 9px 0px 0px;"/>
+                                                           </apex:facet>
+                                                            
+                                                       </apex:actionStatus>
+                                                        <apex:commandLink action="{!deleteHistoricalData}" status="up2" reRender="setup" >
+                                                           <apex:actionSupport event="onclick" status="up3" rerender="setup"/>
+                                                            <style>
+                                                                .slds-scope a{color:#fff;text-decoration:none;}
+                                                                .slds-scope a:hover{color:#fff;text-decoration:none !important;}
+                                                            </style>
+                                                            
+                                                            <apex:actionStatus id="up3">
+                                                                <apex:facet name="start">
+                                                                   Deleting....  
+                                                               </apex:facet>
+                                                               <apex:facet name="stop">
+                                                                   Delete
+                                                               </apex:facet>
+                                                               </apex:actionStatus>
+                                                              
+                                                        </apex:commandLink>
+                                                           
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="slds-grid slds-grid--align-spread slds-grid--vertical-align-center slds-p-around_medium" style="border-bottom: 1px solid #dddbda;">
+                                                    <div><h1><span>12.</span> Sync metrics to date </h1></div>
+                                                    <div>
+                                                        <apex:commandButton action="{!syncData}" value="Sync" reRender="setup" StyleClass="button"/>
+                                                    </div>
+                                                </div>  
+                                                
+                                                <div class="slds-grid slds-grid--align-spread slds-grid--vertical-align-center slds-p-around_medium" style="border-bottom: 1px solid #dddbda;">
+                                                    <div><h1><span>13.</span> Run custom metric batch </h1></div>
+                                                    <div>
+                                                        <apex:input type="date" value="{!custMetDateValue}"/> &nbsp; &nbsp; &nbsp;
+
+                                                        <apex:commandButton action="{!executeCustomMetricBatch}" value="Sync" reRender="setup" StyleClass="button"/>
+                                                    </div>
+                                                </div>  
+                                                
+                                                <div class="slds-grid slds-grid--align-spread slds-grid--vertical-align-center slds-p-around_medium" style="border-bottom: 1px solid #dddbda;">
+                                                    <div><h1><span>14.</span> Run Opportunity batch </h1></div>
+                                                    <div>
+                                                        <apex:commandButton action="{!executeOppyBatch}" value="Sync" reRender="setup" StyleClass="button"/>
+                                                    </div>
+                                                </div> 
+                                                
+                                                    
+                                            </div>
+                                            </apex:outputPanel>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                 
+                                
+                               
+                        
+                        <div id="tab-default-2" class="slds-tabs_default__content slds-hide" role="tabpanel" aria-labelledby="tab-default-2__item">Item Two Content</div>
+                        <div id="tab-default-3" class="slds-tabs_default__content slds-hide" role="tabpanel" aria-labelledby="tab-default-3__item">Item Three Content</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>  
+  </div>  
+    </html>
+    </apex:form>
+    <script>
+    $(document).ready(function(){
+       overridePageMessages();    
+    });
+         
+    function overridePageMessages(){    
+        var textureEffect = '';
+        //Uncomment below line for texture effect on page messages
+        //textureEffect = 'slds-theme--alert-texture';
+                      
+        $('.warningM3').addClass('slds-notify slds-notify--toast slds-theme--warning customMessage '+textureEffect);          
+        $('.confirmM3').addClass('slds-notify slds-notify--alert slds-theme--success  customMessage '+textureEffect);    
+        $('.errorM3').addClass('slds-notify slds-notify--alert slds-theme--error customMessage '+textureEffect);                  
+        $('.infoM3').addClass('slds-notify slds-notify--toast customMessage '+textureEffect);    
+                          
+        $('.errorM3').removeClass('errorM3'); 
+        $('.confirmM3').removeClass('confirmM3'); 
+        $('.infoM3').removeClass('infoM3');   
+        $('.warningM3').removeClass('warningM3');  
+    }
+    
+   </script>
+    
+     
+</apex:page>

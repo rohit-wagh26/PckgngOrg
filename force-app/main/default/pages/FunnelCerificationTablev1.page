@@ -1,0 +1,4 @@
+<apex:page controller="FunnelCertificationTable" sidebar="false">
+
+     
+</apex:page>

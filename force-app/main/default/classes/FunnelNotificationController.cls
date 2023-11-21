@@ -1,0 +1,298 @@
+/*
+Copyright: Funnel Metrics, LLC
+*/
+public with sharing class FunnelNotificationController {
+    
+    public string tps{get;set;}
+    Public Map<String,String> managemenetReports{get;set;}
+
+    public boolean  enableNotifications{get;set;}
+    public string   edvanceReminders{get;set;}
+    public string   notificationFrequency{get;set;}
+    public string   escalation{get;set;}
+    public list<Notification_Setting__c>  noti{get;set;}
+    public  Notification_Setting__c insertnoti {get;set;}
+    
+    //Variables to store the parameters passed in the URL
+    public String label1{get; set;}
+    public String label2{get; set;}
+    public String label3{get; set;}
+    public String selectedLevel1{get; set;}
+    public String selectedLevel2{get; set;}
+    public String selectedLevel3{get; set;}
+    
+    public Boolean adminPer{get;set;}
+    public Boolean isManger{get;set;}
+    
+    public Boolean lasSubmitDate{get;set;}
+    /* Filters */
+    
+    public Application_Setting__c stretchPercentage{ get; set;} 
+    
+    public static String prefix{ get{return 'FunnelMetrics__';} set; }
+
+    public FunnelNotificationController (){
+        try{
+            tps ='tps';
+            List<String> fldList = new List<String>{prefix+'Name', prefix+'Advance_Reminders__c',prefix +'Enable_Notifications__c',prefix+'Escalation__c',prefix+'Notification_Frequency__c'};
+                
+            Boolean readAccess = true;
+            
+            Map <String, Schema.SObjectField> fieldMap = Schema.getGlobalDescribe().get(prefix+'Notification_Setting__c').getDescribe().fields.getMap();
+            
+            for(String fldName: fldList){
+                if(!fieldMap.get(fldName).getDescribe().isAccessible()){
+                    readAccess = false;
+                }                           
+            }
+            if(readAccess){ 
+                noti = [select id,name,Advance_Reminders__c,Last_Date_for_submit__c,Enable_Notifications__c,Escalation__c,Notification_Frequency__c,On_boarding_period__c from  Notification_Setting__c ORDER BY createddate DESC limit 1 ];
+                insertnoti = new Notification_Setting__c(); 
+                lasSubmitDate = true;
+                List<CronTrigger> cornListpull = new List<CronTrigger>();
+                cornListpull =[SELECT Id, CronJobDetail.name, State FROM CronTrigger where CronJobDetail.name='FM Model Score Data Pull' OR CronJobDetail.name='FM Model Qual Data Pull' OR CronJobDetail.name='FM Model Quant Data Pull' OR CronJobDetail.name='FM Model Update Manager Score'];
+                if(cornListpull != null && cornListpull .size()>0){
+                    lasSubmitDate = false;
+                }
+                  
+                if(noti == null || (noti != null && noti.size()<1)){
+                    
+                    List<String> fldList1 = new List<String>{prefix+'name',prefix+'Enable_Notifications__c',prefix+'Advance_Reminders__c',prefix+'Notification_Frequency__c',prefix+'Escalation__c',prefix+'On_boarding_period__c'};
+                    
+                    Boolean updateAccess = true;
+                                
+                    Map <String, Schema.SObjectField> fieldMap1 = Schema.getGlobalDescribe().get(prefix+'Notification_Setting__c').getDescribe().fields.getMap();
+                    
+                    for(String fldName: fldList1){
+                        if(!fieldMap1.get(fldName).getDescribe().isUpdateable()){
+                          ApexPages.addmessage(new ApexPages.message(ApexPages.severity.ERROR,'Insufficient access'));
+                          updateAccess = false;
+                        }
+                        if(!fieldMap1.get(fldName).getDescribe().isCreateable()){
+                          ApexPages.addmessage(new ApexPages.message(ApexPages.severity.ERROR,'Insufficient access'));
+                          updateAccess = false;
+                        }                
+                    } 
+                    
+                    if(updateAccess){         
+                        insertnoti.name ='Notification';
+                        insertnoti.Enable_Notifications__c = false;
+                        insertnoti.Advance_Reminders__c = '7 days prior';
+                        insertnoti.Notification_Frequency__c = 'Daily';
+                        //insertnoti.Escalation__c= '10 days overdue';
+                        insertnoti.On_boarding_Period__c= 90;
+                        insertnoti.Last_Date_for_submit__c= 7;
+                
+                    }    
+                }
+                else{                        
+                   
+                    insertnoti = noti[0];
+                       
+                }
+                
+                /*filters*/
+                label1 = ApexPages.currentPage().getParameters().get('labelOne');
+                label2 = ApexPages.currentPage().getParameters().get('labelTwo');
+                label3 = ApexPages.currentPage().getParameters().get('labelThree');
+                selectedLevel1 = ApexPages.currentPage().getParameters().get('selectOne');
+                selectedLevel2 = ApexPages.currentPage().getParameters().get('selectTwo');
+                selectedLevel3 = ApexPages.currentPage().getParameters().get('selectThree');
+                
+                List<AggregateResult> asperm = [SELECT count(Id) c FROM PermissionSetAssignment WHERE AssigneeId = :Userinfo.getUserId() AND PermissionSet.Name = 'Funnel_App_Setup'];
+                if((asperm != null && asperm.size() > 0 && asperm[0].get('c') != null && (Integer)asperm[0].get('c') > 0)   ){
+                    adminPer= true;
+                }else{
+                    adminPer= false;
+                }
+                
+                isManger = FunnelTriggerBatchHelper.isManager(UserInfo.getUserId()); 
+                 /*
+                 managemenetReports = new Map<String,String>();
+        
+                 User u = [SELECT Name, UserPreferencesLightningExperiencePreferred FROM User WHERE id = :UserInfo.getUserId()];
+        
+                  List<String> dashList = new List<String>();
+                  dashList.add('mXaDybYGcSDujlyIRRJQxUrUEqXiFe');
+        
+                  managemenetReports = FunnelNavigationHelper.fetchDashboards(dashList,u);*/
+                  
+                 stretchPercentage= [Select Stretch_percentage__c from Application_Setting__c Limit 1]; 
+            }
+        }
+        catch(Exception ex){
+            System.debug('Exception occured: '+ ex+' Line number: '+ex.getLineNumber());
+            ApexPages.addmessage(new ApexPages.message(ApexPages.severity.ERROR,ex.getMessage()));
+            FunnelTriggerBatchHelper.sendErrorMail(' FunnelNotificationController '+ex.getMessage()+' '+ex.getStackTraceString()+ ' line number: '+ex.getLineNumber()+' cause '+ex.getCause());
+        } 
+    }
+    
+    public void save(){
+        try{    
+            //if(Schema.sObjectType.Notification_Setting__c.isCreateable() && Schema.sObjectType.Notification_Setting__c.isUpdateable()){         
+            if(Schema.getGlobalDescribe().get(prefix+'Notification_Setting__c').getDescribe().isCreateable() && Schema.getGlobalDescribe().get(prefix+'Notification_Setting__c').getDescribe().isUpdateable()){
+                if((insertnoti.Last_Date_for_submit__c != null && insertnoti.Last_Date_for_submit__c  <= 0) || insertnoti.Last_Date_for_submit__c == null){
+                    insertnoti.Last_Date_for_submit__c = 0;
+                }
+                upsert insertnoti ;
+            }  
+            update stretchPercentage;  
+        }
+        catch(Exception ex){
+            System.debug('Exception occured: '+ ex+' Line number: '+ex.getLineNumber());
+            ApexPages.addmessage(new ApexPages.message(ApexPages.severity.ERROR,ex.getMessage()));
+            FunnelTriggerBatchHelper.sendErrorMail(' FunnelNotificationController '+ex.getMessage()+' '+ex.getStackTraceString()+ ' line number: '+ex.getLineNumber()+' cause '+ex.getCause());
+        } 
+        //if(Schema.sObjectType.Notification_Setting__c.isCreateable() && Schema.sObjectType.Notification_Setting__c.isUpdateable()){ 
+        //if(Schema.getGlobalDescribe().get('Notification_Setting__c').getDescribe().isCreateable()){
+            
+        //}
+    }
+    
+    /*Navigation*/
+    //Method called on clicking on View Scoring Dashboard
+    public PageReference navigateToCertification(){
+        
+        //return FunnelNavigationHelper.navigateToCertification(label1,label2,label3,selectedLevel1,selectedLevel2,selectedLevel3);
+    	return FunnelNavigationHelper.navigateToCertification(label1,label2,label3,selectedLevel1,selectedLevel2,selectedLevel3,'');
+    }
+    
+    //Method called on clicking on View Scoring Dashboard
+    public PageReference navigateToDashboard(){
+        
+        //return FunnelNavigationHelper.navigateToDashboard(label1,label2,label3,selectedLevel1,selectedLevel2,selectedLevel3);
+    	return FunnelNavigationHelper.navigateToDashboard(label1,label2,label3,selectedLevel1,selectedLevel2,selectedLevel3,'');
+    }
+    
+    //Method called on clicking Performance Dashboard on header
+    public PageReference navigateToCalculator(){
+        
+        return FunnelNavigationHelper.navigateToCalculator(label1,label2,label3,selectedLevel1,selectedLevel2,selectedLevel3);
+        
+    }
+    
+    //Method called on clicking Home on header    
+    public PageReference navigateToHomePage(){
+        
+        return FunnelNavigationHelper.navigateToHomePage(label1,label2,label3,selectedLevel1,selectedLevel2,selectedLevel3);
+        
+    }
+    
+    //Method called on clicking Reporting on header    
+    public PageReference navigateToReportsPage(){
+        
+        //return FunnelNavigationHelper.navigateToReportsPage(label1,label2,label3,selectedLevel1,selectedLevel2,selectedLevel3);
+        return FunnelNavigationHelper.navigateToReportsPage(label1,label2,label3,selectedLevel1,selectedLevel2,selectedLevel3,'');
+    }
+    
+    //Method called on clicking App Setup on header    
+    public PageReference navigateToAppSetup(){
+        
+        return FunnelNavigationHelper.navigateToAppSetupPage(label1,label2,label3,selectedLevel1,selectedLevel2,selectedLevel3);
+        
+    }
+    
+    public PageReference navigateToCertificateReports(){
+        
+        return FunnelNavigationHelper.navigateToCertificateReports(label1,label2,label3,selectedLevel1,selectedLevel2,selectedLevel3);
+        
+    }  
+    
+    public PageReference navigateToRatings(){
+        
+        return FunnelNavigationHelper.navigateToCreateEditRatings(label1,label2,label3,selectedLevel1,selectedLevel2,selectedLevel3);
+        
+    }
+    
+    public PageReference navigateToAssignRole(){
+        
+        return FunnelNavigationHelper.navigateToAssignRole(label1,label2,label3,selectedLevel1,selectedLevel2,selectedLevel3);    
+        
+    }
+    public PageReference navigateToCustomMetric(){
+        
+        return FunnelNavigationHelper.navigateToCustomMetric(label1,label2,label3,selectedLevel1,selectedLevel2,selectedLevel3);    
+        
+    }
+    
+    public PageReference navigateToCategories(){
+        
+        return FunnelNavigationHelper.navigateToCategories(label1,label2,label3,selectedLevel1,selectedLevel2,selectedLevel3);
+    }
+    
+    public PageReference navigateToAnalytics(){
+        
+        return FunnelNavigationHelper.navigateToAnalytics(label1,label2,label3,selectedLevel1,selectedLevel2,selectedLevel3);
+    
+    }
+    
+    public PageReference navigateToFunnelAnalyticQualitative(){
+        
+        //return FunnelNavigationHelper.navigateToFunnelAnalyticQualitative(label1,label2,label3,selectedLevel1,selectedLevel2,selectedLevel3);
+    	return FunnelNavigationHelper.navigateToFunnelAnalyticQualitative(label1,label2,label3,selectedLevel1,selectedLevel2,selectedLevel3,'');
+    } 
+    
+    public PageReference navigateToSalesPipeline(){
+        
+        return FunnelNavigationHelper.navigateToSalesPipeline(label1,label2,label3,selectedLevel1,selectedLevel2,selectedLevel3,'');
+    }
+    
+    public PageReference navigateToTrendingByRep(){
+        
+        return FunnelNavigationHelper.navigateToTrendingByRep(label1,label2,label3,selectedLevel1,selectedLevel2,selectedLevel3);
+        
+    }
+    
+    public PageReference navigateToTrendingBySkill(){
+        
+        return FunnelNavigationHelper.navigateToTrendingBySkill(label1,label2,label3,selectedLevel1,selectedLevel2,selectedLevel3);
+        
+    }
+    
+    public PageReference navigateToFunnelAnalytic(){
+        
+        //return FunnelNavigationHelper.navigateToFunnelAnalytic(label1,label2,label3,selectedLevel1,selectedLevel2,selectedLevel3);
+    	return FunnelNavigationHelper.navigateToFunnelAnalytic(label1,label2,label3,selectedLevel1,selectedLevel2,selectedLevel3,'');
+    }
+    public PageReference navigateToFunnelEvaluationGuidelines(){
+        
+        return FunnelNavigationHelper.navigateToFunnelEvaluationGuidelines(label1,label2,label3,selectedLevel1,selectedLevel2,selectedLevel3);
+    
+    }
+    public PageReference navigateToAnnualizationDashboard(){
+        
+        //return FunnelNavigationHelper.navigateToFunnelAnnualizationDashboard(label1,label2,label3,selectedLevel1,selectedLevel2,selectedLevel3);
+    	return FunnelNavigationHelper.navigateToFunnelAnnualizationDashboard(label1,label2,label3,selectedLevel1,selectedLevel2,selectedLevel3,'');
+    }
+    
+    public PageReference navigateToFunnelSetup(){
+        
+        return FunnelNavigationHelper.navigateToFunnelSetup(label1,label2,label3,selectedLevel1,selectedLevel2,selectedLevel3);
+    
+    }
+    
+    public PageReference navigateToFunnelReviewGoals(){
+        
+        return FunnelNavigationHelper.navigateToFunnelReviewGoals(label1,label2,label3,selectedLevel1,selectedLevel2,selectedLevel3);
+    
+    }
+    public PageReference navigateToFunnelManagerUpdate(){
+        
+        return FunnelNavigationHelper.navigateToFunnelManagerUpdate(label1,label2,label3,selectedLevel1,selectedLevel2,selectedLevel3);
+    
+    }
+    public PageReference navigateToGoals(){
+        
+        return FunnelNavigationHelper.navigateToGoalsPage(label1,label2,label3,selectedLevel1,selectedLevel2,selectedLevel3);
+    
+    }
+    
+    //Added for Help Menu - Rohit
+    public PageReference navigateToHelpMenu(){
+        
+        return FunnelNavigationHelper.navigateToHelpMenu();
+    
+    }
+    /*Navigation*/
+
+}

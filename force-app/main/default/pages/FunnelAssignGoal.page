@@ -1,0 +1,241 @@
+<apex:page sidebar="false" controller="FunnelAssignGoalController" docType="html-5.0">
+<html   lang="en">
+    <!--Navigation-->
+     
+    <style>
+         body { font-size: 75%; }
+        .noSidebarCell, .sidebarCell .fixed { padding: 10px; font-family: sldsFont; }
+        
+         @font-face {
+         font-family: sldsFont;
+             src: url({!URLFOR($Resource.SldsCss,'SldsResources/fonts/SalesforceSans-Light.ttf')});
+         }
+         
+         
+         .bPageHeader .phHeader td.left{display: block;}
+        .navigation{display: table; width: 100%; text-align: center;}
+        
+        .navigation ul{margin: 0; padding: 0;}
+        .navigation ul li{display: inline-block; padding: 0 13px; border-left: 1px solid #7e8793; line-height: 17px; margin-left: 0;}
+        .navigation ul li a{color: #7e8793; font-size: 17px; font-weight: bold;}
+        .navigation ul li a:hover{color: #66cc33; text-decoration: none;}
+        .navigation ul li a:focus{outline: none; text-decoration: none;}
+        .navigation ul li {color: #7e8793; font-size: 17px; font-weight: bold;}
+        .navigation ul li:hover{color: #66cc33; text-decoration: none;}
+        .navigation ul li.selected a{color: #66cc33;}
+        .navigation ul li.home{border: none; padding-left: 0; padding-bottom: 10px;}
+        .navigation ul li.home a{color: #00b2ee;}
+        .navigation ul li:last-child{padding-right: 0;}
+        
+        .navigation ul li.scorenav a{background: url({!$Resource.CertificationNavigationIcon}) no-repeat; padding: 0 0 0 25px; background-position: 0 0; height: 19px; width: 20px;}
+        .navigation ul li.scorenav a:hover {background-position: 0 -23px;}
+    
+        .myapp{min-width: 500px; font-family: sldsFont;background-color: #fff; }
+         th.tablesorter-headerAsc .fa-chevron-down:before{content:"\f077" !important}
+         
+         .navigation ul li.reportnav{position: relative; display: inline-block;cursor: pointer;}
+        .navigation ul li.reportnav ul.subnav{position: absolute; z-index: 1; width: 240px; background: #fff; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); display: none;}
+        .navigation ul li.reportnav ul.subnav li{display: block; text-align: left; border: none; padding: 0;}
+        .navigation ul li.reportnav ul.subnav li a {color: #7e8793; padding: 10px; display: block; width: 100%;}
+        .navigation ul li.reportnav ul.subnav li a:hover{background: #66cc33; color: #fff;}
+        .navigation ul li.reportnav:hover ul.subnav {display: block;}
+        button a:hover{text-decoration: none;}
+        button a:focus{text-decoration: none; outline: none;}
+        select{background: url('{!URLFOR($Resource.Selectarrow )}') no-repeat right -20px center #fff !important; -moz-appearance: none; -webkit-appearance: none;}
+      
+    </style>
+  <apex:form >
+       <div id="tab-default-1" class="slds-tabs_default__content slds-show" role="tabpanel" aria-labelledby="tab-default-1__item" style="padding-top: 0; padding-bottom: 0;">
+            <div class="slds-wrap slds-p-around_medium" style="background: #fff;">
+                <div class="slds-grid">
+                    <div class="slds-size_8-of-8">
+                        <div class="slds-p-around_small">
+                            <div class="slds-form-element slds-size_1-of-3">
+                                <label class="slds-form-element__label slds-p-around_small" for="select-03" style="color: #00b2ee; font-size: 21px; font-weight: bold; padding-left: 0; padding-top: 0;">Select Role</label>
+                                <div class="slds-form-element__control slds-p-left_small slds-p-right_small" style="padding-left: 0;">
+                                    <div  style="position: relative;">
+                                        <apex:selectList size="1" value="{!SelectedValue}" style="color: #7e8793; font-size: 21px; border-radius:0; height: auto; padding: 8px 30px 8px 8px;" Styleclass="slds-select slds-p-around_x-small" id="select-03">
+                                             <apex:selectOptions value="{!Role}"/>
+                                      <!--       <apex:actionSupport event="onchange" action="{!cr}" reRender=""/> -->
+                                         </apex:selectList>
+                                         
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <apex:outputPanel id="quota">
+        <div class="slds-p-around_small slds-grid">
+            <div class="slds-size_1-of-2">
+                <div class="slds-form-element__control slds-p-left_small slds-p-right_small">
+                   <label class="slds-form-element__label slds-p-around_small" for="text-input-id-1" style="color: #00b2ee; font-size: 18px;">Month 1 Quota Amount</label>
+                   <apex:input type="number" value="{!Month1}" id="text-input-id-1" style="font-family: arial;color: #7e8793; font-size: 18px; border-radius:0;"    html-min="0"/>
+                </div>
+            </div>
+            <div class="slds-size_1-of-2">
+                <div class="slds-form-element__control slds-p-left_small slds-p-right_small">
+                   <label class="slds-form-element__label slds-p-around_small" for="text-input-id-2" style="color: #00b2ee; font-size: 18px;">Month 7 Quota Amount</label>
+                    <apex:input type="number" value="{!Month7}" id="text-input-id-2" style="font-family: arial;color: #7e8793; font-size: 18px; border-radius:0;"    html-min="0"/>
+                </div>
+            </div>
+        </div> 
+         
+         <div class="slds-p-around_small slds-grid">
+            <div class="slds-size_1-of-2">
+                <div class="slds-form-element__control slds-p-left_small slds-p-right_small">
+                   <label class="slds-form-element__label slds-p-around_small" for="text-input-id-3" style="color: #00b2ee; font-size: 18px;">Month 2 Quota Amount</label>
+                   <apex:input type="number" value="{!Month2}" id="text-input-id-3" style="font-family: arial;color: #7e8793; font-size: 18px; border-radius:0;"    html-min="0"/>
+                </div>
+            </div>
+            <div class="slds-size_1-of-2">
+                <div class="slds-form-element__control slds-p-left_small slds-p-right_small">
+                   <label class="slds-form-element__label slds-p-around_small" for="text-input-id-4" style="color: #00b2ee; font-size: 18px;">Month 8 Quota Amount</label>
+                    <apex:input type="number" value="{!Month8}" id="text-input-id-4" style="font-family: arial;color: #7e8793; font-size: 18px; border-radius:0;"    html-min="0"/>
+                </div>
+            </div>
+        </div>
+        
+        <div class="slds-p-around_small slds-grid">
+            <div class="slds-size_1-of-2">
+                <div class="slds-form-element__control slds-p-left_small slds-p-right_small">
+                   <label class="slds-form-element__label slds-p-around_small" for="text-input-id-5" style="color: #00b2ee; font-size: 18px;">Month 3 Quota Amount</label>
+                   <apex:input type="number" value="{!Month3}" id="text-input-id-5" style="font-family: arial;color: #7e8793; font-size: 18px; border-radius:0;"    html-min="0"/>
+                </div>
+            </div>
+            <div class="slds-size_1-of-2">
+                <div class="slds-form-element__control slds-p-left_small slds-p-right_small">
+                   <label class="slds-form-element__label slds-p-around_small" for="text-input-id-6" style="color: #00b2ee; font-size: 18px;">Month 9 Quota Amount</label>
+                    <apex:input type="number" value="{!Month9}" id="text-input-id-6" style="font-family: arial;color: #7e8793; font-size: 18px; border-radius:0;"    html-min="0"/>
+                </div>
+            </div>
+        </div>
+        
+        <div class="slds-p-around_small slds-grid">
+            <div class="slds-size_1-of-2">
+                <div class="slds-form-element__control slds-p-left_small slds-p-right_small">
+                   <label class="slds-form-element__label slds-p-around_small" for="text-input-id-7" style="color: #00b2ee; font-size: 18px;">Month 4 Quota Amount</label>
+                   <apex:input type="number" value="{!Month4}" id="text-input-id-7" style="font-family: arial;color: #7e8793; font-size: 18px; border-radius:0;"    html-min="0"/>
+                </div>
+            </div>
+            <div class="slds-size_1-of-2">
+                <div class="slds-form-element__control slds-p-left_small slds-p-right_small">
+                   <label class="slds-form-element__label slds-p-around_small" for="text-input-id-8" style="color: #00b2ee; font-size: 18px;">Month 10 Quota Amount</label>
+                    <apex:input type="number" value="{!Month10}" id="text-input-id-8" style="font-family: arial;color: #7e8793; font-size: 18px; border-radius:0;"    html-min="0"/>
+                </div>
+            </div>
+        </div>
+        
+        <div class="slds-p-around_small slds-grid">
+            <div class="slds-size_1-of-2">
+                <div class="slds-form-element__control slds-p-left_small slds-p-right_small">
+                   <label class="slds-form-element__label slds-p-around_small" for="text-input-id-9" style="color: #00b2ee; font-size: 18px;">Month 5 Quota Amount</label>
+                   <apex:input type="number" value="{!Month5}" id="text-input-id-9" style="font-family: arial;color: #7e8793; font-size: 18px; border-radius:0;"    html-min="0"/>
+                </div>
+            </div>
+            <div class="slds-size_1-of-2">
+                <div class="slds-form-element__control slds-p-left_small slds-p-right_small">
+                   <label class="slds-form-element__label slds-p-around_small" for="text-input-id-10" style="color: #00b2ee; font-size: 18px;">Month 11 Quota Amount</label>
+                    <apex:input type="number" value="{!Month11}" id="text-input-id-10" style="font-family: arial;color: #7e8793; font-size: 18px; border-radius:0;"    html-min="0"/>
+                </div>
+            </div>
+        </div>
+        
+        <div class="slds-p-around_small slds-grid">
+            <div class="slds-size_1-of-2">
+                <div class="slds-form-element__control slds-p-left_small slds-p-right_small">
+                   <label class="slds-form-element__label slds-p-around_small" for="text-input-id-11" style="color: #00b2ee; font-size: 18px;">Month 6 Quota Amount</label>
+                   <apex:input type="number" value="{!Month6}" id="text-input-id-11" style="font-family: arial;color: #7e8793; font-size: 18px; border-radius:0;"    html-min="0"/>
+                </div>
+            </div>
+            <div class="slds-size_1-of-2">
+                <div class="slds-form-element__control slds-p-left_small slds-p-right_small">
+                   <label class="slds-form-element__label slds-p-around_small" for="text-input-id-12" style="color: #00b2ee; font-size: 18px;">Month 12 Quota Amount</label>
+                    <apex:input type="number" value="{!Month12}" id="text-input-id-12" style="font-family: arial;color: #7e8793; font-size: 18px; border-radius:0;"    html-min="0"/>
+                </div>
+            </div>
+        </div>
+        
+        
+        <div class="slds-p-around_small slds-grid">
+            <div class="slds-size_1-of-2">
+                <div class="slds-form-element__control slds-p-left_small slds-p-right_small">
+                   <label class="slds-form-element__label slds-p-around_small" for="text-input-id-13" style="color: #00b2ee; font-size: 18px;">Goal 12m Avg Selling Price</label>
+                   <apex:input type="number" value="{!asp}" id="text-input-id-13" style="font-family: arial;color: #7e8793; font-size: 18px; border-radius:0;"    html-min="0"/>
+                </div>
+            </div>
+            <div class="slds-size_1-of-2">
+                <div class="slds-form-element__control slds-p-left_small slds-p-right_small">
+                   <label class="slds-form-element__label slds-p-around_small" for="text-input-id-14" style="color: #00b2ee; font-size: 18px;">Goal 12m Lead To Opp Conv Rate</label>
+                    <apex:input type="number" value="{!ltocr}" id="text-input-id-14" style="font-family: arial;color: #7e8793; font-size: 18px; border-radius:0;"    html-min="0"/>
+                </div>
+            </div>
+        </div>
+        <div class="slds-p-around_small slds-grid">
+            <div class="slds-size_1-of-2">
+                <div class="slds-form-element__control slds-p-left_small slds-p-right_small">
+                   <label class="slds-form-element__label slds-p-around_small" for="text-input-id-15" style="color: #00b2ee; font-size: 18px;">Goal 12m length of sales cycle</label>
+                   <apex:input type="number" value="{!lsc}" id="text-input-id-15" style="font-family: arial;color: #7e8793; font-size: 18px; border-radius:0;"    html-min="0"/>
+                </div>
+            </div>
+            <div class="slds-size_1-of-2">
+                <div class="slds-form-element__control slds-p-left_small slds-p-right_small">
+                   <label class="slds-form-element__label slds-p-around_small" for="text-input-id-16" style="color: #00b2ee; font-size: 18px;">Goal 12m rolling close rate</label>
+                    <apex:input type="number" value="{!rcr}" id="text-input-id-16" style="font-family: arial;color: #7e8793; font-size: 18px; border-radius:0;"    html-min="0"/>
+                </div>
+            </div>
+        </div>
+        <div class="slds-p-around_small slds-grid">
+            <div class="slds-size_1-of-2">
+                <div class="slds-form-element__control slds-p-left_small slds-p-right_small">
+                   <label class="slds-form-element__label slds-p-around_small" for="text-input-id-17" style="color: #00b2ee; font-size: 18px;">Goal # of monthly meetings</label>
+                   <apex:input type="number" value="{!mm}" id="text-input-id-17" style="font-family: arial;color: #7e8793; font-size: 18px; border-radius:0;"    html-min="0"/>
+                </div>
+            </div>
+           <!-- <div class="slds-size_1-of-2">
+                <div class="slds-form-element__control slds-p-left_small slds-p-right_small">
+                   <label class="slds-form-element__label slds-p-around_small" for="text-input-id-12" style="color: #00b2ee; font-size: 18px;">Month 12 Quota Amount</label>
+                    <apex:input type="number" value="{!Month12}" id="text-input-id-12" style="font-family: arial;color: #7e8793; font-size: 18px; border-radius:0;"    html-min="0"/>
+                </div>
+            </div>-->
+        </div>
+        </apex:outputPanel>
+        
+         <div class="slds-grid">
+            <div class="slds-size_8-of-8">
+                <div class="slds-p-around_medium">
+                    <!--<button class="slds-button slds-text-heading_medium" style="background-color: #ff9900; color: #fff; padding: 15px 40px; border-radius: 30px; font-size: 20px;">
+                        <style>
+                            .slds-scope a{color:#fff;text-decoration:none;}
+                            .slds-scope a:hover{color:#fff;text-decoration:none !important;}
+                        </style>
+                        <span class="color:#fff;">APPLY</span>
+                    </button> -->
+                     <apex:commandLink styleClass="slds-button slds-text-heading_medium" style="background-color: #ff9900; color: #fff; padding: 15px 40px; border-radius: 30px; font-size: 20px;" status="up3" action="{!updateQuota}" reRender="quota">
+                            <style>
+                                .slds-scope a{color:#fff;text-decoration:none;}
+                                .slds-scope a:hover{color:#fff;text-decoration:none !important;}
+                            </style>
+                            <span class="color:#fff;">
+                            <apex:actionStatus id="up3">
+                                <apex:facet name="start">
+                                   Applying.....
+                               </apex:facet>
+                               <apex:facet name="stop">
+                                   Apply
+                               </apex:facet>
+                               </apex:actionStatus>
+                            </span>
+                        </apex:commandLink>
+                    
+                    </div>
+                </div>
+            </div> 
+         
+         
+         
+  </apex:form>
+  </html>
+</apex:page>

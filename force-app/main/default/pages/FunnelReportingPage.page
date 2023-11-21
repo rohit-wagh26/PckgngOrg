@@ -1,0 +1,2001 @@
+<apex:page sidebar="false" docType="html-5.0" controller="FunnelReporting_Controller" extensions="FunnelInstallation">
+<head>
+ 
+<apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/jquery.min.js')}"/>
+
+<apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/highcharts.js')}"/>
+ 
+
+<apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/exporting.js')}"/>
+ 
+
+<apex:stylesheet value="{!URLFOR($Resource.SldsCss,'SldsResources/styles/salesforce-lightning-design-system.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.SldsCss,'SldsResources/styles/salesforce-lightning-design-system.min')}"/>
+<apex:outputPanel id="chartlabel">
+
+    <script type="text/javascript">
+
+  var clabels=[];
+  var cData=[];
+  var cQuota = [];
+  var yCloseRate = [];
+  var yCloseRateGoal = [];
+  var yOppWon = [];
+  var yOppWonGoal = [];
+   
+         
+            function showChart(){
+          
+                  clabels=[];
+                  cData=[];
+                  cQuota = [];
+                  yCloseRate = [];
+                  yCloseRateGoal = [];
+                  yOppWon = [];
+                  yOppWonGoal = [];
+                  
+                  clabels =  JSON.parse('{!JSENCODE(Data)}');
+                  clabelsbelow =  JSON.parse('{!JSENCODE(Databelow)}');
+                  
+                  clabelsArr = [];
+                  for (var i=0; i < clabels.length ; i++)
+                  {
+                      
+                    clabelsArr[i] = clabels[i];
+                  }
+                   console.log(clabelsArr);
+                       
+                 GenerateChart();
+             }
+                      
+
+           
+            function GenerateChart(){ 
+            
+                 Highcharts.setOptions({
+                    lang: {
+                            thousandsSep: ','
+                        }
+                    });
+            
+                $('#QuotaContainer').highcharts({
+                 
+                 credits: {
+                  enabled: false
+                  },
+                  
+                chart: {
+                        type: 'column'
+                        
+                    },
+                    title: {
+                         text:'',
+                        x: -20 //center
+                    },
+                    subtitle: {
+                       // text: 'Source: Opportunity Records',
+                        x: -20
+                    },
+                    xAxis: {
+                        categories: clabelsArr,
+                        labels:{
+                             style:{
+                                 color: '#333333',
+                                 fontSize:'13px'
+                              }  
+                            },
+                    },
+                    yAxis: [{ // Primary yAxis
+                                labels: {
+                                   
+                                    style: {
+                                        color: '#9b54f1'
+                                    }
+                                },
+                                title: {
+                                    text: 'Sales',
+                                    style: {
+                                        color: '#9b54f1'
+                                    }
+                                },
+                               
+                        
+                            }, { // Secondary yAxis
+                                min:0,
+                                max:150,
+                                gridLineWidth: 0,
+                                title: {
+                                    text: 'Percentage',
+                                    style: {
+                                        color: '#666666'
+                                    }
+                                },
+                                 
+                                 opposite: true,
+                                labels: {
+                                    
+                                    style: {
+                                        color: '#666666'
+                                    }
+                                }
+                        
+                            }],
+                      
+                   
+                     colors: [
+                        '#9b54f1',
+                        '#ff9900',
+                        '#666666',
+                    ],
+                    legend: {
+                            align: 'center',
+                            verticalAlign: 'bottom',
+                            x: 0,
+                            y: 0
+                    },
+                    
+                    series: [{
+                      
+                        name: 'Sales',
+                        data: {!Revenues},
+                        yAxis: 0,
+                        tooltip: {
+                            valuePrefix: '$',
+                            valueDecimals: 2
+                        }
+                    },
+                    { 
+                         name: 'Quota',
+                         data: {!Quotas},
+                          tooltip: {
+                            valuePrefix: '$',
+                            valueDecimals: 2
+                        }
+                        
+                    },
+                         
+                    { 
+                         type: '',
+                         name: 'Percentage',
+                         data: {!QuotaPercentage},
+                         yAxis: 1,
+                         tooltip: {
+                            valueSuffix: '%',
+                            valueDecimals: 2
+                         }
+                     }
+                    
+                    ]
+                });
+                
+                 $('#CloserateContainer').highcharts({
+                
+                 credits: {
+                  enabled: false
+                  },
+                
+                chart: {
+                        type: 'column'
+                    },
+                    title: {
+                        text: ' ',
+                        x: -20 //center
+                    },
+                    subtitle: {
+                        //text: 'Source: Opportunity Records',
+                        x: -20
+                    },
+                    xAxis: {
+                        categories: clabelsArr,
+                        labels:{
+                             style:{
+                                 color: '#333333',
+                                 fontSize:'13px'
+                              }  
+                            },
+                    },
+                    yAxis: {
+                        title: {
+                                    text: 'Close Rate',
+                                    style: {
+                                        color: '#00b2ee'
+                                    }
+                                },
+                         labels: {
+                            formatter: function() {
+                               return this.value+"%";
+                            },
+                            style: {
+                                        color: '#00b2ee'
+                                    }
+                          },
+                          
+                        plotLines: [{
+                            value: 0+'%',
+                            width: 1,
+                            color: '#808080'
+                        }]
+                    },
+                    tooltip: {
+                        valueSuffix: '%'
+                    },
+                    
+                    legend: {
+                            align: 'center',
+                            verticalAlign: 'bottom',
+                            x: 0,
+                            y: 0
+                    },
+                    
+                     colors: [
+                        '#00b2ee',
+                        '#ff9900',
+                       
+                    ],
+                    series: [{
+                      
+                        name: 'Close Rate',
+                        data: {!YtdCloseRates},
+                        
+                        tooltip: {
+                            
+                            valueDecimals: 2
+                        }
+                    },
+                       {  
+                         name: 'Close Rate Goal',
+                         data: {!YtdCloseRatesGoals},
+                         
+                         tooltip: {
+                            
+                            valueDecimals: 2
+                        }
+                       }
+                    
+                    ]
+                });
+                
+                $('#OpportunityContainer').highcharts({
+                
+                 credits: {
+                  enabled: false
+                  },
+                
+                chart: {
+                        type: 'column'
+                    },
+                    title: {
+                        text: ' ',
+                        x: -20 //center
+                    },
+                    subtitle: {
+                       // text: 'Source: Opportunity Records',
+                        x: -20
+                    },
+                    xAxis: {
+                        categories: clabelsArr,
+                        labels:{
+                             style:{
+                                 color: '#333333',
+                                 fontSize:'13px'
+                              }  
+                            },
+                    },
+                    yAxis: [{ // Primary yAxis
+                                labels: {
+                                   
+                                    style: {
+                                        color: Highcharts.getOptions().colors[0]
+                                    }
+                                },
+                                title: {
+                                    text: 'Opportunities won',
+                                    style: {
+                                        color: Highcharts.getOptions().colors[0]
+                                    }
+                                },
+                               
+                        
+                            }, { // Secondary yAxis
+                                 min:0,
+                                 max:150,
+                                gridLineWidth: 0,
+                                title: {
+                                    text: 'Percentage',
+                                    style: {
+                                        color: '#666666'
+                                    }
+                                },
+                                 
+                                 opposite: true,
+                                labels: {
+                                    
+                                    style: {
+                                        color: '#666666'
+                                    }
+                                }
+                        
+                            }],
+                      
+                    colors: [
+                        '#00b2ee',
+                        '#ff9900',
+                        '#666666',
+                    ],
+                    
+                    legend: {
+                            align: 'center',
+                            verticalAlign: 'bottom',
+                            x: 0,
+                            y: 0
+                    },
+                    
+                    series: [{
+                      
+                        name: 'Opp Won',
+                        data: {!YtdOppWins},
+                        yAxis: 0,
+                        
+                       
+                    },
+                       {  
+                         name: 'Opp Won Goal',
+                         data: {!YtdOppWinsGoals},
+                         
+                       },
+                       {
+                         type:'',
+                          name: 'Percentage',
+                          data: {!OppPercentage},
+                          yAxis: 1,
+                           tooltip: {
+                            valueSuffix: '%',
+                            valueDecimals: 2
+                         }
+                           
+                       }
+                    
+                    ]
+                });
+               
+                $('#QuotaContainerbelow').highcharts({
+                 
+                 credits: {
+                  enabled: false
+                  },
+                  
+                chart: {
+                        type: 'column'
+                        
+                    },
+                    title: {
+                         text:'',
+                        x: -20 //center
+                    },
+                    subtitle: {
+                       // text: 'Source: Opportunity Records',
+                        x: -20
+                    },
+                    xAxis: {
+                        categories: clabelsbelow ,
+                        labels:{
+                             style:{
+                                 color: '#333333',
+                                 fontSize:'13px'
+                              }  
+                            },
+                    },
+                    yAxis: [{ // Primary yAxis
+                                labels: {
+                                   
+                                    style: {
+                                        color: '#9b54f1'
+                                    }
+                                },
+                                title: {
+                                    text: 'Sales',
+                                    style: {
+                                        color: '#9b54f1'
+                                    }
+                                },
+                               
+                        
+                            }, { // Secondary yAxis
+                                 min:0,
+                                 max:150,
+                                gridLineWidth: 0,
+                                title: {
+                                    text: 'Percentage',
+                                    style: {
+                                        color: '#666666'
+                                    }
+                                },
+                                 
+                                 opposite: true,
+                                labels: {
+                                    
+                                    style: {
+                                        color: '#666666'
+                                    }
+                                }
+                        
+                            }],
+                      
+                   
+                     colors: [
+                        '#9b54f1',
+                        '#ff9900',
+                        '#666666',
+                    ],
+                    legend: {
+                            align: 'center',
+                            verticalAlign: 'bottom',
+                            x: 0,
+                            y: 0
+                    },
+                    
+                    series: [{
+                      
+                        name: 'Sales',
+                        data: {!Revenuesbelow},
+                        yAxis: 0,
+                        tooltip: {
+                            valuePrefix: '$',
+                            valueDecimals: 2
+                        }
+                    },
+                    { 
+                         name: 'Quota',
+                         data: {!Quotasbelow},
+                          tooltip: {
+                            valuePrefix: '$',
+                            valueDecimals: 2
+                        }
+                        
+                    },
+                         
+                    { 
+                         type: '',
+                         name: 'Percentage',
+                         data: {!QuotaPercentagebelow},
+                         yAxis: 1,
+                         tooltip: {
+                            valueSuffix: '%',
+                            valueDecimals: 2
+                         }
+                     }
+                    
+                    ]
+                });
+                
+                 $('#CloserateContainerbelow').highcharts({
+                
+                 credits: {
+                  enabled: false
+                  },
+                
+                chart: {
+                        type: 'column'
+                    },
+                    title: {
+                        text: ' ',
+                        x: -20 //center
+                    },
+                    subtitle: {
+                        //text: 'Source: Opportunity Records',
+                        x: -20
+                    },
+                    xAxis: {
+                        categories: clabelsbelow ,
+                        labels:{
+                             style:{
+                                 color: '#333333',
+                                 fontSize:'13px'
+                              }  
+                            },
+                    },
+                    yAxis: {
+                        title: {
+                                    text: 'Close Rate',
+                                    style: {
+                                        color: '#00b2ee'
+                                    }
+                                },
+                         labels: {
+                            formatter: function() {
+                               return this.value+"%";
+                            },
+                            style: {
+                                        color: '#00b2ee'
+                                    }
+                          },
+                        plotLines: [{
+                            value: 0+'%',
+                            width: 1,
+                            color: '#808080'
+                        }]
+                    },
+                    tooltip: {
+                        valueSuffix: '%'
+                    },
+                    
+                    legend: {
+                            align: 'center',
+                            verticalAlign: 'bottom',
+                            x: 0,
+                            y: 0
+                    },
+                    
+                     colors: [
+                        '#00b2ee',
+                        '#ff9900',
+                       
+                    ],
+                    series: [{
+                      
+                        name: 'Close Rate',
+                        data: {!YtdCloseRatesbelow},
+                        
+                        tooltip: {
+                            
+                            valueDecimals: 2
+                        }
+                    },
+                       {  
+                         name: 'Close Rate Goal',
+                         data: {!YtdCloseRatesGoalsbelow},
+                         
+                         tooltip: {
+                            
+                            valueDecimals: 2
+                        }
+                       }
+                    
+                    ]
+                });
+                
+                $('#OpportunityContainerbelow').highcharts({
+                
+                 credits: {
+                  enabled: false
+                  },
+                
+                chart: {
+                        type: 'column'
+                    },
+                    title: {
+                        text: ' ',
+                        x: -20 //center
+                    },
+                    subtitle: {
+                       // text: 'Source: Opportunity Records',
+                        x: -20
+                    },
+                    xAxis: {
+                        categories: clabelsbelow ,
+                        labels:{
+                             style:{
+                                 color: '#333333',
+                                 fontSize:'13px'
+                              }  
+                            },
+                    },
+                    yAxis: [{ // Primary yAxis
+                                labels: {
+                                   
+                                    style: {
+                                        color: Highcharts.getOptions().colors[0]
+                                    }
+                                },
+                                title: {
+                                    text: 'Opportunities won',
+                                    style: {
+                                        color: Highcharts.getOptions().colors[0]
+                                    }
+                                },
+                               
+                        
+                            }, { // Secondary yAxis
+                                 min:0,
+                                 max:150,
+                                gridLineWidth: 0,
+                                title: {
+                                    text: 'Percentage',
+                                    style: {
+                                        color: '#666666'
+                                    }
+                                },
+                                 
+                                 opposite: true,
+                                labels: {
+                                    
+                                    style: {
+                                        color: '#666666'
+                                    }
+                                }
+                        
+                            }],
+                      
+                    colors: [
+                        '#00b2ee',
+                        '#ff9900',
+                        '#666666',
+                    ],
+                    
+                    legend: {
+                            align: 'center',
+                            verticalAlign: 'bottom',
+                            x: 0,
+                            y: 0
+                    },
+                    
+                    series: [{
+                      
+                        name: 'Opp Won',
+                        data: {!YtdOppWinsbelow},
+                        yAxis: 0,
+                        
+                       
+                    },
+                       {  
+                         name: 'Opp Won Goal',
+                         data: {!YtdOppWinsGoalsbelow},
+                         
+                       },
+                       {
+                         type:'',
+                          name: 'Percentage',
+                          data: {!OppPercentagebelow},
+                          yAxis: 1,
+                           tooltip: {
+                            valueSuffix: '%',
+                            valueDecimals: 2
+                         }
+                           
+                       }
+                    
+                    ]
+                });
+            }
+            </script>
+
+</apex:outputPanel>
+</head>
+    <!--Navigation
+     
+    <!--Navigation-->
+    <apex:stylesheet value="{!URLFOR($Resource.FunnelScriptFolder,'Design/css/v5.0.8-fontawesome.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.FunnelScriptFolder,'Design/css/v5.0.8-solid.css')}"/>
+    <!--Navigation-->
+    <style>
+         body { font-size: 75%; }
+        .noSidebarCell, .sidebarCell .fixed { padding: 10px; font-family: sldsFont; }
+        
+         @font-face {
+         font-family: sldsFont;
+             src: url({!URLFOR($Resource.SldsCss,'SldsResources/fonts/SalesforceSans-Light.ttf')});
+         }
+         
+        // *{font-family: sldsFont;}
+         .bPageHeader .phHeader td.left{display: block;}
+        .myapp{min-width: 500px; font-family: sldsFont;background-color: #fff; }
+        
+        #contentWrapper .bodyDiv{display: block; width: 100%;}
+        #contentWrapper .bodyDiv #bodyTable{display: block;}
+        #contentWrapper .bodyDiv #bodyTable > tbody{display: block;}
+        #contentWrapper .bodyDiv #bodyTable > tbody > tr{display: block;}
+        #contentWrapper .bodyDiv #bodyTable > tbody > tr > td{display: block;}
+        
+        .navigation{display: table; width: 100%; text-align: center;}
+        .navigation ul{margin: 0; padding: 0;}
+        .navigation ul li{display: inline-block; padding: 0 8px; border-left: 2px solid #7e8793; line-height: 17px; margin-left:0;}
+        .navigation ul li a{color: #7e8793; font-size: 17px; font-weight: bold;}
+        .navigation ul li a:hover{color: #66cc33; text-decoration: none;}
+        .navigation ul li a:focus{outline: none; text-decoration: none;}
+        .navigation ul li {color: #7e8793; font-size: 17px; font-weight: bold;}
+        .navigation ul li:hover{color: #66cc33; text-decoration: none;}
+        .navigation ul li.selected a{color: #66cc33;}
+        .navigation ul li.home{border: none; padding-left: 0; margin-bottom: 10px;}
+        .navigation ul li.home a{color: #00b2ee;}
+        .navigation ul li.help{border-left: 2px solid #7e8793; padding-left: 5px; margin-left: 5px; margin-bottom: 10px;}
+        .navigation ul li.help a{color: #00b2ee;}
+        .navigation ul li:last-child{padding-right: 0;}
+        .navigation ul li.selected { color: #66cc33; }
+        
+        .navigation ul li.scorenav a{background: url({!$Resource.CertificationNavigationIcon}) no-repeat; padding: 0 0 0 25px; background-position: 0 0; height: 19px; width: 20px;}
+        .navigation ul li.scorenav a:hover {background-position: 0 -23px;}
+        
+        .navigation ul li.funnelanalyticsnav > a{background: url({!$Resource.AnalyticsNavigationIcon}) no-repeat; padding: 0 0 0 25px; background-position: 0 5px; height: 19px; width: 20px; color: #7e8793;}
+        .navigation ul li.funnelanalyticsnav > a:hover{background-position: 0 -17px; color: #66cc33;}
+        
+        .navigation ul li.checklisticon{border-right: 2px solid #7e8793; color: #00b2ee; border-left: 0; margin-right: 5px; cursor: pointer;}
+
+        .navigation ul li.checklisticon a{color: #00b2ee;}
+        
+        .navigation ul li.reportnav{position: relative; display: inline-block;cursor: pointer; }
+        .navigation ul li.reportnav ul.subnav{position: absolute; z-index: 1; width: 240px; background: #fff; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); display: none;}
+        .navigation ul li.reportnav ul.subnav li{display: block; text-align: left; border: none; padding: 0;}
+        .navigation ul li.reportnav ul.subnav li a {color: #7e8793; padding: 10px; display: block; width: 100%;}
+        .navigation ul li.reportnav ul.subnav li a:hover{background: #66cc33; color: #fff;}
+        .navigation ul li.reportnav:hover ul.subnav {display: block;}
+        
+        .navigation ul li.reportnav ul.subnavlast{right:0; position: absolute; z-index: 1; width: 240px; background: #fff; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); display: none;}
+        .navigation ul li.reportnav ul.subnavlast li{display: block; text-align: left; border: none; padding: 0;}
+        .navigation ul li.reportnav ul.subnavlast li a {color: #7e8793; padding: 10px; display: block; width: 100%;}
+        .navigation ul li.reportnav ul.subnavlast li a:hover{background: #66cc33; color: #fff;}
+        .navigation ul li.reportnav:hover ul.subnavlast{display: block;}
+        
+        
+        .navigation ul li.adminnav{position: relative; display: inline-block;cursor: pointer;color: #7e8793;}
+        .navigation ul li.adminnav ul.subnav{position: absolute; z-index: 1; width: 240px; background: #fff; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); display: none;}
+        .navigation ul li.adminnav ul.subnav li{display: block; text-align: left; border: none; padding: 0;}
+        .navigation ul li.adminnav ul.subnav li a {color: #7e8793; padding: 10px; display: block; width: 100%;}
+        .navigation ul li.adminnav ul.subnav li a:hover{background: #66cc33; color: #fff;}
+        .navigation ul li.adminnav:hover ul.subnav {display: block;}
+        
+        button a:hover{text-decoration: none;}
+        button a:focus{text-decoration: none; outline: none;}
+        select{background: url('{!URLFOR($Resource.Selectarrow )}') no-repeat right -20px center #fff !important; -moz-appearance: none; -webkit-appearance: none;}
+       .slds-select[disabled], .slds-select.slds-is-disabled {background-color: #ecebea !important;border-color: #c9c7c5;cursor: not-allowed;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;}
+        
+         /* Add this attribute to the element that needs a tooltip */
+        [data-tooltip] {
+          position: relative;
+          z-index: 2;
+          cursor: pointer;
+        }
+        
+        /* Hide the tooltip content by default */
+        [data-tooltip]:before,
+        [data-tooltip]:after {
+          visibility: hidden;
+          -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+          filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=0);
+          opacity: 0;
+          pointer-events: none;
+        }
+        
+        /* Position tooltip above the element */
+        [data-tooltip]:before {
+          position: absolute;
+          bottom: 100%;
+          right: 0;
+          margin-bottom: 5px;
+          margin-left: 0;
+          padding: 10px;
+          width: 250px; 
+          -webkit-border-radius: 0;
+          -moz-border-radius: 0;
+          border-radius: 5px;
+          background-color: #66cc33;
+          /*background-color: hsla(0, 0%, 20%, 0.9);*/
+          color: #fff;
+          content: attr(data-tooltip);
+          text-align: center;
+          font-size: 14px;
+          line-height: 18px;
+          border: 2px solid #66cc33;
+        }
+        
+        /* Triangle hack to make tooltip look like a speech bubble */
+        [data-tooltip]:after {
+          position: absolute;
+          bottom: 100%;
+          left: 50%;
+          margin-left: -5px;
+          width: 0;
+          border-top: 5px solid #66cc33;
+          /*border-top: 5px solid hsla(0, 0%, 20%, 0.9);*/
+          border-right: 5px solid transparent;
+          border-left: 5px solid transparent;
+          content: " ";
+          font-size: 0;
+          line-height: 0;
+        }
+        
+        /* Show tooltip content on hover */
+        [data-tooltip]:hover:before,
+        [data-tooltip]:hover:after {
+          visibility: visible;
+          -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+          filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=100);
+          opacity: 1;
+        }
+        .help{font-weight: bold; cursor: pointer;}
+        .help i{color: #66cc33;}
+    </style>
+    
+    <!--Navigation-->
+    <apex:form >
+        <apex:outputPanel id="detailsPanel">
+            <div class="slds-scope">                            
+                <div class="myapp">
+                    <c:Help_popup helpContent="{!help}"/>   
+                    <!--Navigation-->
+                    <div class="slds-grid slds-wrap slds-form-element slds-p-around_small">
+                        <div class="slds-size_1-of-1">
+                            <div class="navigation">
+                                <ul>
+                                    <li class="checklisticon" >
+                                        <apex:outputPanel rendered="{!(admin && wizardComp && (!checkListComp))}">
+                                            <apex:commandLink action="{!navigateToChecklistPage}"><i class="fa fa-check-circle" aria-hidden="true"></i></apex:commandLink>
+                                        </apex:outputPanel>
+                                    </li>
+                                    <li class="home"><apex:commandLink action="{!navigateToHomePage}"><i class="fas fa-home"></i></apex:commandLink></li>
+                                    <li class="scorenav"><apex:commandLink action="{!navigateToCertification}"> FUNNELOCITY SCORING</apex:commandLink></li> 
+                                    <li><apex:commandLink action="{!navigateToDashboard}"><span><i class="fas fa-tachometer-alt"></i></span> PERFORMANCE DASHBOARD</apex:commandLink></li>
+                                    <li class="selected reportnav"> <i class="fas fa-chart-bar"></i> REPORTING 
+                                        <ul class="subnav">
+                                            <!--li><apex:commandLink action="{!navigateToCertificateReports}">Funnelocity Reports</apex:commandLink></li-->
+                                            <li><a>Sales Management Reports</a></li>
+                                            <li><apex:commandLink action="{!navigateToAnnualizationDashboard}">Tenured and New Hire Performance Dashboard</apex:commandLink></li>
+                                            <li><apex:commandLink action="{!navigateToTrndngRep}">Trending By Rep Dashboard</apex:commandLink></li>
+                                            <li><apex:commandLink action="{!navigateToTrendingBySkill}">Trending By Metric/Skill Dashboard</apex:commandLink></li>
+                                        </ul>
+                                    </li> 
+                                     
+                                     <li class="reportnav funnelanalyticsnav " >   <a> FUNNELOCITY ANALYTICS </a>  
+                                        <ul class="subnav">
+                                            <li><apex:commandLink action="{!navigateToFunnelAnalytic}">Funnelocity Analytics Dashboard</apex:commandLink></li>
+                                        <!--li><apex:commandLink action="{!navigateToFunnelAnalyticQualitative}">Funnelocity Qualitative Scoring</apex:commandLink></li-->
+                                            <li><apex:commandLink action="{!navigateToSalesPipeline}">Funnelocity Sales Pipeline</apex:commandLink></li>
+                                         </ul>
+                                   </li>                                                                   
+                                    <li style="display:none"><apex:commandLink ><i class="fas fa-star"></i> TERRITORY PLAN</apex:commandLink></li>
+                                    <apex:outputPanel rendered="{!displayMetricCalculator}">
+                                    <li><apex:commandLink action="{!navigateToCalculator}"><i class="fas fa-calculator"></i> METRICS CALCULATOR</apex:commandLink></li>
+                                </apex:outputPanel>
+                                    <apex:outputPanel rendered="{!appSetup = ''}">
+                                        <li class=" reportnav"> <i class="fas fa-chart-bar"></i> ADMIN 
+                                            <ul class="subnavlast">
+                                                <li><apex:commandLink action="{!navigateToFunnelAddEditSRP}" rendered="{!adminUser}">Sales Rep Profiles and Hierarchy</apex:commandLink></li>
+                                                <li><apex:commandLink action="{!navigateToAppSetup}" rendered="{!adminUser}">Metrics and Skills</apex:commandLink></li>
+                                                <li><apex:commandLink action="{!navigateToGoals}">Goal Management</apex:commandLink></li>
+                                                <li><apex:commandLink action="{!navigateToFunnelSetup}" rendered="{!adminUser}">Custom Updates</apex:commandLink></li>                                        
+                                            </ul>
+                                        </li>
+                                    </apex:outputPanel>
+                                    <!--Added for Help Menu - Rohit-->
+                                    <li class="help">
+                                        <apex:commandLink target="_blank" action="{!navigateToHelpMenu}"><i class="fas fa-question-circle" style="color: #00b2ee"></i></apex:commandLink>
+                                    </li>
+                                </ul>  
+                            </div>
+                        </div>
+                    </div> 
+                    <!--Navigation-->
+                    <apex:actionFunction id="breadCrumClick" name="breadCrumClick" action="{!breadCrumClick}" rerender="repList,roleList,levels,levelList" oncomplete="validateSave();">
+                        <apex:param value="" name="crumValue" assignTo="{!crumValue}" />
+                        <apex:param value="" name="levelValue" assignTo="{!levelValue}" />
+                    </apex:actionFunction>
+                    <apex:outputPanel id="ref">
+                        <div class="slds-grid slds-wrap slds-form-element" style="background: #f5f5f9;padding-bottom: 10px;padding-top: 10px;">
+                            <div class="slds-p-around_small" style="color: #333333; font-size: 16px; position: absolute; right: 0; top: 0;">
+                                <span class="help" onclick="popup('pop')" style="float: left; line-height: 18px;">Help <i style="font-size: 18px; margin: 0 0 0 5px; float: right;" class="fa fa-question-circle" aria-hidden="true"></i></span>
+                            </div>
+                            <div class="slds-col">
+                                <script type="text/javascript">
+                                 var repVal ;
+                                 var repupdate = false;
+                                 var crumb = '{!defaultBreadCrumb}'; 
+                                 
+                                    $(document).ready(function(){                                       
+                                        var option;
+                                        $(".crumbClass").html(crumb);                                    
+                                        
+                                    });
+                                
+                                function addCrumb(obj,levelValue){
+                                     
+                                    option = $(obj).find('option:selected').text();
+                                    if(option != '--Select--' && option != 'All'){
+                                        if(crumb == ''){
+                                            crumb = option;                                                            
+                                        }else if((repVal =='Rep' || repVal == 'Filter By Representative') && !repupdate ){
+                                            if(crumb.lastIndexOf('a') != (crumb.length-2)){
+                                                console.log('insidelength');
+                                                crumb = crumb.slice(0, crumb.lastIndexOf('>'))
+                                            }
+                                            crumb = crumb + '&nbsp> ' +option;
+                                            repupdate = true;
+                                        }else if((repVal =='Rep' || repVal == 'Filter By Representative') && repupdate ){
+                                             
+                                            crumb = crumb.slice(0, crumb.lastIndexOf('>')) +'> ' + option;
+                                            
+                                        }else { 
+                                            crumb = crumb + '&nbsp>&nbsp '+`   <a onclick="breadCrumClick1('${option}','${levelValue}')">`+ option+ '</a>' ;
+                                            
+                                        }
+                                        }else if(option == 'All'){
+                                        crumb = crumb.slice(0, crumb.lastIndexOf('>'));
+                                    }
+                                    $(".crumbClass").html(crumb);
+                                    
+                                }
+                                
+                                function repva(rv){
+                                    repVal = rv;
+                                     
+                                }
+                                
+                                function breadCrumClick1(v,l){
+                                    repupdate = false;
+                                    breadCrumClick(v,l);
+                                    crumb = crumb.slice(0, crumb.lastIndexOf(v+'</a>'))+v+'</a>';
+                                    $(".crumbClass").html(crumb);
+                                 
+                               }
+                                                                                               
+                            </script>
+                                <apex:outputPanel id="crumbText">
+                                    <script type="text/javascript">
+                                        function reloadCrumb(){
+                                            crumb = '{!defaultBreadCrumb}';
+                                            $(".crumbClass").html(crumb);
+                                            repupdate = false;
+                                        }
+                                    </script>
+                                    <apex:outputText rendered="{!NOT(ISNULL(fw.SelectedLevelOne))}" styleClass="crumbClass slds-p-around_small slds-grid" style="color: #333333; font-size: 18px; font-weight: 300;padding-top: 0;padding-bottom: 10px;">                                
+                                    </apex:outputText>
+                                </apex:outputPanel>
+                                <apex:actionStatus id="filterStatus">                                
+                                    <apex:facet name="stop">
+                                        <apex:outputPanel id="filterp">
+                                            <div class="slds-grid slds-wrap">                                
+                                                <div class="slds-large-size_8-of-8 slds-small-size_1-of-1">
+                                                    
+                                                    <div class="slds-grid"> 
+                                                        <apex:outputPanel id="levels" styleclass="slds-col slds-size_1-of-3"> 
+                                                            <label class="slds-form-element__label slds-text-heading_medium slds-p-left_small" style="font-size: 21px; font-weight: bold; color: #7e8793;" for="select-01">{!fw.labelOne}</label>                              
+                                                            <div class="slds-form-element__control slds-p-around_small" style="margin: -10px 0 0 0;">
+                                                                <div style="position: relative;">
+                                                                    <!--  <apex:actionRegion > -->
+                                                                        <apex:selectList size="1" disabled="{!IF(NOT(fw.isRep),false,true)}" value="{!fw.SelectedLevelOne}" styleClass="slds-select slds-text-heading_medium slds-p-around_x-small" id="select-01" style="color: #7e8793; font-size: 21px; border-radius: 0; height: auto; padding: 6px 30px 6px 8px;">
+                                                                            <apex:actionSupport status="filterStatus" event="onchange" onComplete="reloadCrumb();validateSave();" action="{!levelOneAction}" rerender="repList,levelList,roleList,crumbText"/>
+                                                                            <apex:selectoptions value="{!fw.levelOne}"> 
+                                                                            </apex:selectoptions>                                                
+                                                                        </apex:selectList> 
+                                                                    <!--  </apex:actionRegion > -->
+                                                                    
+                                                                </div>
+                                                            </div>
+                                                            <apex:outputText style="color:red; display:none;margin: 0px 0px 0px 75px; font-size: 15px;" value="Please select a value" id="validlevel"></apex:outputText>
+                                                        </apex:outputPanel> 
+                                                        <apex:outputPanel id="levelList" styleclass="slds-col slds-size_1-of-3">
+                                                            <label class="slds-form-element__label slds-text-heading_medium slds-p-left_small" style="font-size: 21px; font-weight: bold; color: #7e8793;" for="select-02">{!fw.labelTwo}{!IF(fw.labelTwo =='Rep','  Name','')}</label><apex:outputPanel id="repol"><apex:image url="{!URLFOR($Resource.Overlay,'Overlay/overlay.png')}" style="margin: -10px 0 0 0;" rendered="{!IF(AND(RepOverlay,!RoleOverlay) ,true,false)}" id="repover"/> </apex:outputPanel> 
+                                                            <div class="slds-form-element__control slds-p-around_small" style="margin: -10px 0 0 0;">
+                                                                <div style="position: relative;">
+                                                                    <apex:actionRegion >
+                                                                        <apex:selectList disabled="{!IF(AND(NOT(ISNULL(fw.SelectedLevelOne)),NOT(fw.SelectedLevelOne='--Select--'),NOT(ISBLANK(fw.SelectedLevelOne)),NOT(fw.disableLevelTwo),NOT(fw.isRep)),false,true)}" size="1" value="{!fw.SelectedLevelTwo}" styleClass="slds-select slds-text-heading_medium slds-p-around_x-small" id="select-02" style="color: #7e8793; font-size: 21px; border-radius: 0; height: auto; padding: 6px 30px 6px 8px;">
+                                                                            <apex:actionSupport status="filterStatus" event="onchange" onComplete="reloadCrumb();validateSave();" action="{!levelTwoAction}" onbeforedomupdate="repva('{!fw.labelTwo}')" rerender="repList,roleList,levels,levelList,crumbText,repover" />
+                                                                            <apex:selectoptions value="{!fw.levelTwo}"> 
+                                                                            </apex:selectoptions>                                                        
+                                                                        </apex:selectList> 
+                                                                    </apex:actionRegion>
+                                                                    
+                                                                </div>
+                                                            </div>
+                                                            <apex:outputText style="color:red; display:none;margin: 0px 0px 0px 75px; font-size: 15px;" value="Please select a value" id="validname"></apex:outputText>
+                                                        </apex:outputPanel>
+                                                        
+                                                        <apex:outputPanel id="roleList" styleclass="slds-col slds-size_1-of-3">
+                                                            <label class="slds-form-element__label slds-text-heading_medium slds-p-left_small" style="font-size: 21px; font-weight: bold; color: #7e8793;" for="select-03">{!fw.labelThree}</label><apex:outputPanel id="roleOl"><apex:image url="{!URLFOR($Resource.Overlay,'Overlay/overlay.png')}" style="margin: -10px 0 0 0;" rendered="{!IF(RoleOverlay ,true,false)}"/></apex:outputPanel> 
+                                                            
+                                                            <div class="slds-form-element__control slds-p-around_small" style="margin: -10px 0 0 0;">
+                                                                <div style="position: relative;">
+                                                                <apex:actionRegion >
+                                                                    <apex:selectList disabled="{!IF(AND(NOT(ISNULL(fw.SelectedLevelOne)),NOT(ISNULL(fw.SelectedLevelTwo)),NOT(ISBLANK(fw.SelectedLevelOne)),NOT(ISBLANK(fw.SelectedLevelTwo)),NOT(fw.disableLevelThree),NOT(fw.isRep)),false,true)}" size="1" value="{!fw.SelectedLevelThree}" styleClass="slds-select slds-text-heading_medium slds-p-around_x-small" id="select-03" style="color: #7e8793; font-size: 21px; border-radius: 0; height: auto; padding: 6px 30px 6px 8px;">
+                                                                        <apex:actionSupport status="filterStatus" event="onchange" rerender="repList" oncomplete="validateSave();"/>
+                                                                        <apex:selectoptions value="{!fw.levelThree}"> 
+                                                                        </apex:selectoptions>                                                        
+                                                                    </apex:selectList>
+                                                                </apex:actionRegion>   
+                                                                                                                         
+                                                                </div>
+                                                            </div>
+                                                            <apex:outputText style="color:red; display:none;margin: 0px 0px 0px 75px; font-size: 15px;" value="Please select a value" id="validmgr"></apex:outputText>
+                                                        </apex:outputPanel>                                                                                                                                              
+                                                    </div>
+                                                </div>
+                                                
+                                                 <div class="slds-large-size_8-of-8 slds-small-size_1-of-1">
+                                                    <div class="slds-grid"> 
+                                                        <apex:outputPanel id="repList" styleclass="slds-col slds-size_1-of-3">
+                                                            <label class="slds-form-element__label slds-text-heading_medium slds-p-left_small" style="font-size: 21px; font-weight: bold; color: #7e8793;" for="select-04">{!fw.labelFour}</label>
+                                                            <div class="slds-form-element__control slds-p-around_small" style="margin: -10px 0 0 0;">
+                                                                <div style="position: relative;">
+                                                                    <apex:actionRegion >
+                                                                        <apex:selectList disabled="{!IF(AND(NOT(ISNULL(fw.SelectedLevelOne)),NOT(fw.SelectedLevelOne='--Select--'),NOT(ISBLANK(fw.SelectedLevelOne)),NOT(fw.isRep)),false,true)}" size="1" value="{!fw.SelectedLevelFour}" styleClass="slds-select slds-text-heading_medium slds-p-around_x-small" id="select-04" style="color: #7e8793; font-size: 21px; border-radius: 0; height: auto; padding: 6px 30px 6px 8px;">
+                                                                            <apex:actionSupport status="filterStatus" event="onchange" onComplete="addCrumb(this,'{!fw.labelOne}');validateSave();"  onbeforedomupdate="repva('{!fw.labelFour}')" rerender="repList,roleList,levels,levelList,crumbText" />
+                                                                            <apex:selectoptions value="{!fw.levelFour}"> 
+                                                                            </apex:selectoptions>                                                        
+                                                                        </apex:selectList> 
+                                                                    </apex:actionRegion>
+                                                                </div>
+                                                            </div>
+                                                            <apex:outputText style="color:red; display:none;margin: 0px 0px 0px 75px; font-size: 15px;" value="Please select a value" id="validrep"></apex:outputText>
+
+                                                        </apex:outputPanel>
+                                                    </div>
+
+                                                </div>
+                                                
+                                                <apex:actionFunction name="show" action="{!showUpdated}" rerender="chartlabel,pg,mgrDetails,profDetails,performanceTable,gr,roleOl,repol" oncomplete="showChart();"/>     
+                                                 
+                                                                                               
+                                            </div>
+                                        </apex:outputPanel>
+                                    </apex:facet>
+                                                                                                    
+                                    <apex:facet name="start">
+                                        <apex:outputPanel >
+                                            <div class="slds-grid slds-wrap">                                
+                                                <div class="slds-large-size_8-of-8 slds-small-size_1-of-1">
+                                                    <div class="slds-grid">                                                 
+                                                        <apex:outputPanel styleclass="slds-col slds-size_1-of-3"> 
+                                                            <label class="slds-form-element__label slds-text-heading_medium slds-p-left_small" style="font-size: 21px; font-weight: bold; color: #7e8793;" for="select-01">Select Level</label>                              
+                                                            <div class="slds-form-element__control slds-p-around_small" style="margin: -10px 0 0 0;">
+                                                                <div style="position: relative;">
+                                                                    <apex:selectList size="1" disabled="true" styleClass="slds-select slds-text-heading_medium slds-p-around_x-small" style="color: #7e8793; font-size: 21px; border-radius: 0; height: auto; padding: 6px 30px 6px 8px;">
+                                                                        <apex:selectoption itemValue="Level" itemLabel="Level"> 
+                                                                        </apex:selectoption>                                               
+                                                                    </apex:selectList>  
+                                                                                                                                           
+                                                                </div>
+                                                            </div>
+                                                        </apex:outputPanel> 
+                                                        <apex:outputPanel styleclass="slds-col slds-size_1-of-3"> 
+                                                            <label class="slds-form-element__label slds-text-heading_medium slds-p-left_small" style="font-size: 21px; font-weight: bold; color: #7e8793;" for="select-01">Select Level</label>                              
+                                                            <div class="slds-form-element__control slds-p-around_small" style="margin: -10px 0 0 0;">
+                                                                <div style="position: relative;">
+                                                                    <apex:selectList size="1" disabled="true" styleClass="slds-select slds-text-heading_medium slds-p-around_x-small" style="color: #7e8793; font-size: 21px; border-radius: 0; height: auto; padding: 6px 30px 6px 8px;">
+                                                                        <apex:selectoption itemValue="Level" itemLabel="Level"> 
+                                                                        </apex:selectoption>                                               
+                                                                    </apex:selectList> 
+                                                                                                                                            
+                                                                </div>
+                                                            </div>
+                                                        </apex:outputPanel>
+                                                        
+                                                        <apex:outputPanel styleclass="slds-col slds-size_1-of-3"> 
+                                                            <label class="slds-form-element__label slds-text-heading_medium slds-p-left_small" style="font-size: 21px; font-weight: bold; color: #7e8793;" for="select-01">Select Role</label>                              
+                                                            <div class="slds-form-element__control slds-p-around_small" style="margin: -10px 0 0 0;">
+                                                                <div style="position: relative;">
+                                                                    <apex:selectList size="1" disabled="true" styleClass="slds-select slds-text-heading_medium slds-p-around_x-small" style="color: #7e8793; font-size: 21px; border-radius: 0; height: auto; padding: 6px 30px 6px 8px;">
+                                                                        <apex:selectoption itemValue="Role" itemLabel="Role"> 
+                                                                        </apex:selectoption>                                               
+                                                                    </apex:selectList>       
+                                                                                                                                      
+                                                                </div>
+                                                            </div>
+                                                        </apex:outputPanel>                                                                                                                                                                                                                                             
+                                                    </div>
+                                                </div>
+                                                <div class="slds-large-size_8-of-8 slds-small-size_1-of-1">
+                                                    <div class="slds-grid">
+                                                        <apex:outputPanel styleclass="slds-col slds-size_1-of-3"> 
+                                                            <label class="slds-form-element__label slds-text-heading_medium slds-p-left_small" style="font-size: 21px; font-weight: bold; color: #7e8793;" for="select-04">Select Level</label>                              
+                                                            <div class="slds-form-element__control slds-p-around_small" style="margin: -10px 0 0 0;">
+                                                                <div style="position: relative;">
+                                                                    <apex:selectList size="1" disabled="true" styleClass="slds-select slds-text-heading_medium slds-p-around_x-small" style="color: #7e8793; font-size: 21px; border-radius: 0; height: auto; padding: 6px 30px 6px 8px;">
+                                                                        <apex:selectoption itemValue="Level" itemLabel="Level"> 
+                                                                        </apex:selectoption>                                               
+                                                                    </apex:selectList> 
+                                                                </div>
+                                                            </div>
+                                                        </apex:outputPanel>
+                                                    </div>
+                                                </div>
+                                                
+                                                 
+                                                                                                                                              
+                                            </div>
+                                        </apex:outputPanel>
+                                    </apex:facet>                                                                                                
+                                    
+                                </apex:actionStatus>                                
+                            </div>
+                        </div>
+                    </apex:outputPanel>    
+                    
+                    
+                    <apex:outputPanel id="profDetails">
+                        <apex:outputPanel rendered="{!!isMgr}">
+                            <div class="slds-grid slds-wrap slds-p-around_small" style="background: #00b2ee; color: #fff;">
+                                    <div class="slds-large-size_8-of-8 slds-small-size--1-of-1">
+                                        <div class="slds-grid" style="display: table; width: 100%;">
+                                            <div style="display: inline-block; float: left;">
+                                                <div class="slds-text-heading_large slds-p-around_medium" style="font-size: 32px; padding-left: 0">Sales Management Dashboard</div> 
+                                            </div>
+                                             
+                                            <div class="slds-border_left" style="border-width: 5px; border-color: #fff; display: inline-block; float: left;">
+                                                <div class="slds-text-heading_large slds-p-around_medium" style="font-size: 32px;">{!displayWrapper.Name}</div>
+                                            </div>
+                                            <!--div style="background: #1a88c0; border-radius: 70px; float: right; display: table;">
+                                                <div class="slds-text-heading_medium" style="color: #fff; font-size: 20px; float: none; text-align: left; padding: 0 20px; display: table-cell; vertical-align: middle;">Funnelocity Quantitative Score</div>
+                                                <div style="width: 78px; height: 78px; float: none; min-width: 78px; display: table-cell;">
+                                                    <div class="slds-text-heading_large" style="font-size: 28px; color: #ff9900; padding: 20px 10px; background: #fff; border: 2px solid #fff; border-radius: 70px; text-align: center; font-weight: bold;">{!displayWrapper.score}</div>
+                                                </div>
+                                            </div-->
+                                        </div>
+                                    </div>
+                                </div>                                                                                   
+                        </apex:outputPanel>
+                    </apex:outputPanel> 
+                    
+                    <apex:outputPanel id="mgrDetails" >
+                        <apex:outputPanel rendered="{!isMgr}">
+                            <div class="slds-grid slds-wrap slds-p-left_x-large slds-p-right_x-large slds-p-top_medium slds-p-bottom_medium" style="background: #00b2ee; color: #fff;">
+                                    <div class="slds-large-size_8-of-8 slds-small-size--1-of-1">
+                                        <div class="slds-grid" style="display: table; width: 100%;">
+                                            <div style="display: inline-block; float: left;">
+                                                <div class="slds-text-heading_large slds-p-around_medium" style="font-size: 32px; padding-left: 0">Sales Management Dashboard</div> 
+                                            </div>
+                                            <div class="slds-border_left" style="border-width: 5px; border-color: #fff; display: inline-block; float: left;">
+                                                <div class="slds-text-heading_large slds-p-around_medium" style="font-size: 32px;">{!fw.SelectedLevelOne}</div>
+                                            </div>
+                                            <div class="slds-border_left" style="border-width: 5px; border-color: #fff; display: inline-block; float: left;">
+                                                <div class="slds-text-heading_large slds-p-around_medium" style="font-size: 32px;">{!displayWrapper.Name}</div>
+                                            </div>
+                                            <!--div style="background: #1a88c0; border-radius: 70px; float: right; display: table;">
+                                                <div class="slds-text-heading_medium" style="color: #fff; font-size: 20px; float: none; text-align: left; padding: 0 20px; display: table-cell; vertical-align: middle;">Funnelocity Quantitative Score</div>
+                                                <div style="width: 78px; height: 78px; float: none; min-width: 78px; display: table-cell;">
+                                                    <div class="slds-text-heading_large" style="font-size: 28px; color: #ff9900; padding: 20px 10px; background: #fff; border: 2px solid #fff; border-radius: 70px; text-align: center; font-weight: bold;">{!displayWrapper.score}</div>
+                                                </div>
+                                            </div-->
+                                        </div>
+                                    </div>
+                                </div>                                                      
+                        </apex:outputPanel>
+                    </apex:outputPanel>
+                    
+                    <div class="slds-grid slds-wrap" style="background: #f5f5f9;">
+                        
+                        <div class="slds-size_8-of-8">
+                            <div class="slds-grid slds-wrap">
+                                <div class="slds-col slds-p-around_medium slds-large-size_1-of-3 slds-small-size_1-of-1">
+                                    <div class="slds-text-align_left slds-p-around_medium" style="background: #7e8793;">
+                                        <div class="slds-text-body_regular" style="color:#ffffff; font-size: 21px; line-height:22px;">YTD Quota Performance</div>
+                                    </div>
+                                    <div style="background: #fff;">
+                                        <div class="slds-grid slds-p-around_medium slds-border_bottom">
+                                            <div id="QuotaContainer" class="slds-col slds-text-body_regular slds-size_8-of-8" style="color:#7e8793; font-size:18px; line-height: 20px;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="slds-col slds-p-around_medium slds-large-size_1-of-3 slds-small-size_1-of-1">
+                                    <div class="slds-text-align_left slds-p-around_medium" style="background: #7e8793;">
+                                        <div class="slds-text-body_regular" style="color:#ffffff; font-size: 21px; line-height:22px;">YTD Close Rate</div>
+                                    </div>
+                                    <div style="background: #fff;">
+                                        <div class="slds-grid slds-p-around_medium slds-border_bottom">
+                                            <div id="CloserateContainer" class="slds-col slds-text-body_regular slds-size_8-of-8" style="color:#7e8793; font-size:18px; line-height: 20px;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="slds-col slds-p-around_medium slds-large-size_1-of-3 slds-small-size_1-of-1">
+                                    <div class="slds-text-align_left slds-p-around_medium" style="background: #7e8793;">
+                                        <div class="slds-text-body_regular" style="color:#ffffff; font-size: 21px; line-height:22px;">YTD Opportunity Won</div>
+                                    </div>
+                                    <div style="background: #fff;">
+                                        <div class="slds-grid slds-p-around_medium slds-border_bottom">
+                                            <div id="OpportunityContainer" class="slds-col slds-text-body_regularslds-size_8-of-8" style="color:#7e8793; font-size:18px; line-height: 20px; width: 100%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <apex:outputPanel id="gr" style="width:100%">
+                        <div class="slds-size_8-of-8" style="display:{!If(AND(isMgr ,fw.SelectedLevelFour = 'All'),'','none')}">
+                            <div class="slds-grid slds-wrap">
+                                <div class="slds-col slds-p-around_medium slds-large-size_1-of-3 slds-small-size_1-of-1">
+                                    <div class="slds-text-align_left slds-p-around_medium" style="background: #7e8793;">
+                                        <div class="slds-text-body_regular" style="color:#ffffff; font-size: 21px; line-height:22px;">YTD Quota Performance</div>
+                                    </div>
+                                    <div style="background: #fff;">
+                                        <div class="slds-grid slds-p-around_medium slds-border_bottom">
+                                            <div id="QuotaContainerbelow" class="slds-col slds-text-body_regular slds-size_8-of-8" style="color:#7e8793; font-size:18px; line-height: 20px;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="slds-col slds-p-around_medium slds-large-size_1-of-3 slds-small-size_1-of-1">
+                                    <div class="slds-text-align_left slds-p-around_medium" style="background: #7e8793;">
+                                        <div class="slds-text-body_regular" style="color:#ffffff; font-size: 21px; line-height:22px;">YTD Close Rate</div>
+                                    </div>
+                                    <div style="background: #fff;">
+                                        <div class="slds-grid slds-p-around_medium slds-border_bottom">
+                                            <div id="CloserateContainerbelow" class="slds-col slds-text-body_regular slds-size_8-of-8" style="color:#7e8793; font-size:18px; line-height: 20px;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="slds-col slds-p-around_medium slds-large-size_1-of-3 slds-small-size_1-of-1">
+                                    <div class="slds-text-align_left slds-p-around_medium" style="background: #7e8793;">
+                                        <div class="slds-text-body_regular" style="color:#ffffff; font-size: 21px; line-height:22px;">YTD Opportunity Won</div>
+                                    </div>
+                                    <div style="background: #fff;">
+                                        <div class="slds-grid slds-p-around_medium slds-border_bottom">
+                                            <div id="OpportunityContainerbelow" class="slds-col slds-text-body_regularslds-size_8-of-8" style="color:#7e8793; font-size:18px; line-height: 20px; width: 100%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        </apex:outputPanel>
+                        <!--div class="slds-size_8-of-8">
+                            <div class="slds-grid slds-wrap"-->
+                                <div class="slds-col slds-p-around_medium slds-large-size_2-of-3 slds-small-size_1-of-1" style="width:100%">
+                                    <apex:outputPanel id="performanceTable" style="width:100%">
+                                    <div class="slds-text-align_left slds-p-around_medium" style="background: #7e8793;">
+                                        <div class="slds-text-body_regular" style="color:#ffffff; font-size: 21px; line-height:22px;">12 Month Performance</div>
+                                    </div>
+                                    <div style="background: #fff;">
+                                        <div class="slds-grid slds-border_bottom">
+                                            <div class="slds-col slds-text-body_regular slds-size_8-of-8 slds-scrollable--x" style="color:#333333; font-size:18px; line-height: 20px;">
+                                                <table class="slds-table slds-table_bordered slds-table_col-bordered" style="background: none;">
+                                                    <thead>
+                                                        <tr class="" style="color: #fff; font-size: 14px;">
+                                                            <th scope="col" style="background: #ff9900; font-size: 18px; color: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="Sales Metrics">Sales Metrics</div>
+                                                            </th>
+                                                            <th class="slds-text-align_center" scope="col" style="background: #5f666f; color: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="Trend">Trend</div>
+                                                            </th>
+                                                            <th class="slds-text-align_center" scope="col" style="background: #00b2ee; color: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="Aug">{!header.m1}</div>
+                                                            </th>
+                                                            <th class="slds-text-align_center" scope="col" style="background: #00b2ee; color: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="Jul">{!header.m2}</div>
+                                                            </th>
+                                                            <th class="slds-text-align_center" scope="col" style="background: #00b2ee; color: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="Jun">{!header.m3}</div>
+                                                            </th>
+                                                            <th class="slds-text-align_center" scope="col" style="background: #00b2ee; color: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="May">{!header.m4}</div>
+                                                            </th>
+                                                            <th class="slds-text-align_center" scope="col" style="background: #00b2ee; color: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="Apr">{!header.m5}</div>
+                                                            </th>
+                                                            <th class="slds-text-align_center" scope="col" style="background: #00b2ee; color: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="Mar">{!header.m6}</div>
+                                                            </th>
+                                                            <th class="slds-text-align_center" scope="col" style="background: #00b2ee; color: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="Feb">{!header.m7}</div>
+                                                            </th>
+                                                            <th class="slds-text-align_center" scope="col" style="background: #00b2ee; color: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="Jan">{!header.m8}</div>
+                                                            </th>
+                                                            <th class="slds-text-align_center" scope="col" style="background: #00b2ee; color: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="Dec">{!header.m9}</div>
+                                                            </th>
+                                                            <th class="slds-text-align_center" scope="col" style="background: #00b2ee; color: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="Nov">{!header.m10}</div>
+                                                            </th>
+                                                            <th class="slds-text-align_center" scope="col" style="background: #00b2ee; color: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="Oct">{!header.m11}</div>
+                                                            </th>
+                                                            <th class="slds-text-align_center" scope="col" style="background: #00b2ee; color: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="Sep">{!header.m12}</div>
+                                                            </th>
+                                                            
+                                                            
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr style="font-size: 18px;">
+                                                            <td scope="row" data-label="Category Description" style="font-size: 15px; border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="Wins">Wins</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Funnel Metric (Rep) Goals" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="">
+                                                                    <span class="slds-icon_container null slds-icon__svg--default" style="">
+                                                                        <apex:outputPanel rendered="{!wins.trend = 'up'}">
+                                                                            <svg class="slds-icon slds-icon-text-default" aria-hidden="true" style="fill: #66cc33;">
+                                                                                <svg   viewBox="0 0 24 24" id="arrowup" width="100%" height="100%"><path d="M19.1 9.7c.4-.4.4-.9 0-1.3l-6.9-6.7c-.4-.4-.9-.4-1.3 0L4 8.4c-.4.4-.4.9 0 1.3l1.3 1.2c.3.4.9.4 1.3 0l2.1-2.1c.4-.4 1-.1 1 .4v12.5c0 .5.5.9 1 .9h1.8c.5 0 .9-.5.9-.9V9.2c0-.5.7-.8 1-.4l2.2 2.1c.4.4.9.4 1.3 0l1.2-1.2z"></path></svg>
+                                                                            </svg>
+                                                                        </apex:outputPanel>
+                                                                        
+                                                                        <apex:outputPanel rendered="{!wins.trend = 'down'}">
+                                                                            <svg class="slds-icon slds-icon-text-default" aria-hidden="true" style="fill: #c1272d;">
+                                                                                <svg  viewBox="0 0 24 24" id="arrowdown" width="100%" height="100%"><path d="M4.4 14.3c-.3.4-.3.9 0 1.3l7 6.7c.3.4.9.4 1.2 0l7-6.7c.4-.4.4-.9 0-1.3l-1.3-1.2c-.3-.4-.9-.4-1.3 0l-2.1 2.1c-.4.4-1.1.1-1.1-.4V2.3c0-.5-.4-.9-.9-.9h-1.8c-.5 0-.9.5-.9.9v12.5c0 .5-.7.8-1.1.4L7 13.1c-.4-.4-1-.4-1.3 0l-1.3 1.2z"></path></svg>
+                                                                            </svg>
+                                                                        </apex:outputPanel>
+                                                                        
+                                                                        <apex:outputPanel rendered="{!wins.trend = 'equal'}">
+                                                                            <svg class="slds-icon slds-icon-text-default" aria-hidden="true" style="fill: #66cc33;">
+                                                                                <svg   viewBox="0 0 24 24" id="dash" width="100%" height="100%"><path d="M23.1 12.7c0 .4-.3.7-.7.7H1.6c-.4 0-.7-.3-.7-.7v-1.4c0-.4.3-.7.7-.7h20.8c.4 0 .7.3.7.7v1.4z"></path></svg>
+                                                                            </svg>
+                                                                        </apex:outputPanel>
+                                                                    </span>
+                                                                </div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="(Rep) Result" style="background: #fff; border: 1px solid #d8dde6;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="3">{!wins.m1}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Team Comparable Results" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="2">{!wins.m2}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year Results" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="4">{!wins.m3}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Goal vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="2">{!wins.m4}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Comparable Result vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="2">{!wins.m5}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="3">{!wins.m6}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="1">{!wins.m7}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="2">{!wins.m8}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="2">{!wins.m9}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="2">{!wins.m10}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="1">{!wins.m11}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="1">{!wins.m12}</div>
+                                                            </td>
+                                                        </tr>
+                                                        <tr style="font-size: 18px;">
+                                                            <td scope="row" data-label="Category Description" style="font-size: 15px; border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="Lost/Delayed">Lost/Delayed</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Funnel Metric (Rep) Goals" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="">
+                                                                    <span class="slds-icon_container null slds-icon__svg--default" style="">
+                                                                        <apex:outputPanel rendered="{!lost.trend = 'up'}">
+                                                                            <svg class="slds-icon slds-icon-text-default" aria-hidden="true" style="fill: #66cc33;">
+                                                                                <svg   viewBox="0 0 24 24" id="arrowup" width="100%" height="100%"><path d="M19.1 9.7c.4-.4.4-.9 0-1.3l-6.9-6.7c-.4-.4-.9-.4-1.3 0L4 8.4c-.4.4-.4.9 0 1.3l1.3 1.2c.3.4.9.4 1.3 0l2.1-2.1c.4-.4 1-.1 1 .4v12.5c0 .5.5.9 1 .9h1.8c.5 0 .9-.5.9-.9V9.2c0-.5.7-.8 1-.4l2.2 2.1c.4.4.9.4 1.3 0l1.2-1.2z"></path></svg>
+                                                                            </svg>
+                                                                        </apex:outputPanel>
+                                                                        
+                                                                        <apex:outputPanel rendered="{!lost.trend = 'down'}">
+                                                                            <svg class="slds-icon slds-icon-text-default" aria-hidden="true" style="fill: #c1272d;">
+                                                                                <svg   viewBox="0 0 24 24" id="arrowdown" width="100%" height="100%"><path d="M4.4 14.3c-.3.4-.3.9 0 1.3l7 6.7c.3.4.9.4 1.2 0l7-6.7c.4-.4.4-.9 0-1.3l-1.3-1.2c-.3-.4-.9-.4-1.3 0l-2.1 2.1c-.4.4-1.1.1-1.1-.4V2.3c0-.5-.4-.9-.9-.9h-1.8c-.5 0-.9.5-.9.9v12.5c0 .5-.7.8-1.1.4L7 13.1c-.4-.4-1-.4-1.3 0l-1.3 1.2z"></path></svg>
+                                                                            </svg>
+                                                                        </apex:outputPanel>
+                                                                        
+                                                                        <apex:outputPanel rendered="{!lost.trend = 'equal'}">
+                                                                            <svg class="slds-icon slds-icon-text-default" aria-hidden="true" style="fill: #66cc33;">
+                                                                                <svg   viewBox="0 0 24 24" id="dash" width="100%" height="100%"><path d="M23.1 12.7c0 .4-.3.7-.7.7H1.6c-.4 0-.7-.3-.7-.7v-1.4c0-.4.3-.7.7-.7h20.8c.4 0 .7.3.7.7v1.4z"></path></svg>
+                                                                            </svg>
+                                                                        </apex:outputPanel>
+                                                                    </span>
+                                                                </div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="(Rep) Result" style="background: #fff; border: 1px solid #d8dde6;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="3">{!lost.m1}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Team Comparable Results" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="2">{!lost.m2}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year Results" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="4">{!lost.m3}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Goal vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="2">{!lost.m4}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Comparable Result vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="2">{!lost.m5}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="3">{!lost.m6}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="1">{!lost.m7}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="2">{!lost.m8}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="2">{!lost.m9}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="2">{!lost.m10}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="1">{!lost.m11}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="1">{!lost.m12}</div>
+                                                            </td>
+                                                        </tr>
+                                                        <tr style="font-size: 18px;">
+                                                            <td scope="row" data-label="Category Description" style="font-size: 15px; border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="New Leads">New Leads</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Funnel Metric (Rep) Goals" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="">
+                                                                    <span class="slds-icon_container null slds-icon__svg--default" style="">
+                                                                        <apex:outputPanel rendered="{!leads.trend = 'up'}">
+                                                                            <svg class="slds-icon slds-icon-text-default" aria-hidden="true" style="fill: #66cc33;">
+                                                                                <svg   viewBox="0 0 24 24" id="arrowup" width="100%" height="100%"><path d="M19.1 9.7c.4-.4.4-.9 0-1.3l-6.9-6.7c-.4-.4-.9-.4-1.3 0L4 8.4c-.4.4-.4.9 0 1.3l1.3 1.2c.3.4.9.4 1.3 0l2.1-2.1c.4-.4 1-.1 1 .4v12.5c0 .5.5.9 1 .9h1.8c.5 0 .9-.5.9-.9V9.2c0-.5.7-.8 1-.4l2.2 2.1c.4.4.9.4 1.3 0l1.2-1.2z"></path></svg>
+                                                                            </svg>
+                                                                        </apex:outputPanel>
+                                                                        
+                                                                        <apex:outputPanel rendered="{!leads.trend = 'down'}">
+                                                                            <svg class="slds-icon slds-icon-text-default" aria-hidden="true" style="fill: #c1272d;">
+                                                                                <svg   viewBox="0 0 24 24" id="arrowdown" width="100%" height="100%"><path d="M4.4 14.3c-.3.4-.3.9 0 1.3l7 6.7c.3.4.9.4 1.2 0l7-6.7c.4-.4.4-.9 0-1.3l-1.3-1.2c-.3-.4-.9-.4-1.3 0l-2.1 2.1c-.4.4-1.1.1-1.1-.4V2.3c0-.5-.4-.9-.9-.9h-1.8c-.5 0-.9.5-.9.9v12.5c0 .5-.7.8-1.1.4L7 13.1c-.4-.4-1-.4-1.3 0l-1.3 1.2z"></path></svg>
+                                                                            </svg>
+                                                                        </apex:outputPanel>
+                                                                        
+                                                                        <apex:outputPanel rendered="{!leads.trend = 'equal'}">
+                                                                            <svg class="slds-icon slds-icon-text-default" aria-hidden="true" style="fill: #66cc33;">
+                                                                                <svg   viewBox="0 0 24 24" id="dash" width="100%" height="100%"><path d="M23.1 12.7c0 .4-.3.7-.7.7H1.6c-.4 0-.7-.3-.7-.7v-1.4c0-.4.3-.7.7-.7h20.8c.4 0 .7.3.7.7v1.4z"></path></svg>
+                                                                            </svg>
+                                                                        </apex:outputPanel>
+                                                                    </span>
+                                                                </div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="(Rep) Result" style="background: #fff; border: 1px solid #d8dde6;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="3">{!leads.m1}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Team Comparable Results" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="2">{!leads.m2}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year Results" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="4">{!leads.m3}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Goal vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="2">{!leads.m4}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Comparable Result vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="2">{!leads.m5}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="3">{!leads.m6}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="1">{!leads.m7}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="2">{!leads.m8}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="2">{!leads.m9}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="2">{!leads.m10}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="1">{!leads.m11}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="1">{!leads.m12}</div>
+                                                            </td>
+                                                        </tr>
+                                                        <tr style="font-size: 18px;">
+                                                            <td scope="row" data-label="Category Description" style="font-size: 15px; border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="Monthly Opportunities added to Qualified Funnel">Monthly Opportunities <br/>added to Qualified Funnel</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Funnel Metric (Rep) Goals" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="">
+                                                                    <span class="slds-icon_container null slds-icon__svg--default" style="">
+                                                                        <apex:outputPanel rendered="{!monthlyOppsAdded.trend = 'up'}">
+                                                                            <svg class="slds-icon slds-icon-text-default" aria-hidden="true" style="fill: #66cc33;">
+                                                                                <svg   viewBox="0 0 24 24" id="arrowup" width="100%" height="100%"><path d="M19.1 9.7c.4-.4.4-.9 0-1.3l-6.9-6.7c-.4-.4-.9-.4-1.3 0L4 8.4c-.4.4-.4.9 0 1.3l1.3 1.2c.3.4.9.4 1.3 0l2.1-2.1c.4-.4 1-.1 1 .4v12.5c0 .5.5.9 1 .9h1.8c.5 0 .9-.5.9-.9V9.2c0-.5.7-.8 1-.4l2.2 2.1c.4.4.9.4 1.3 0l1.2-1.2z"></path></svg>
+                                                                            </svg>
+                                                                        </apex:outputPanel>
+                                                                        
+                                                                        <apex:outputPanel rendered="{!monthlyOppsAdded.trend = 'down'}">
+                                                                            <svg class="slds-icon slds-icon-text-default" aria-hidden="true" style="fill: #c1272d;">
+                                                                                <svg   viewBox="0 0 24 24" id="arrowdown" width="100%" height="100%"><path d="M4.4 14.3c-.3.4-.3.9 0 1.3l7 6.7c.3.4.9.4 1.2 0l7-6.7c.4-.4.4-.9 0-1.3l-1.3-1.2c-.3-.4-.9-.4-1.3 0l-2.1 2.1c-.4.4-1.1.1-1.1-.4V2.3c0-.5-.4-.9-.9-.9h-1.8c-.5 0-.9.5-.9.9v12.5c0 .5-.7.8-1.1.4L7 13.1c-.4-.4-1-.4-1.3 0l-1.3 1.2z"></path></svg>
+                                                                            </svg>
+                                                                        </apex:outputPanel>
+                                                                        
+                                                                        <apex:outputPanel rendered="{!monthlyOppsAdded.trend = 'equal'}">
+                                                                            <svg class="slds-icon slds-icon-text-default" aria-hidden="true" style="fill: #66cc33;">
+                                                                                <svg   viewBox="0 0 24 24" id="dash" width="100%" height="100%"><path d="M23.1 12.7c0 .4-.3.7-.7.7H1.6c-.4 0-.7-.3-.7-.7v-1.4c0-.4.3-.7.7-.7h20.8c.4 0 .7.3.7.7v1.4z"></path></svg>
+                                                                            </svg>
+                                                                        </apex:outputPanel>
+                                                                    </span>
+                                                                </div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="(Rep) Result" style="background: #fff; border: 1px solid #d8dde6;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="3">{!monthlyOppsAdded.m1}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Team Comparable Results" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="2">{!monthlyOppsAdded.m2}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year Results" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="4">{!monthlyOppsAdded.m3}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Goal vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="2">{!monthlyOppsAdded.m4}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Comparable Result vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="2">{!monthlyOppsAdded.m5}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="3">{!monthlyOppsAdded.m6}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="1">{!monthlyOppsAdded.m7}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="2">{!monthlyOppsAdded.m8}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="2">{!monthlyOppsAdded.m9}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="2">{!monthlyOppsAdded.m10}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="1">{!monthlyOppsAdded.m11}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="1">{!monthlyOppsAdded.m12}</div>
+                                                            </td>
+                                                        </tr>
+                                                        <tr style="font-size: 18px;">
+                                                            <td scope="row" data-label="Category Description" style="font-size: 15px; border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="Rolling 12 Month Opportunities added to Qualified Funnel">Rolling 12 Month Opportunities <br/>added to Qualified Funnel</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Funnel Metric (Rep) Goals" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="">
+                                                                    <span class="slds-icon_container null slds-icon__svg--default" style="">
+                                                                        <apex:outputPanel rendered="{!rollingOppsAdded.trend = 'up'}">
+                                                                            <svg class="slds-icon slds-icon-text-default" aria-hidden="true" style="fill: #66cc33;">
+                                                                                <svg   viewBox="0 0 24 24" id="arrowup" width="100%" height="100%"><path d="M19.1 9.7c.4-.4.4-.9 0-1.3l-6.9-6.7c-.4-.4-.9-.4-1.3 0L4 8.4c-.4.4-.4.9 0 1.3l1.3 1.2c.3.4.9.4 1.3 0l2.1-2.1c.4-.4 1-.1 1 .4v12.5c0 .5.5.9 1 .9h1.8c.5 0 .9-.5.9-.9V9.2c0-.5.7-.8 1-.4l2.2 2.1c.4.4.9.4 1.3 0l1.2-1.2z"></path></svg>
+                                                                            </svg>
+                                                                        </apex:outputPanel>
+                                                                        
+                                                                        <apex:outputPanel rendered="{!rollingOppsAdded.trend = 'down'}">
+                                                                            <svg class="slds-icon slds-icon-text-default" aria-hidden="true" style="fill: #c1272d;">
+                                                                                <svg   viewBox="0 0 24 24" id="arrowdown" width="100%" height="100%"><path d="M4.4 14.3c-.3.4-.3.9 0 1.3l7 6.7c.3.4.9.4 1.2 0l7-6.7c.4-.4.4-.9 0-1.3l-1.3-1.2c-.3-.4-.9-.4-1.3 0l-2.1 2.1c-.4.4-1.1.1-1.1-.4V2.3c0-.5-.4-.9-.9-.9h-1.8c-.5 0-.9.5-.9.9v12.5c0 .5-.7.8-1.1.4L7 13.1c-.4-.4-1-.4-1.3 0l-1.3 1.2z"></path></svg>
+                                                                            </svg>
+                                                                        </apex:outputPanel>
+                                                                        
+                                                                        <apex:outputPanel rendered="{!rollingOppsAdded.trend = 'equal'}">
+                                                                            <svg class="slds-icon slds-icon-text-default" aria-hidden="true" style="fill: #66cc33;">
+                                                                                <svg   viewBox="0 0 24 24" id="dash" width="100%" height="100%"><path d="M23.1 12.7c0 .4-.3.7-.7.7H1.6c-.4 0-.7-.3-.7-.7v-1.4c0-.4.3-.7.7-.7h20.8c.4 0 .7.3.7.7v1.4z"></path></svg>
+                                                                            </svg>
+                                                                        </apex:outputPanel>
+                                                                    </span>
+                                                                </div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="(Rep) Result" style="background: #fff; border: 1px solid #d8dde6;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="3">{!rollingOppsAdded.m1}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Team Comparable Results" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="2">{!rollingOppsAdded.m2}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year Results" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="4">{!rollingOppsAdded.m3}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Goal vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="2">{!rollingOppsAdded.m4}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Comparable Result vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="2">{!rollingOppsAdded.m5}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="3">{!rollingOppsAdded.m6}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="1">{!rollingOppsAdded.m7}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="2">{!rollingOppsAdded.m8}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="2">{!rollingOppsAdded.m9}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="2">{!rollingOppsAdded.m10}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="1">{!rollingOppsAdded.m11}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="1">{!rollingOppsAdded.m12}</div>
+                                                            </td>
+                                                        </tr>
+                                                                                                                
+                                                        <tr style="font-size: 18px;">
+                                                            <td scope="row" data-label="Category Description" style="font-size: 15px; border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="12 Month Rolling Average Sales Cycle">12 Month Rolling <br/>Average Sales Cycle</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Funnel Metric (Rep) Goals" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="">
+                                                                    <span class="slds-icon_container null slds-icon__svg--default" style="">
+                                                                        <apex:outputPanel rendered="{!rollingSalesCycle.trend = 'up'}">
+                                                                            <svg class="slds-icon slds-icon-text-default" aria-hidden="true" style="fill: #66cc33;">
+                                                                                <svg  viewBox="0 0 24 24" id="arrowup" width="100%" height="100%"><path d="M19.1 9.7c.4-.4.4-.9 0-1.3l-6.9-6.7c-.4-.4-.9-.4-1.3 0L4 8.4c-.4.4-.4.9 0 1.3l1.3 1.2c.3.4.9.4 1.3 0l2.1-2.1c.4-.4 1-.1 1 .4v12.5c0 .5.5.9 1 .9h1.8c.5 0 .9-.5.9-.9V9.2c0-.5.7-.8 1-.4l2.2 2.1c.4.4.9.4 1.3 0l1.2-1.2z"></path></svg>
+                                                                            </svg>
+                                                                        </apex:outputPanel>
+                                                                        
+                                                                        <apex:outputPanel rendered="{!rollingSalesCycle.trend = 'down'}">
+                                                                            <svg class="slds-icon slds-icon-text-default" aria-hidden="true" style="fill: #c1272d;">
+                                                                                <svg  viewBox="0 0 24 24" id="arrowdown" width="100%" height="100%"><path d="M4.4 14.3c-.3.4-.3.9 0 1.3l7 6.7c.3.4.9.4 1.2 0l7-6.7c.4-.4.4-.9 0-1.3l-1.3-1.2c-.3-.4-.9-.4-1.3 0l-2.1 2.1c-.4.4-1.1.1-1.1-.4V2.3c0-.5-.4-.9-.9-.9h-1.8c-.5 0-.9.5-.9.9v12.5c0 .5-.7.8-1.1.4L7 13.1c-.4-.4-1-.4-1.3 0l-1.3 1.2z"></path></svg>
+                                                                            </svg>
+                                                                        </apex:outputPanel>
+                                                                        
+                                                                        <apex:outputPanel rendered="{!rollingSalesCycle.trend = 'equal'}">
+                                                                            <svg class="slds-icon slds-icon-text-default" aria-hidden="true" style="fill: #66cc33;">
+                                                                                <svg  viewBox="0 0 24 24" id="dash" width="100%" height="100%"><path d="M23.1 12.7c0 .4-.3.7-.7.7H1.6c-.4 0-.7-.3-.7-.7v-1.4c0-.4.3-.7.7-.7h20.8c.4 0 .7.3.7.7v1.4z"></path></svg>
+                                                                            </svg>
+                                                                        </apex:outputPanel>
+                                                                    </span>
+                                                                </div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="(Rep) Result" style="background: #fff; border: 1px solid #d8dde6;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="20">{!rollingSalesCycle.m1}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Team Comparable Results" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="15">{!rollingSalesCycle.m2}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year Results" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="17">{!rollingSalesCycle.m3}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Goal vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="19">{!rollingSalesCycle.m4}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Comparable Result vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="25">{!rollingSalesCycle.m5}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="20">{!rollingSalesCycle.m6}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="21">{!rollingSalesCycle.m7}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="15">{!rollingSalesCycle.m8}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="17">{!rollingSalesCycle.m9}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="32">{!rollingSalesCycle.m10}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="16">{!rollingSalesCycle.m11}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="20">{!rollingSalesCycle.m12}</div>
+                                                            </td>
+                                                        </tr>
+                                                        
+                                                        <tr style="font-size: 18px;">
+                                                            <td scope="row" data-label="Category Description" style="font-size: 15px; border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="12 Month Rolling Average $ Win Size">12 Month Rolling <br/>Average $ Win Size</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Funnel Metric (Rep) Goals" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="">
+                                                                    <span class="slds-icon_container null slds-icon__svg--default" style="">
+                                                                        <apex:outputPanel rendered="{!rollingWinSize.trend = 'up'}">
+                                                                            <svg class="slds-icon slds-icon-text-default" aria-hidden="true" style="fill: #66cc33;">
+                                                                                <svg  viewBox="0 0 24 24" id="arrowup" width="100%" height="100%"><path d="M19.1 9.7c.4-.4.4-.9 0-1.3l-6.9-6.7c-.4-.4-.9-.4-1.3 0L4 8.4c-.4.4-.4.9 0 1.3l1.3 1.2c.3.4.9.4 1.3 0l2.1-2.1c.4-.4 1-.1 1 .4v12.5c0 .5.5.9 1 .9h1.8c.5 0 .9-.5.9-.9V9.2c0-.5.7-.8 1-.4l2.2 2.1c.4.4.9.4 1.3 0l1.2-1.2z"></path></svg>
+                                                                            </svg>
+                                                                        </apex:outputPanel>
+                                                                        
+                                                                        <apex:outputPanel rendered="{!rollingWinSize.trend = 'down'}">
+                                                                            <svg class="slds-icon slds-icon-text-default" aria-hidden="true" style="fill: #c1272d;">
+                                                                                <svg  viewBox="0 0 24 24" id="arrowdown" width="100%" height="100%"><path d="M4.4 14.3c-.3.4-.3.9 0 1.3l7 6.7c.3.4.9.4 1.2 0l7-6.7c.4-.4.4-.9 0-1.3l-1.3-1.2c-.3-.4-.9-.4-1.3 0l-2.1 2.1c-.4.4-1.1.1-1.1-.4V2.3c0-.5-.4-.9-.9-.9h-1.8c-.5 0-.9.5-.9.9v12.5c0 .5-.7.8-1.1.4L7 13.1c-.4-.4-1-.4-1.3 0l-1.3 1.2z"></path></svg>
+                                                                            </svg>
+                                                                        </apex:outputPanel>
+                                                                        
+                                                                        <apex:outputPanel rendered="{!rollingWinSize.trend = 'equal'}">
+                                                                            <svg class="slds-icon slds-icon-text-default" aria-hidden="true" style="fill: #66cc33;">
+                                                                                <svg  viewBox="0 0 24 24" id="dash" width="100%" height="100%"><path d="M23.1 12.7c0 .4-.3.7-.7.7H1.6c-.4 0-.7-.3-.7-.7v-1.4c0-.4.3-.7.7-.7h20.8c.4 0 .7.3.7.7v1.4z"></path></svg>
+                                                                            </svg>
+                                                                        </apex:outputPanel>
+                                                                    </span>
+                                                                </div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="(Rep) Result" style="background: #fff; border: 1px solid #d8dde6;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="$13K">{!rollingWinSize.m1}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Team Comparable Results" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="$14K">{!rollingWinSize.m2}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year Results" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="$12K">{!rollingWinSize.m3}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Goal vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="$13K">{!rollingWinSize.m4}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Comparable Result vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="$15K">{!rollingWinSize.m5}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="$10K">{!rollingWinSize.m6}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="$16K">{!rollingWinSize.m7}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="$15K">{!rollingWinSize.m8}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="$15K">{!rollingWinSize.m9}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="$12K">{!rollingWinSize.m10}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="$16K">{!rollingWinSize.m11}</div>
+                                                            </td>
+                                                            <td class="slds-text-align_center" data-label="Prior Year vs (Rep) Result" style="border: 1px solid #d8dde6; background: #fff;">
+                                                                <div class="slds-truncate slds-p-top_medium slds-p-bottom_medium" title="$143K">{!rollingWinSize.m12}</div>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div> 
+                                        </div>
+                                    </div>
+                                    
+                                    </apex:outputPanel>
+                                    
+                                </div>
+                                <!--div class="slds-col slds-p-around_medium slds-large-size_1-of-3 slds-small-size_1-of-1">
+                                    <div class="slds-text-align_left slds-p-around_medium" style="background: #7e8793;">
+                                        <div class="slds-text-body_regular" style="color:#ffffff; font-size: 21px; line-height:22px;">Sales Management Reports</div>
+                                    </div>
+                                    <div style="background: #fff;">
+                                        <div class="slds-grid slds-p-around_small slds-border_bottom" style="background-color:#00b2ee;">
+                                            <div class="slds-col slds-size_7-of-8" style="color:#fff; font-size:18px;"> <apex:outputLink value="{!managemenetReports['Sales Management Dashboard']}" target="_blank" style="color:#fff;">Sales Management Dashboard</apex:outputLink></div>
+                                            <div class="slds-col slds-size_1-of-8" style="color:#fff; font-size:18px; text-align: right;">
+                                                <span class="slds-icon_container null slds-icon__svg--default" style="" data-tooltip="Best Practices Reports for Reviewing Sales Performance">
+                                                    <svg class="slds-icon slds-icon-text-default" aria-hidden="true" style="height: 25px;">
+                                                        <svg  viewBox="0 0 24 24" id="info" width="100%" height="100%"><path d="M12 .9C5.9.9.9 5.9.9 12s5 11.1 11.1 11.1 11.1-5 11.1-11.1S18.1.9 12 .9zm0 5.6c.8 0 1.4.6 1.4 1.4s-.6 1.4-1.4 1.4-1.4-.6-1.4-1.4.6-1.4 1.4-1.4zm2.3 9.7c0 .2-.2.4-.5.4h-3.6c-.3 0-.5-.1-.5-.4v-.9c0-.3.2-.5.5-.5.2 0 .4-.2.4-.4v-1.9c0-.2-.2-.5-.4-.5-.3 0-.5-.1-.5-.4v-.9c0-.3.2-.5.5-.5h2.7c.3 0 .5.2.5.5v3.7c0 .2.2.4.4.4.3 0 .5.2.5.5v.9z">
+                                                        
+                                                         </path>
+                                                        </svg>
+                                                       
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="slds-grid slds-p-around_small slds-border_bottom">
+                                            <div class="slds-col slds-size_7-of-8" style="color:#333333; font-size:18px;"><apex:outputLink value="{!managemenetReports['X12_Mo_SRP_Snapshots_Opptys_Added_tTS']}" target="_blank" style="color:#333333;">12 Mo SRP Snapshots Opptys Added</apex:outputLink></div>
+                                            <div class="slds-col slds-size_1-of-8" style="color:#333333; font-size:18px; text-align: right;">
+                                                <span class="slds-icon_container null slds-icon__svg--default" style="" data-tooltip="12 mo rolling Opptys added by SELECTED rep">
+                                                    <svg class="slds-icon slds-icon-text-default" aria-hidden="true" style="fill: #66cc33; height: 25px;">
+                                                        <svg   viewBox="0 0 24 24" id="info" width="100%" height="100%"><path d="M12 .9C5.9.9.9 5.9.9 12s5 11.1 11.1 11.1 11.1-5 11.1-11.1S18.1.9 12 .9zm0 5.6c.8 0 1.4.6 1.4 1.4s-.6 1.4-1.4 1.4-1.4-.6-1.4-1.4.6-1.4 1.4-1.4zm2.3 9.7c0 .2-.2.4-.5.4h-3.6c-.3 0-.5-.1-.5-.4v-.9c0-.3.2-.5.5-.5.2 0 .4-.2.4-.4v-1.9c0-.2-.2-.5-.4-.5-.3 0-.5-.1-.5-.4v-.9c0-.3.2-.5.5-.5h2.7c.3 0 .5.2.5.5v3.7c0 .2.2.4.4.4.3 0 .5.2.5.5v.9z"></path></svg>
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="slds-grid slds-p-around_small slds-border_bottom">
+                                            <div class="slds-col slds-size_7-of-8" style="color:#333333; font-size:18px;"><apex:outputLink value="{!managemenetReports['X12_Month_Funnel_Report']}" target="_blank" style="color:#333333;">12 Month  Funnel Report</apex:outputLink></div>
+                                            <div class="slds-col slds-size_1-of-8" style="color:#333333; font-size:18px; text-align: right;">
+                                                <span class="slds-icon_container null slds-icon__svg--default" style="" data-tooltip="Show Each Rep's funnel by Qtr/Close Date">
+                                                    <svg class="slds-icon slds-icon-text-default" aria-hidden="true" style="fill: #66cc33; height: 25px;">
+                                                        <svg   viewBox="0 0 24 24" id="info" width="100%" height="100%"><path d="M12 .9C5.9.9.9 5.9.9 12s5 11.1 11.1 11.1 11.1-5 11.1-11.1S18.1.9 12 .9zm0 5.6c.8 0 1.4.6 1.4 1.4s-.6 1.4-1.4 1.4-1.4-.6-1.4-1.4.6-1.4 1.4-1.4zm2.3 9.7c0 .2-.2.4-.5.4h-3.6c-.3 0-.5-.1-.5-.4v-.9c0-.3.2-.5.5-.5.2 0 .4-.2.4-.4v-1.9c0-.2-.2-.5-.4-.5-.3 0-.5-.1-.5-.4v-.9c0-.3.2-.5.5-.5h2.7c.3 0 .5.2.5.5v3.7c0 .2.2.4.4.4.3 0 .5.2.5.5v.9z"></path></svg>
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="slds-grid slds-p-around_small slds-border_bottom">
+                                            <div class="slds-col slds-size_7-of-8" style="color:#333333; font-size:18px;"><apex:outputLink value="{!managemenetReports['X12_Month_Funnel_Win_Rate_m3a']}" target="_blank" style="color:#333333;">12 Month Funnel Win Rate</apex:outputLink></div>
+                                            <div class="slds-col slds-size_1-of-8" style="color:#333333; font-size:18px; text-align: right;">
+                                                <span class="slds-icon_container null slds-icon__svg--default" style="" data-tooltip="Shows all current 12 mo rolling metrics by Rep">
+                                                    <svg class="slds-icon slds-icon-text-default" aria-hidden="true" style="fill: #66cc33; height: 25px;">
+                                                        <svg   viewBox="0 0 24 24" id="info" width="100%" height="100%"><path d="M12 .9C5.9.9.9 5.9.9 12s5 11.1 11.1 11.1 11.1-5 11.1-11.1S18.1.9 12 .9zm0 5.6c.8 0 1.4.6 1.4 1.4s-.6 1.4-1.4 1.4-1.4-.6-1.4-1.4.6-1.4 1.4-1.4zm2.3 9.7c0 .2-.2.4-.5.4h-3.6c-.3 0-.5-.1-.5-.4v-.9c0-.3.2-.5.5-.5.2 0 .4-.2.4-.4v-1.9c0-.2-.2-.5-.4-.5-.3 0-.5-.1-.5-.4v-.9c0-.3.2-.5.5-.5h2.7c.3 0 .5.2.5.5v3.7c0 .2.2.4.4.4.3 0 .5.2.5.5v.9z"></path></svg>
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="slds-grid slds-p-around_small slds-border_bottom">
+                                            <div class="slds-col slds-size_7-of-8" style="color:#333333; font-size:18px;"><apex:outputLink value="{!managemenetReports['X12_Month_Funnel_by_Lead_Source']}" target="_blank" style="color:#333333;">12 Month Funnel by Lead Source</apex:outputLink></div>
+                                            <div class="slds-col slds-size_1-of-8" style="color:#333333; font-size:18px; text-align: right;">
+                                                <span class="slds-icon_container null slds-icon__svg--default" style="" data-tooltip="Shows distribution of Opportunities by Lead Source">
+                                                    <svg class="slds-icon slds-icon-text-default" aria-hidden="true" style="fill: #66cc33; height: 25px;">
+                                                        <svg   viewBox="0 0 24 24" id="info" width="100%" height="100%"><path d="M12 .9C5.9.9.9 5.9.9 12s5 11.1 11.1 11.1 11.1-5 11.1-11.1S18.1.9 12 .9zm0 5.6c.8 0 1.4.6 1.4 1.4s-.6 1.4-1.4 1.4-1.4-.6-1.4-1.4.6-1.4 1.4-1.4zm2.3 9.7c0 .2-.2.4-.5.4h-3.6c-.3 0-.5-.1-.5-.4v-.9c0-.3.2-.5.5-.5.2 0 .4-.2.4-.4v-1.9c0-.2-.2-.5-.4-.5-.3 0-.5-.1-.5-.4v-.9c0-.3.2-.5.5-.5h2.7c.3 0 .5.2.5.5v3.7c0 .2.2.4.4.4.3 0 .5.2.5.5v.9z"></path></svg>
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="slds-grid slds-p-around_small slds-border_bottom">
+                                            <div class="slds-col slds-size_7-of-8" style="color:#333333; font-size:18px;"><apex:outputLink value="{!managemenetReports['Monthly_Funnel_Report']}" target="_blank" style="color:#333333;">Monthly Funnel Report</apex:outputLink></div>
+                                            <div class="slds-col slds-size_1-of-8" style="color:#333333; font-size:18px; text-align: right;">
+                                                <span class="slds-icon_container null slds-icon__svg--default" style="" data-tooltip=" Shows rep's funnel for current month (dollars) based on Close Dates">
+                                                    <svg class="slds-icon slds-icon-text-default" aria-hidden="true" style="fill: #66cc33; height: 25px;">
+                                                        <svg   viewBox="0 0 24 24" id="info" width="100%" height="100%"><path d="M12 .9C5.9.9.9 5.9.9 12s5 11.1 11.1 11.1 11.1-5 11.1-11.1S18.1.9 12 .9zm0 5.6c.8 0 1.4.6 1.4 1.4s-.6 1.4-1.4 1.4-1.4-.6-1.4-1.4.6-1.4 1.4-1.4zm2.3 9.7c0 .2-.2.4-.5.4h-3.6c-.3 0-.5-.1-.5-.4v-.9c0-.3.2-.5.5-.5.2 0 .4-.2.4-.4v-1.9c0-.2-.2-.5-.4-.5-.3 0-.5-.1-.5-.4v-.9c0-.3.2-.5.5-.5h2.7c.3 0 .5.2.5.5v3.7c0 .2.2.4.4.4.3 0 .5.2.5.5v.9z"></path></svg>
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="slds-grid slds-p-around_small slds-border_bottom">
+                                            <div class="slds-col slds-size_7-of-8" style="color:#333333; font-size:18px;"><apex:outputLink value="{!managemenetReports['Opportunities_Added_by_Rep_qtr']}" target="_blank" style="color:#333333;">Opportunities Added by Rep /qtr</apex:outputLink></div>
+                                            <div class="slds-col slds-size_1-of-8" style="color:#333333; font-size:18px; text-align: right;">
+                                                <span class="slds-icon_container null slds-icon__svg--default" style="" data-tooltip=" Shows opptys added by Qtr by rep">
+                                                    <svg class="slds-icon slds-icon-text-default" aria-hidden="true" style="fill: #66cc33; height: 25px;">
+                                                        <svg   viewBox="0 0 24 24" id="info" width="100%" height="100%"><path d="M12 .9C5.9.9.9 5.9.9 12s5 11.1 11.1 11.1 11.1-5 11.1-11.1S18.1.9 12 .9zm0 5.6c.8 0 1.4.6 1.4 1.4s-.6 1.4-1.4 1.4-1.4-.6-1.4-1.4.6-1.4 1.4-1.4zm2.3 9.7c0 .2-.2.4-.5.4h-3.6c-.3 0-.5-.1-.5-.4v-.9c0-.3.2-.5.5-.5.2 0 .4-.2.4-.4v-1.9c0-.2-.2-.5-.4-.5-.3 0-.5-.1-.5-.4v-.9c0-.3.2-.5.5-.5h2.7c.3 0 .5.2.5.5v3.7c0 .2.2.4.4.4.3 0 .5.2.5.5v.9z"></path></svg>
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="slds-grid slds-p-around_small slds-border_bottom">
+                                            <div class="slds-col slds-size_7-of-8" style="color:#333333; font-size:18px;"><apex:outputLink value="{!managemenetReports['Opportunity_Win_Report']}" target="_blank" style="color:#333333;">Opportunity Win Detail by Rep Report</apex:outputLink></div>
+                                            <div class="slds-col slds-size_1-of-8" style="color:#333333; font-size:18px; text-align: right;">
+                                                <span class="slds-icon_container null slds-icon__svg--default" style="" data-tooltip=" Show wins count/$$ by Rep">
+                                                    <svg class="slds-icon slds-icon-text-default" aria-hidden="true" style="fill: #66cc33; height: 25px;">
+                                                        <svg   viewBox="0 0 24 24" id="info" width="100%" height="100%"><path d="M12 .9C5.9.9.9 5.9.9 12s5 11.1 11.1 11.1 11.1-5 11.1-11.1S18.1.9 12 .9zm0 5.6c.8 0 1.4.6 1.4 1.4s-.6 1.4-1.4 1.4-1.4-.6-1.4-1.4.6-1.4 1.4-1.4zm2.3 9.7c0 .2-.2.4-.5.4h-3.6c-.3 0-.5-.1-.5-.4v-.9c0-.3.2-.5.5-.5.2 0 .4-.2.4-.4v-1.9c0-.2-.2-.5-.4-.5-.3 0-.5-.1-.5-.4v-.9c0-.3.2-.5.5-.5h2.7c.3 0 .5.2.5.5v3.7c0 .2.2.4.4.4.3 0 .5.2.5.5v.9z"></path></svg>
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="slds-grid slds-p-around_small slds-border_bottom">
+                                            <div class="slds-col slds-size_7-of-8" style="color:#333333; font-size:18px;"><apex:outputLink value="{!managemenetReports['Quarterly_Funnel_Report']}" target="_blank" style="color:#333333;">Quarterly Funnel Report</apex:outputLink></div>
+                                            <div class="slds-col slds-size_1-of-8" style="color:#333333; font-size:18px; text-align: right;">
+                                                <span class="slds-icon_container null slds-icon__svg--default" style="" data-tooltip=" Shows Reps funnels by Qtr/Close Date">
+                                                    <svg class="slds-icon slds-icon-text-default" aria-hidden="true" style="fill: #66cc33; height: 25px;">
+                                                        <svg   viewBox="0 0 24 24" id="info" width="100%" height="100%"><path d="M12 .9C5.9.9.9 5.9.9 12s5 11.1 11.1 11.1 11.1-5 11.1-11.1S18.1.9 12 .9zm0 5.6c.8 0 1.4.6 1.4 1.4s-.6 1.4-1.4 1.4-1.4-.6-1.4-1.4.6-1.4 1.4-1.4zm2.3 9.7c0 .2-.2.4-.5.4h-3.6c-.3 0-.5-.1-.5-.4v-.9c0-.3.2-.5.5-.5.2 0 .4-.2.4-.4v-1.9c0-.2-.2-.5-.4-.5-.3 0-.5-.1-.5-.4v-.9c0-.3.2-.5.5-.5h2.7c.3 0 .5.2.5.5v3.7c0 .2.2.4.4.4.3 0 .5.2.5.5v.9z"></path></svg>
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="slds-grid slds-p-around_small slds-border_bottom">
+                                            <div class="slds-col slds-size_7-of-8" style="color:#333333; font-size:18px;"><apex:outputLink value="{!managemenetReports['SRP_Lead_Conversion_Rate_by_Month_2MH']}" target="_blank" style="color:#333333;">SRP Lead Conversion Rate by Month</apex:outputLink></div>
+                                            <div class="slds-col slds-size_1-of-8" style="color:#333333; font-size:18px; text-align: right;">
+                                                <span class="slds-icon_container null slds-icon__svg--default" style="" data-tooltip=" Shows monthly Opptys added by rep for 12 months">
+                                                    <svg class="slds-icon slds-icon-text-default" aria-hidden="true" style="fill: #66cc33; height: 25px;">
+                                                        <svg   viewBox="0 0 24 24" id="info" width="100%" height="100%"><path d="M12 .9C5.9.9.9 5.9.9 12s5 11.1 11.1 11.1 11.1-5 11.1-11.1S18.1.9 12 .9zm0 5.6c.8 0 1.4.6 1.4 1.4s-.6 1.4-1.4 1.4-1.4-.6-1.4-1.4.6-1.4 1.4-1.4zm2.3 9.7c0 .2-.2.4-.5.4h-3.6c-.3 0-.5-.1-.5-.4v-.9c0-.3.2-.5.5-.5.2 0 .4-.2.4-.4v-1.9c0-.2-.2-.5-.4-.5-.3 0-.5-.1-.5-.4v-.9c0-.3.2-.5.5-.5h2.7c.3 0 .5.2.5.5v3.7c0 .2.2.4.4.4.3 0 .5.2.5.5v.9z"></path></svg>
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="slds-grid slds-p-around_small slds-border_bottom">
+                                            <div class="slds-col slds-size_7-of-8" style="color:#333333; font-size:18px;"><apex:outputLink value="{!managemenetReports['SRP_Snapshot_Sales_Cycle_ALc']}" target="_blank" style="color:#333333;">SRP Snapshot 12 Mo Avg Sales Cycle</apex:outputLink></div>
+                                            <div class="slds-col slds-size_1-of-8" style="color:#333333; font-size:18px; text-align: right;">
+                                                <span class="slds-icon_container null slds-icon__svg--default" style="" data-tooltip=" Shows avg sales cycle by mo for 12 months">
+                                                    <svg class="slds-icon slds-icon-text-default" aria-hidden="true" style="fill: #66cc33; height: 25px;">
+                                                        <svg   viewBox="0 0 24 24" id="info" width="100%" height="100%"><path d="M12 .9C5.9.9.9 5.9.9 12s5 11.1 11.1 11.1 11.1-5 11.1-11.1S18.1.9 12 .9zm0 5.6c.8 0 1.4.6 1.4 1.4s-.6 1.4-1.4 1.4-1.4-.6-1.4-1.4.6-1.4 1.4-1.4zm2.3 9.7c0 .2-.2.4-.5.4h-3.6c-.3 0-.5-.1-.5-.4v-.9c0-.3.2-.5.5-.5.2 0 .4-.2.4-.4v-1.9c0-.2-.2-.5-.4-.5-.3 0-.5-.1-.5-.4v-.9c0-.3.2-.5.5-.5h2.7c.3 0 .5.2.5.5v3.7c0 .2.2.4.4.4.3 0 .5.2.5.5v.9z"></path></svg>
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="slds-grid slds-p-around_small slds-border_bottom">
+                                            <div class="slds-col slds-size_7-of-8" style="color:#333333; font-size:18px;"><apex:outputLink value="{!managemenetReports['SRP_Snapshot_12_Mo_Win_Size_iuS']}" target="_blank" style="color:#333333;">SRP Snapshot 12 Mo Win Size</apex:outputLink></div>
+                                            <div class="slds-col slds-size_1-of-8" style="color:#333333; font-size:18px; text-align: right;">
+                                                <span class="slds-icon_container null slds-icon__svg--default" style="" data-tooltip="Shows win size by rep / team for 12 months">
+                                                    <svg class="slds-icon slds-icon-text-default" aria-hidden="true" style="fill: #66cc33; height: 25px;">
+                                                        <svg   viewBox="0 0 24 24" id="info" width="100%" height="100%"><path d="M12 .9C5.9.9.9 5.9.9 12s5 11.1 11.1 11.1 11.1-5 11.1-11.1S18.1.9 12 .9zm0 5.6c.8 0 1.4.6 1.4 1.4s-.6 1.4-1.4 1.4-1.4-.6-1.4-1.4.6-1.4 1.4-1.4zm2.3 9.7c0 .2-.2.4-.5.4h-3.6c-.3 0-.5-.1-.5-.4v-.9c0-.3.2-.5.5-.5.2 0 .4-.2.4-.4v-1.9c0-.2-.2-.5-.4-.5-.3 0-.5-.1-.5-.4v-.9c0-.3.2-.5.5-.5h2.7c.3 0 .5.2.5.5v3.7c0 .2.2.4.4.4.3 0 .5.2.5.5v.9z"></path></svg>
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="slds-grid slds-p-around_small slds-border_bottom">
+                                            <div class="slds-col slds-size_7-of-8" style="color:#7e8793; font-size:18px;"><apex:outputLink value="{!managemenetReports['SRP_Snapshot_Monthly_Leads_Added_xB3']}" target="_blank" style="color:#333333;">SRP Snapshot Monthly Leads Added</apex:outputLink></div>
+                                            <div class="slds-col slds-size_1-of-8" style="color:#7e8793; font-size:18px; text-align: right;">
+                                                <span class="slds-icon_container null slds-icon__svg--default" style="" data-tooltip="Shows monthly leads added by rep / team for 12 months">
+                                                    <svg class="slds-icon slds-icon-text-default" aria-hidden="true" style="fill: #66cc33; height: 25px;">
+                                                        <svg   viewBox="0 0 24 24" id="info" width="100%" height="100%"><path d="M12 .9C5.9.9.9 5.9.9 12s5 11.1 11.1 11.1 11.1-5 11.1-11.1S18.1.9 12 .9zm0 5.6c.8 0 1.4.6 1.4 1.4s-.6 1.4-1.4 1.4-1.4-.6-1.4-1.4.6-1.4 1.4-1.4zm2.3 9.7c0 .2-.2.4-.5.4h-3.6c-.3 0-.5-.1-.5-.4v-.9c0-.3.2-.5.5-.5.2 0 .4-.2.4-.4v-1.9c0-.2-.2-.5-.4-.5-.3 0-.5-.1-.5-.4v-.9c0-.3.2-.5.5-.5h2.7c.3 0 .5.2.5.5v3.7c0 .2.2.4.4.4.3 0 .5.2.5.5v.9z"></path></svg>
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="slds-grid slds-p-around_small slds-border_bottom">
+                                            <div class="slds-col slds-size_7-of-8" style="color:#333333; font-size:18px;"><apex:outputLink value="{!managemenetReports['Copy_of_SRP_Snapshot_Mnthly_Opptys_Added_7aQ']}" target="_blank" style="color:#333333;">SRP Snapshot Monthly Opptys Added</apex:outputLink></div>
+                                            <div class="slds-col slds-size_1-of-8" style="color:#333333; font-size:18px; text-align: right;">
+                                                <span class="slds-icon_container null slds-icon__svg--default" style="" data-tooltip="Shows monthly Opptys added to funnel by rep / team for 12 months">
+                                                    <svg class="slds-icon slds-icon-text-default" aria-hidden="true" style="fill: #66cc33; height: 25px;">
+                                                        <svg   viewBox="0 0 24 24" id="info" width="100%" height="100%"><path d="M12 .9C5.9.9.9 5.9.9 12s5 11.1 11.1 11.1 11.1-5 11.1-11.1S18.1.9 12 .9zm0 5.6c.8 0 1.4.6 1.4 1.4s-.6 1.4-1.4 1.4-1.4-.6-1.4-1.4.6-1.4 1.4-1.4zm2.3 9.7c0 .2-.2.4-.5.4h-3.6c-.3 0-.5-.1-.5-.4v-.9c0-.3.2-.5.5-.5.2 0 .4-.2.4-.4v-1.9c0-.2-.2-.5-.4-.5-.3 0-.5-.1-.5-.4v-.9c0-.3.2-.5.5-.5h2.7c.3 0 .5.2.5.5v3.7c0 .2.2.4.4.4.3 0 .5.2.5.5v.9z"></path></svg>
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="slds-grid slds-p-around_small slds-border_bottom">
+                                            <div class="slds-col slds-size_7-of-8" style="color:#333333; font-size:18px;"><apex:outputLink value="{!managemenetReports['X12_Mo_SRP_Snapshot_Mnthly_Opptys_Added_Wnh1']}" target="_blank" style="color:#333333;">SRP Snapshot Qtrly Opptys Added</apex:outputLink></div>
+                                            <div class="slds-col slds-size_1-of-8" style="color:#333333; font-size:18px; text-align: right;">
+                                                <span class="slds-icon_container null slds-icon__svg--default" style="" data-tooltip=" Shows Qtrly Opptys added to funnel by rep / team for 12 months">
+                                                    <svg class="slds-icon slds-icon-text-default" aria-hidden="true" style="fill: #66cc33; height: 25px;">
+                                                        <svg   viewBox="0 0 24 24" id="info" width="100%" height="100%"><path d="M12 .9C5.9.9.9 5.9.9 12s5 11.1 11.1 11.1 11.1-5 11.1-11.1S18.1.9 12 .9zm0 5.6c.8 0 1.4.6 1.4 1.4s-.6 1.4-1.4 1.4-1.4-.6-1.4-1.4.6-1.4 1.4-1.4zm2.3 9.7c0 .2-.2.4-.5.4h-3.6c-.3 0-.5-.1-.5-.4v-.9c0-.3.2-.5.5-.5.2 0 .4-.2.4-.4v-1.9c0-.2-.2-.5-.4-.5-.3 0-.5-.1-.5-.4v-.9c0-.3.2-.5.5-.5h2.7c.3 0 .5.2.5.5v3.7c0 .2.2.4.4.4.3 0 .5.2.5.5v.9z"></path></svg>
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="slds-grid slds-p-around_small slds-border_bottom">
+                                            <div class="slds-col slds-size_7-of-8" style="color:#333333; font-size:18px;"><apex:outputLink value="{!managemenetReports['YTD_Win_Report_jWK1']}" target="_blank" style="color:#333333;">SRP YTD Opportunity Win Report</apex:outputLink></div>
+                                            <div class="slds-col slds-size_1-of-8" style="color:#333333; font-size:18px; text-align: right;">
+                                                <span class="slds-icon_container null slds-icon__svg--default" style="" data-tooltip="Shows YTD Wins by Region by Rep">
+                                                    <svg class="slds-icon slds-icon-text-default" aria-hidden="true" style="fill: #66cc33; height: 25px;">
+                                                        <svg  viewBox="0 0 24 24" id="info" width="100%" height="100%"><path d="M12 .9C5.9.9.9 5.9.9 12s5 11.1 11.1 11.1 11.1-5 11.1-11.1S18.1.9 12 .9zm0 5.6c.8 0 1.4.6 1.4 1.4s-.6 1.4-1.4 1.4-1.4-.6-1.4-1.4.6-1.4 1.4-1.4zm2.3 9.7c0 .2-.2.4-.5.4h-3.6c-.3 0-.5-.1-.5-.4v-.9c0-.3.2-.5.5-.5.2 0 .4-.2.4-.4v-1.9c0-.2-.2-.5-.4-.5-.3 0-.5-.1-.5-.4v-.9c0-.3.2-.5.5-.5h2.7c.3 0 .5.2.5.5v3.7c0 .2.2.4.4.4.3 0 .5.2.5.5v.9z"></path></svg>
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="slds-grid slds-p-around_small slds-border_bottom">
+                                            <div class="slds-col slds-size_7-of-8" style="color:#333333; font-size:18px;"><apex:outputLink value="{!managemenetReports['Sales_Rep_Quota_YTD_Attainment']}" target="_blank" style="color:#333333;">Sales Rep Quota YTD Attainment</apex:outputLink></div>
+                                            <div class="slds-col slds-size_1-of-8" style="color:#333333; font-size:18px; text-align: right;">
+                                                <span class="slds-icon_container null slds-icon__svg--default" style="" data-tooltip="Shows YTD sales vs quotas by Rep">
+                                                    <svg class="slds-icon slds-icon-text-default" aria-hidden="true" style="fill: #66cc33; height: 25px;">
+                                                        <svg  viewBox="0 0 24 24" id="info" width="100%" height="100%"><path d="M12 .9C5.9.9.9 5.9.9 12s5 11.1 11.1 11.1 11.1-5 11.1-11.1S18.1.9 12 .9zm0 5.6c.8 0 1.4.6 1.4 1.4s-.6 1.4-1.4 1.4-1.4-.6-1.4-1.4.6-1.4 1.4-1.4zm2.3 9.7c0 .2-.2.4-.5.4h-3.6c-.3 0-.5-.1-.5-.4v-.9c0-.3.2-.5.5-.5.2 0 .4-.2.4-.4v-1.9c0-.2-.2-.5-.4-.5-.3 0-.5-.1-.5-.4v-.9c0-.3.2-.5.5-.5h2.7c.3 0 .5.2.5.5v3.7c0 .2.2.4.4.4.3 0 .5.2.5.5v.9z"></path></svg>
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="slds-grid slds-p-around_small slds-border_bottom">
+                                            <div class="slds-col slds-size_7-of-8" style="color:#333333; font-size:18px;"><apex:outputLink value="{!managemenetReports['YTD_Win_Report_jWK']}" target="_blank" style="color:#333333;">YTD Win Report</apex:outputLink></div>
+                                            <div class="slds-col slds-size_1-of-8" style="color:#333333; font-size:18px; text-align: right;">
+                                                <span class="slds-icon_container null slds-icon__svg--default" style="" data-tooltip="Shows YTD Wins by Rep">
+                                                    <svg class="slds-icon slds-icon-text-default" aria-hidden="true" style="fill: #66cc33; height: 25px;">
+                                                        <svg   viewBox="0 0 24 24" id="info" width="100%" height="100%"><path d="M12 .9C5.9.9.9 5.9.9 12s5 11.1 11.1 11.1 11.1-5 11.1-11.1S18.1.9 12 .9zm0 5.6c.8 0 1.4.6 1.4 1.4s-.6 1.4-1.4 1.4-1.4-.6-1.4-1.4.6-1.4 1.4-1.4zm2.3 9.7c0 .2-.2.4-.5.4h-3.6c-.3 0-.5-.1-.5-.4v-.9c0-.3.2-.5.5-.5.2 0 .4-.2.4-.4v-1.9c0-.2-.2-.5-.4-.5-.3 0-.5-.1-.5-.4v-.9c0-.3.2-.5.5-.5h2.7c.3 0 .5.2.5.5v3.7c0 .2.2.4.4.4.3 0 .5.2.5.5v.9z"></path></svg>
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="slds-grid slds-p-around_small slds-border_bottom">
+                                            <div class="slds-col slds-size_7-of-8" style="color:#333333; font-size:18px;"><apex:outputLink value="{!managemenetReports['Current_Yr_YTD_Oppty_Wins_by_Lead_Source']}" target="_blank" style="color:#333333;">YTD Wins by Lead Source</apex:outputLink></div>
+                                            <div class="slds-col slds-size_1-of-8" style="color:#333333; font-size:18px; text-align: right;">
+                                                <span class="slds-icon_container null slds-icon__svg--default" style="" data-tooltip=" Shows Count of Wins by Lead Source">
+                                                    <svg class="slds-icon slds-icon-text-default" aria-hidden="true" style="fill: #66cc33; height: 25px;">
+                                                        <svg   viewBox="0 0 24 24" id="info" width="100%" height="100%"><path d="M12 .9C5.9.9.9 5.9.9 12s5 11.1 11.1 11.1 11.1-5 11.1-11.1S18.1.9 12 .9zm0 5.6c.8 0 1.4.6 1.4 1.4s-.6 1.4-1.4 1.4-1.4-.6-1.4-1.4.6-1.4 1.4-1.4zm2.3 9.7c0 .2-.2.4-.5.4h-3.6c-.3 0-.5-.1-.5-.4v-.9c0-.3.2-.5.5-.5.2 0 .4-.2.4-.4v-1.9c0-.2-.2-.5-.4-.5-.3 0-.5-.1-.5-.4v-.9c0-.3.2-.5.5-.5h2.7c.3 0 .5.2.5.5v3.7c0 .2.2.4.4.4.3 0 .5.2.5.5v.9z"></path></svg>
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div-->
+                            <!--/div>
+                        </div-->
+                    </div>                                          
+                </div>
+            </div>
+        </apex:outputPanel>        
+    </apex:form>
+    
+     <script>
+       
+         showChart();
+        
+    </script>
+   
+    <script type="text/javascript">
+        
+        function validateSave(){
+            
+            var inp1 = $('[id$=select-01]').val();
+            var inp2 = $('[id$=select-02]').val();
+            var inp3 = $('[id$=select-03]').val();
+            
+            var validSave = 'true';
+            
+            console.log(inp1 );
+            console.log(inp2 );
+            console.log(inp3 );
+            if(inp1 == '--Select--'){
+                $('[id$=validlevel]').css("display","block");
+                validSave = 'false';
+            }
+            if(inp2 == '--Select--'){
+                $('[id$=validname]').css("display","block");
+                validSave = 'false';
+            }
+            if(inp3 == '--Select--'){
+                $('[id$=validmgr]').css("display","block");
+                validSave = 'false';
+            }
+           
+            console.log(validSave);
+            if(validSave == 'true'){
+                //alert('save');
+                console.log(validSave); 
+                $('[id$=validlevel]').css("display","none");
+                $('[id$=validname]').css("display","none");
+                $('[id$=validmgr]').css("display","none");
+                
+                show();
+               
+            }
+             
+            
+        }
+    </script>
+</apex:page>

@@ -1,0 +1,329 @@
+<apex:page docType="html-5.0" sidebar="false"  controller="FunnelInstallationStep8Controller" extensions="FunnelSetupController">
+    <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/jquery-1.12.4.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/jquery-ui.js')}"/>
+     
+    <apex:stylesheet value="{!URLFOR($Resource.FunnelScriptFolder,'Design/css/all.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.FunnelScriptFolder,'Design/css/3.3.7.bootstrap.min.css')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/js/3.3.7.bootstrap.min.js')}"/>
+  
+    <style>
+        body { font-size: 75%; }
+        html{font-size: 100% !important;}
+        .noSidebarCell, .sidebarCell .fixed { padding: 10px; font-family: sldsFont; }
+        .bPageHeader .phHeader td.left{display: block;}
+        @font-face {
+         font-family: sldsFont;
+             src: url({!URLFOR($Resource.SldsCss,'SldsResources/fonts/SalesforceSans-Light.ttf')});
+         }  
+        
+        .outer{background: #f5f5f9;}
+        .header{display: flex; flex-direction: column;}
+        .logo{background: #fff; width: 100%; display: flex; justify-content: center; padding: 10px 0;}
+        .logo img{width: 250px;}
+        .stepper{display: flex; width: 100%; background: #00b2ee; padding: 20px 0; justify-content: center;}
+        .stepper .step {font-family: sldsFont !important; font-size: 16px; font-weight: bold; text-align: center; color: #5f666f; cursor: default; margin: 0 3px; padding: 14px 10px 15px 30px; min-width: 5%; float: left; position: relative; background-color: #f5f5f9; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; transition: background-color 0.2s ease;}
+        .stepper .step:after,
+        .stepper .step:before {content: " "; position: absolute; top: 0; right: -17px; width: 0; height: 0; border-top: 25px solid transparent; border-bottom: 25px solid transparent; border-left: 17px solid #f5f5f9; z-index: 2; transition: border-color 0.2s ease; }
+        .stepper .step:before {right: auto; left: 0; border-left: 17px solid #00b2ee; z-index: 0;}
+        .stepper .step:first-child:before {border: none;}
+        .stepper .step:first-child {border-top-left-radius: 4px; border-bottom-left-radius: 4px;}
+        .stepper .step span {position: relative;}
+        /*.stepper .step span:before {opacity: 0; content: "✔"; position: absolute; top: -2px; left: -20px;}*/
+        .stepper .step.done {color: #fff; background-color: #66cc33;}
+        .stepper .step.done i{font-size: 20px;}
+        .stepper .step.done:after {border-left: 17px solid #66cc33;}
+        .stepper .step.done span:before {opacity: 1; -webkit-transition: opacity 0.3s ease 0.5s; -moz-transition: opacity 0.3s ease 0.5s; -ms-transition: opacity 0.3s ease 0.5s; transition: opacity 0.3s ease 0.5s;}
+        .stepper .step.current {color: #fff; background-color: #ff9900;}
+        .stepper .step.current:after {border-left: 17px solid #ff9900;}
+        .content-section{padding: 40px;}
+        .content-section-inner{background: #fff;}
+        .content-heading{background: #7e8793; display: flex; justify-content: center; padding: 16px;}
+        .content-heading h2{font-family: sldsFont !important; font-size: 24px; font-weight: bold; color: #fff;}
+        .content-body{padding: 40px;}
+        .content-section .intro-block{display: flex; flex-direction: column; width: 680px; margin: 0 auto; text-align: center; padding: 50px 0 100px 0;}
+        .content-section .intro-block h4{font-family: sldsFont !important; font-size: 21px; font-weight: bold; color: #5f666f; margin-bottom: 20px;}
+        .content-section .intro-block p{font-family: sldsFont !important; font-size: 18px; color: #5f666f;}
+        .content-button{display: flex; justify-content: center;}
+        .content-button button{font-weight: bold;background: #ff9900; border-radius: 30px; border: none; color: #fff; font-size: 20px; padding: 14px 40px; margin: 0 10px; cursor: pointer; font-family: sldsFont !important;}
+        .content-button button.back{font-weight: bold;background: #7e8793;}
+        
+        .content-button a{font-weight: bold;text-decoration: none !important;background: #ff9900; border-radius: 30px; border: none; color: #fff !important; font-size: 20px; padding: 14px 40px; margin: 0 10px; cursor: pointer; font-family: sldsFont !important;}
+        .content-button a.back{font-weight: bold;background: #7e8793;text-decoration: none !important;}
+        
+         
+        .button-block{display: flex; justify-content: flex-end; margin-top: 20px;}
+        .importbtnblock{display: inline-flex; position: relative;}
+        .importbtnblock .importbtnerrormsg{color: red; font-size: 12px; position: absolute; bottom: -25px; right: 10px; width: 300px; font-weight: 700; text-align: right;}
+        .importbtn{font-weight: bold; text-decoration: none !important; background: #ff9900; border-radius: 30px; border: none; color: #fff !important; font-size: 20px; padding: 14px 40px; cursor: pointer; font-family: sldsFont !important; position: relative; margin: 0 10px;}
+        .importbtn input{position: absolute; left: 0; top: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;}
+        .exportbtn{font-weight: bold; text-decoration: none !important; background: #ff9900; border-radius: 30px; border: none; color: #fff !important; font-size: 20px; padding: 14px 40px; cursor: pointer; font-family: sldsFont !important; margin: 0 10px;}
+    
+        .msg{width: 86%; z-index: 1; position:fixed;    bottom: 0; }
+     
+    </style>
+    <style>
+        .msgIcon {
+            display: none!important
+        }
+        .customMessage * {
+            color: #fff!important
+        }
+        .customMessage {
+            margin: 5px 0!important;
+             min-height: 70px;
+            opacity: 1!important;
+            width: 94%;
+            font-size: 15px;
+            border: 0px;
+            padding-left: 10px;
+        }
+        .message {
+            opacity: .1
+        }
+    </style>
+    <style>
+        
+        /*Start Delete modal CSS*/
+        /*.modal-lg{width: 1100px;}*/
+        #confirm .modal-dialog {width: 65%;}
+        #confirmsch .modal-dialog {width: 65%;}
+        
+        .modal.in .modal-dialog {-webkit-transform: translate(0,0);-ms-transform: translate(0,0);-o-transform: translate(0,0);transform: translate(0,0);width: 90%;max-width: none;min-width: 40rem;display: flex;flex-direction: column;height: 100%;padding: 3rem 0;}
+        .modal-content { border-radius: 0;padding: 20px;overflow: hidden;overflow-y: auto;}
+        .modal-header{padding: 0;border: none;}
+        .modal-header .close{position: absolute; right: 10px; margin: 0; top: 10px; opacity: 1; border: none;background: transparent; color: #7e8793; font-size: 44px; width: 25px; height: 20px; line-height: 18px;}
+        .modal-header h4{background: #BFB178;}
+        .modal-header h4 ul{padding: 0; margin: 0; display: table; width: 100%;}
+        .modal-header h4 ul li{display: table-cell; font-size: 24px; color: #333333; width: 50%; padding: 10px; border: none; text-align: left; font-weight: bold;font-family: sldsfont;}
+        .modal-body{padding: 0;}
+        .modal-body .delete-content-block{padding: 10px;}
+        .modal-body .delete-content-block label{font-size: 21px; color: #00b2ee;font-family: sldsfont;font-weight: normal;}
+        .modal-body .delete-content-block p{margin: 0; font-size: 18px;  color: #777; text-align: center;}
+        .modal-footer{border: none; padding: 20px 30px;}
+        .modal-footer .btn-block{display: table; width: auto; margin: 0 auto;}
+        .modal-footer a{background-color: #7e8793;color: #fff;padding: 15px 100px;border-radius: 30px;font-size: 24px;border: none;margin-left: 18px;}
+        .modal-footer a:hover{color: #fff; text-decoration: none;}
+        .modal-footer a.save{background: #ff9900;}
+        .modal-footer a i{color: #fff;}
+        /*End Delete modal CSS*/
+         
+    </style>
+    
+    <!--Navigation -->
+    <apex:stylesheet value="{!URLFOR($Resource.FunnelScriptFolder,'Design/css/v5.0.8-fontawesome.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.FunnelScriptFolder,'Design/css/v5.0.8-solid.css')}"/>
+    
+    <html  lang="en">
+    <apex:stylesheet value="{!URLFOR($Resource.SldsCss,'SldsResources/styles/salesforce-lightning-design-system.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.SldsCss,'SldsResources/styles/salesforce-lightning-design-system.min')}"/>
+    <div class="outer">
+        <c:FunnelInstallationSteps /> 
+        <div class="content-section">
+            <div class="content-section-inner">
+                
+                <div class="content-heading">
+                    <h2>Step 8 - Historical Scripts</h2>
+                </div>
+                <div class="content-body">
+                    <div class="button-block">
+                        <apex:form >
+                           
+                        
+                        <apex:actionFunction action="{!uploadSrp}" name="uploadFile"/>
+                              <a class="exportbtn" href="/apex/FunnelInstallationStep8export" target="_blank"> Export</a>
+                            <apex:actionRegion >
+                                 <span class="importbtnblock">
+                                    <a class="importbtn">
+                                        Upload
+                                        <apex:inputFile value="{!contentFile}" filename="{!nameFile}" onchange="check(this);" styleclass="inputfil"/>
+                                    </a>
+                                    <apex:outputText styleClass="importbtnerrormsg" Style="display:none;" id="myPlaceholder" value="In order to import, the file type should be CSV."/> 
+                                    </span>
+                                                                                                                              
+                                
+                            </apex:actionRegion>
+                        </apex:form>
+                 </div>
+                 <apex:form id="setup"> 
+                  <div class="slds-scope">  
+                  <div class="slds-wrap slds-p-around_medium" style="background: #fff;">
+                  <apex:actionFunction name="clearMessage"  action="{!timerOffS}"  reRender="messagePanel"/>
+                  <apex:outputPanel id="timerPanelS">
+                    <apex:actionPoller reRender="messagePanel"  interval="5"  enabled="{!timerS}"   action="{!timerOffS}"/> 
+                  </apex:outputPanel>   
+                   
+                   <apex:actionPoller reRender="nextPanel"  interval="180"  enabled="{!nextpoller}"   action="{!chechNext}"/> 
+                        
+                   <apex:outputPanel styleClass="msg" id="messagePanel"  onclick="clearMessage(); " >
+                       <apex:pageMessages id="messaAge"></apex:pageMessages>
+                    </apex:outputPanel> 
+                
+                    <div class="intro-block">
+                          
+                        <p>Almost finished! We’ll need to run the scripts to set up your application and populate the historical data.
+
+                            You can choose to do this now or run these scripts at midnight. Please note, once you begin this process
+                            you cannot stop it. It may take a while and we will email the administrator when this is completed.</p>
+                            
+                          
+                            
+                     
+                    </div>
+                        <apex:outputPanel id="runpanel">
+                        <div class="content-button">
+                            
+                            <apex:actionFunction action="{!CreateHD}" name="CreateHD" reRender="runpanel,setup" />
+                            <apex:actionFunction action="{!CreateHDMidnight}" name="CreateHDMidnight" reRender="runpanel,setup"/>
+                            
+                            <apex:outputPanel rendered="{! If(AND(createHisSrp,createHisSrpMid,batchNotstarted),true,false) }"><a class="button" onclick="createNow();">Run Now </a> <span class="ortext"> </span> <a class="button" onclick="createLater();" >Schedule at Midnight</a></apex:outputPanel> 
+                            <apex:outputPanel rendered="{! If(OR(!createHisSrp,!createHisSrpMid,!batchNotstarted),true,false) }" ><apex:commandLink value="Run Now" reRender="setup" StyleClass="button" style="background: grey;" />  <span class="ortext"> </span> <apex:commandLink value="Schedule at Midnight" reRender="setup" StyleClass="button" style="background: grey;"/></apex:outputPanel> 
+                       
+                        </div>
+                        </apex:outputPanel>
+                    
+                     <div class="content-button" style=" margin-top: 120px;">
+                         <apex:outputPanel id="nextPanel">
+                             <apex:commandLink action="{!saveAndExit}">Save &#38; Exit</apex:commandLink>
+                             <apex:commandLink rendered="{!!displayNext}" value="Next" reRender="setup" StyleClass="button" style=" background: #ffd9a0;" />
+                             <apex:commandLink action="{!navigateToStep9}" rendered="{!displayNext}" value="Next" reRender="setup" StyleClass="button"   />
+                         </apex:outputPanel>
+                     </div>
+                    <script>
+                    $(document).ready(function(){
+                       overridePageMessages();    
+                    });
+                         
+                    function overridePageMessages(){    
+                        var textureEffect = '';
+                        //Uncomment below line for texture effect on page messages
+                        //textureEffect = 'slds-theme--alert-texture';
+                                      
+                        $('.warningM3').addClass('slds-notify slds-notify--toast slds-theme--warning customMessage '+textureEffect);          
+                        $('.confirmM3').addClass('slds-notify slds-notify--alert slds-theme--success  customMessage '+textureEffect);    
+                        $('.errorM3').addClass('slds-notify slds-notify--alert slds-theme--error customMessage '+textureEffect);                  
+                        $('.infoM3').addClass('slds-notify slds-notify--toast customMessage '+textureEffect);    
+                                          
+                        $('.errorM3').removeClass('errorM3'); 
+                        $('.confirmM3').removeClass('confirmM3'); 
+                        $('.infoM3').removeClass('infoM3');   
+                        $('.warningM3').removeClass('warningM3');  
+                    }
+                    
+                   </script>
+                   </div>
+                   </div>
+                   <!-- Modal --  autosave -- end -->
+                    <div class="modal fade " id="confirm" role="dialog">
+                        <div class="modal-dialog modal-lg">
+                            <!-- Modal content-->
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal"  >&times;</button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="delete-content-block">
+                                        <apex:outputPanel rendered="{!quotaEmpty}">
+                                            <p>You have not populated Sales Rep Quota. Please ensure to upload the Sales rep quota before proceeding.</p>
+                                        </apex:outputPanel>
+                                        <apex:outputPanel rendered="{!hybridPresent}">
+                                            <p>You have Hybrid users. Please ensure the data in the revenue object is fully populated and correct before proceeding.</p>
+                                        </apex:outputPanel>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <div class="btn-block">
+                                        <a style="font-size: 18px; padding: 12px 50px;" data-dismiss="modal"  class="cancel">  Cancel </a>
+                                        <a onclick="CreateHD();" data-dismiss="modal" style="background-color: #ff9900; color: #fff; padding: 12px 50px; border-radius: 30px; font-size: 18px; border: none;">
+                                        Run Scripts
+                                        </a >
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Modal --  autosave -- end -->
+                     <!-- Modal --  autosave -- end -->
+                    <div class="modal fade " id="confirmsch" role="dialog">
+                        <div class="modal-dialog modal-lg">
+                            <!-- Modal content-->
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal"  >&times;</button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="delete-content-block">
+                                        <apex:outputPanel id="modalidconfirmsch">    
+                                            <apex:outputPanel rendered="{!quotaEmpty}">
+                                                <p>You have not populated Sales Rep Quota. Please ensure to upload the Sales rep quota before proceeding.</p>
+                                            </apex:outputPanel>
+                                            <apex:outputPanel rendered="{!hybridPresent}">
+                                                <p>You have Hybrid users. Please ensure the data in the revenue object is fully populated and correct before proceeding.</p>
+                                            </apex:outputPanel>
+                                        </apex:outputPanel>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <div class="btn-block">
+                                        <a style="font-size: 18px; padding: 12px 50px;" data-dismiss="modal"  class="cancel">  Cancel </a>
+                                        <a onclick="CreateHDMidnight();" data-dismiss="modal" style="background-color: #ff9900; color: #fff; padding: 12px 50px; border-radius: 30px; font-size: 18px; border: none;">
+                                        Run Scripts
+                                        </a >
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Modal --  autosave -- end -->
+                    </apex:form>
+                </div>
+            </div>
+        </div>
+    </div>
+    </html>
+    
+    <script>
+    window.onload = function() {
+        jQuery('input[type=text]').blur();
+        
+    };
+    quotaEmpty
+    var hybridPresent = {!hybridPresent};
+    var quotaEmpty = {!quotaEmpty};
+    function createNow(){
+        if(hybridPresent || quotaEmpty){
+            $('#confirm').modal('show');
+        }else{
+            CreateHD();
+        }
+    
+    }
+    function createLater(){
+        
+        if(hybridPresent || quotaEmpty){
+            $('#confirmsch').modal('show');
+        }else{
+            CreateHDMidnight();
+        }
+    
+    }
+</script>
+ 
+<script>    
+        function check(obj_inpf){
+        
+            fullPath = obj_inpf.value;
+            var filename = fullPath.replace(/^.*[\\\/]/, '')
+            console.log(filename );
+            if(filename.includes(".csv")){
+                uploadFile();
+               // jQuery('#delete').modal('show'); 
+             
+            }else{
+                jQuery('[id$=myPlaceholder]').css("display", "block");
+                //jQuery('[id$=csvfile]').css("top", "23.1%");
+            }
+
+        }
+</script>
+
+</apex:page>

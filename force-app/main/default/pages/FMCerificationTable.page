@@ -1,0 +1,864 @@
+<apex:page controller="FunnelCertificationTable" sidebar="false" extensions="FunnelInstallation">
+
+    <html lang="en">
+     
+    <apex:stylesheet value="{!URLFOR($Resource.SldsCss,'SldsResources/styles/salesforce-lightning-design-system.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.SldsCss,'SldsResources/styles/salesforce-lightning-design-system.min')}"/>
+    
+     
+    <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/jquery-1.12.3.min.js')}"/>    
+    
+    <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/jquery.tablesorter.min.js')}"/>    
+     
+    <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/jquery.tablesorter.widgets.js')}"/>
+     
+    <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/widget-staticRow.min.js')}"/>
+     
+    <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/highcharts.js')}"/>
+     
+    <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/exporting.js')}"/>
+     
+    <apex:stylesheet value="{!URLFOR($Resource.FunnelScriptFolder,'Design/css/v5.0.8-fontawesome.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.FunnelScriptFolder,'Design/css/v5.0.8-solid.css')}"/>
+    <!--Navigation-->
+    <!--<apex:slds />-->
+    <!--Navigation-->
+    <style>
+        body { font-size: 75%; }
+        #contentWrapper{overflow:hidden;}
+        .noSidebarCell, .sidebarCell .fixed { padding: 10px; font-family: sldsFont; }
+        
+         @font-face {
+         font-family: sldsFont;
+             src: url({!URLFOR($Resource.SldsCss,'SldsResources/fonts/SalesforceSans-Light.ttf')});
+         }
+         
+         .bPageHeader .phHeader td.left{display: block;}
+        .navigation{display: table; width: 100%; text-align: center;}
+        
+        .navigation ul{margin: 0; padding: 0;}
+        .navigation ul li{display: inline-block; padding: 0 8px; border-left: 2px solid #7e8793; line-height: 17px; margin-left: 0;}
+        .navigation ul li a{color: #7e8793; font-size: 17px; font-weight: bold;}
+        .navigation ul li a:hover{color: #66cc33; text-decoration: none;}
+        .navigation ul li {color: #7e8793; font-size: 17px; font-weight: bold;}
+        .navigation ul li:hover{color: #66cc33; text-decoration: none;}
+        .navigation ul li.selected a{color: #66cc33;}
+        .navigation ul li.home{border: none; padding-left: 0; margin-bottom: 10px;}
+        .navigation ul li.home a{color: #00b2ee;}
+        .navigation ul li.help{border-left: 2px solid #7e8793; padding-left: 5px; margin-left: 5px; margin-bottom: 10px;}
+        .navigation ul li.help a{color: #00b2ee;}
+        .navigation ul li:last-child{padding-right: 0;}
+        
+        .navigation ul li.scorenav > a{background: url({!$Resource.CertificationNavigationIcon}) no-repeat; padding: 0 0 0 25px; background-position: 0 -23px; height: 19px; width: 20px; color: #66cc33;}
+        
+        .navigation ul li.funnelanalyticsnav {background: url({!$Resource.AnalyticsNavigationIcon}) no-repeat; padding: 0 8px 0 33px; background-position: 8px 2px; color: #7e8793;}
+        .navigation ul li.funnelanalyticsnav:hover{background-position: 8px -20px; color: #66cc33;}
+        
+        .navigation ul li.checklisticon{border-right: 2px solid #7e8793; color: #00b2ee; border-left: 0; margin-right: 5px; cursor: pointer;}
+
+        .navigation ul li.checklisticon a{color: #00b2ee;}
+        
+        .myapp{min-width: 500px; font-family: sldsFont;background-color: #fff; }
+        
+        .navigation ul li.reportnav{position: relative; display: inline-block;cursor: pointer;}
+        .navigation ul li.reportnav ul.subnav{position: absolute; z-index: 1; width: 240px; background: #fff; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); display: none; left: 8px;}
+        .navigation ul li.reportnav ul.subnav li{display: block; text-align: left; border: none; padding: 0;}
+        .navigation ul li.reportnav ul.subnav li a {color: #7e8793; padding: 10px; display: block; width: 100%;}
+        .navigation ul li.reportnav ul.subnav li a:hover{background: #66cc33; color: #fff;}
+        .navigation ul li.reportnav:hover ul.subnav {display: block;}
+        
+        .navigation ul li.reportnav ul.subnavlast{right:0; position: absolute; z-index: 1; width: 240px; background: #fff; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); display: none;}
+        .navigation ul li.reportnav ul.subnavlast li{display: block; text-align: left; border: none; padding: 0;}
+        .navigation ul li.reportnav ul.subnavlast li a {color: #7e8793; padding: 10px; display: block; width: 100%;}
+        .navigation ul li.reportnav ul.subnavlast li a:hover{background: #66cc33; color: #fff;}
+        .navigation ul li.reportnav:hover ul.subnavlast{display: block;}
+        
+        button a:hover{text-decoration: none;}
+        button a:focus{text-decoration: none; outline: none;}
+         select{background: url('{!URLFOR($Resource.Selectarrow )}') no-repeat right -20px center #fff !important; -moz-appearance: none; -webkit-appearance: none;}
+       .slds-select[disabled], .slds-select.slds-is-disabled {background-color: #ecebea !important;border-color: #c9c7c5;cursor: not-allowed;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;}
+        
+        th.tablesorter-headerAsc .fa-chevron-down:before{content:"\f077" !important}
+        
+
+        .radio-container {
+            display: block;
+            position: relative;
+            padding-left: 35px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            font-size: 21px;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            color: #333333;
+            font-weight: 300;
+        }
+        
+        .radio-container input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+        
+        .radio-container .checkmark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 30px;
+            width: 30px;
+            background-color: #f5f5f9;
+            border-radius: 50%;
+            border: 1px solid #333333;
+        }
+        
+        .radio-container input:checked ~ .checkmark {
+            background-color: #5f666f;
+            border: 1px solid #5f666f;
+        }
+        
+        .radio-container .checkmark:after {
+            content: "";
+            position: absolute;
+            display: none;
+        }
+        
+        .radio-container input:checked ~ .checkmark:after {
+            display: block;
+        }
+        
+        .radio-container .checkmark:after {
+            top: 7px;
+            left: 7px;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: #00b2ee;
+        }
+        
+        .certificationtable{width: 100% !important;}   
+        .certificationtable thead, .certificationtable tbody, .certificationtable tr, .certificationtable td, .certificationtable th {display: table; width: 100%;}
+        
+        .certificationtable tr:after {
+            content: '';
+            display: block;
+            visibility: hidden;
+            clear: both;
+        }
+        
+        .certificationtable thead {
+            width: 100%;
+        }
+        
+        .certificationtable thead th {
+            height: auto;
+        }
+        
+        .certificationtable tbody {
+            max-height: 550px;
+            overflow-y: auto;
+            width: 100%;
+        }     
+        
+        .certificationtable tbody::-webkit-scrollbar {width: 5px;}
+        .certificationtable tbody::-webkit-scrollbar-track {background: #f1f1f1;}
+        .certificationtable tbody::-webkit-scrollbar-thumb {background: #888;}
+        .certificationtable tbody::-webkit-scrollbar-thumb:hover {background: #555;}          
+        
+        .certificationtable tbody td, .certificationtable thead th {
+            float: none;
+            display: table-cell;
+            padding: 12px 10px;
+        }
+        .certificationtable thead th:last-child [data-tooltip]:before{
+            left: auto;
+            right: 0;
+        }
+        .certificationtable tbody td {
+            height: auto;
+        }
+        
+        /* Add this attribute to the element that needs a tooltip */
+        [data-tooltip] {
+          position: relative;
+          z-index: 2;
+          cursor: pointer;
+        }
+        
+        /* Hide the tooltip content by default */
+        [data-tooltip]:before,
+        [data-tooltip]:after {
+          visibility: hidden;
+          -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+          filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=0);
+          opacity: 0;
+          pointer-events: none;
+        }
+        
+        /* Position tooltip above the element */
+        [data-tooltip]:before {
+          position: absolute;
+          bottom: 100%;
+          left: 32%;
+          margin-bottom: 5px;
+          margin-left: -70px;
+          padding: 10px;
+          width: 150px; 
+          -webkit-border-radius: 0;
+          -moz-border-radius: 0;
+          border-radius: 5px;
+          background-color: #66cc33;
+          /*background-color: hsla(0, 0%, 20%, 0.9);*/
+          color: #fff;
+          content: attr(data-tooltip);
+          text-align: center;
+          font-size: 14px;
+          line-height: 18px;
+          border: 2px solid #66cc33;
+        }
+        
+        /* Triangle hack to make tooltip look like a speech bubble */
+        [data-tooltip]:after {
+          position: absolute;
+          bottom: 100%;
+          left: 50%;
+          margin-left: -5px;
+          width: 0;
+          border-top: 5px solid #66cc33;
+          /*border-top: 5px solid hsla(0, 0%, 20%, 0.9);*/
+          border-right: 5px solid transparent;
+          border-left: 5px solid transparent;
+          content: " ";
+          font-size: 0;
+          line-height: 0;
+        }
+        
+        /* Show tooltip content on hover */
+        [data-tooltip]:hover:before,
+        [data-tooltip]:hover:after {
+          visibility: visible;
+          -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+          filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=100);
+          opacity: 1;
+        }
+        
+        .help{font-weight: bold; cursor: pointer;}
+        .help i{color: #66cc33;}
+    </style>
+    
+    <script type="text/javascript">
+    //    j$ = jQuery.noConflict();
+            
+        $(document).ready(function(){
+           
+              $("#table1").tablesorter({
+                
+                // use save sort widget
+                widgets : ['saveSort','staticRow'],
+                emptyTo: 'bottom',
+                sortList: [[2,1]],
+                headers : { 0: {  sorter: true},
+                            1: { sorter: true},
+                            2: { sorter: true },
+                            3: { sorter: true}
+                            
+                 }
+               
+                
+             });
+            });
+            
+        </script>
+       
+      
+       <apex:outputPanel id="charts" >
+
+   </apex:outputPanel>
+    <!--Navigation-->    
+    <apex:form >
+    <apex:actionFunction action="{!statusFilter}" reRender="pg,av,av1,av2,av3" name="sf">
+        <apex:param name="status" value="" assignTo="{!repStatus}"/>
+    </apex:actionFunction>
+        <div class="slds-scope">
+            <div class="myapp">
+                <!--Navigation-->
+                 
+                <!--Navigation-->
+                 <apex:actionFunction id="breadCrumClick" name="breadCrumClick" action="{!breadCrumClick}" rerender="repList,roleList,levels,levelList" oncomplete="validateSave();">
+                    <apex:param value="" name="crumValue" assignTo="{!crumValue}" />
+                    <apex:param value="" name="levelValue" assignTo="{!levelValue}" />
+                </apex:actionFunction>
+                <div class="slds-grid slds-wrap slds-form-element slds-p-around_small" style="background: #f5f5f9; padding-left: 0; padding-right: 0; padding-bottom: 0;">
+                    <div class="slds-p-around_small" style="color: #333333; font-size: 16px; position: absolute; right: 0; top: 0;"  >
+                        <span class="help" onclick="popup('pop')" style="float: left; line-height: 18px;">Help <i style="font-size: 18px; margin: 0 0 0 5px; float: right;" class="fa fa-question-circle" aria-hidden="true"></i></span>
+                    </div>
+                    <div class="slds-col">
+                       
+                        <script type="text/javascript">
+                             var repVal ;
+                             var repupdate = false;
+                        	var space = false;
+                             var crumb = '{!defaultBreadCrumb}'; 
+                             console.log('defaultBreadCrumb'+crumb );
+                                $(document).ready(function(){                                       
+                                    var option;
+                                    $(".crumbClass").html(crumb);                                    
+                                    
+                                });
+                                
+                                function addCrumb(obj,levelValue){
+                                     
+                             		console.log('defaultBreadCrumb'+crumb );
+                                    option = $(obj).find('option:selected').text();
+                                    console.log('option  :: '+option);
+                                    console.log('repupdate  :: '+repupdate);
+                                    var repName = '';
+                                    if(option != '--Select--' && option != 'All'){
+                                        if(crumb == ''){
+                                            crumb = option;                                                            
+                                        }/*else if((repVal =='Rep' || repVal == 'Filter By Representative') && !repupdate ){
+                                            //if(!crumb.endswith('</a>')){
+                                                console.log('inside :: '+crumb.lastIndexOf('a'));
+                                                console.log('inside :: '+crumb.length);
+                                            //}
+                                            if(crumb.lastIndexOf('a') != (crumb.length-2)){
+                                                console.log('insidelength');
+                                                crumb = crumb.slice(0, crumb.lastIndexOf('>'))
+                                            }
+                                            crumb = crumb + '&nbsp> ' +option;
+                                            repupdate = true;
+                                        }else if((repVal =='Rep' || repVal == 'Filter By Representative') && repupdate ){
+                                             console.log('crumb :: '+crumb);
+                                            crumb = crumb.slice(0, crumb.lastIndexOf('>')) +'> ' + option;
+                                            
+                                        }*/else { 
+                                            if(crumb.lastIndexOf('a') != (crumb.length-2)){
+                                                console.log('insidelength');
+                                                repName = crumb.slice((crumb.lastIndexOf('>')),crumb.length);
+                                                crumb = crumb.slice(0, crumb.lastIndexOf('>'));
+                                            }
+                                            console.log('repName'+repName);
+                                            crumb = crumb + '&nbsp>&nbsp '+`   <a onclick="breadCrumClick1('${option}','${levelValue}')">`+ option+ '</a>'+'&nbsp'+repName;
+                                            space = true;
+                                        }
+                                        }else if(option == 'All'){
+                                        crumb = crumb.slice(0, crumb.lastIndexOf('>'));
+                                    }
+                                    $(".crumbClass").html(crumb);
+                                    
+                                }
+                                
+                                function repva(rv){
+                                    repVal = rv;
+                                    
+                                    console.log(repVal);
+                                }
+                            
+                            function sfcall(obj){
+                                sf($(obj).val());
+                            }
+                            
+                            function hidePanel(){
+                                 $("#noti1").toggle();
+                                 $("#noti2").toggle();
+                            }
+                            function breadCrumClick1(v,l){
+                                repupdate = false;
+                                console.log(v);
+                                console.log(l);
+                                console.log('crumb'+crumb);
+                                breadCrumClick(v,l);
+                                crumb = crumb.slice(0, crumb.lastIndexOf(v+'</a>'))+v+'</a>';
+                                console.log('crumb'+crumb);
+                                $(".crumbClass").html(crumb);
+                                
+                                 
+                            }
+                        
+                        function addreptoCrumb(obj,levelValue){
+                            console.log('defaultBreadCrumb'+crumb );
+                                    option = $(obj).find('option:selected').text();
+                                    console.log('option  :: '+option);
+                                    console.log('repupdate  :: '+repupdate);
+                                    if(option != '--Select--' && option != 'All'){
+                                        if(crumb == ''){
+                                            crumb = option;                                                            
+                                        }else if((repVal =='Rep' || repVal == 'Filter By Representative') && !repupdate ){
+                                            //if(!crumb.endswith('</a>')){
+                                                console.log('inside :: '+crumb.lastIndexOf('a'));
+                                                console.log('inside :: '+crumb.length);
+                                            //}
+                                            if(crumb.lastIndexOf('a') != (crumb.length-2) && !space){
+                                                console.log('insidelength');
+                                                crumb = crumb.slice(0, crumb.lastIndexOf('>'))
+                                            }
+                                            crumb = crumb + '&nbsp> ' +option;
+                                            repupdate = true;
+                                        }else if((repVal =='Rep' || repVal == 'Filter By Representative') && repupdate ){
+                                             console.log('crumb2 :: '+crumb);
+                                            if(crumb.lastIndexOf('a') != (crumb.length-2)){
+                                            crumb = crumb.slice(0, crumb.lastIndexOf('>')) +'> ' + option;
+                                            }else{
+                                            	crumb = crumb +' > '+option
+                                            }
+                                            
+                                        }
+                                        }else if(option == 'All'){
+                                        crumb = crumb.slice(0, crumb.lastIndexOf('>')-6);
+                                    }
+                                    $(".crumbClass").html(crumb);
+                                    
+                            
+                        }
+                        </script> 
+                        
+                        <apex:outputPanel id="crumbText">
+                        
+                            <script type="text/javascript">
+                                function reloadCrumb(){
+                                        crumb = '{!defaultBreadCrumb}';
+                                        $(".crumbClass").html(crumb);
+                                        repupdate = false;
+                                    }
+                            </script>
+                            <apex:outputText styleClass="crumbClass slds-p-around_small slds-grid" style="color: #333333; font-size: 18px; font-weight: 300;padding-top: 0;padding-bottom: 10px;">                                
+                            </apex:outputText>
+                        </apex:outputPanel>
+                         
+                        <apex:outputPanel id="filtersPanel">
+                            <apex:actionStatus id="filterStatus">                                
+                                <apex:facet name="stop">
+                                    <apex:outputPanel >
+                                        <div class="slds-grid slds-wrap">                                
+                                            <div class="slds-large-size_8-of-8 slds-small-size_1-of-1">
+                                                
+                                                <div class="slds-grid"> 
+                                                    <apex:outputPanel id="levels" styleclass="slds-col slds-size_1-of-3"> 
+                                                        <label class="slds-form-element__label slds-text-heading_medium slds-p-left_small" style="font-size: 21px; font-weight: bold; color: #7e8793;" for="select-01">{!fw.labelOne}</label>                              
+                                                        <div class="slds-form-element__control slds-p-around_small" style="margin: -10px 0 0 0;">
+                                                            <div style="position: relative;">
+                                                              <!--  <apex:actionRegion > -->
+                                                                    <apex:selectList size="1" disabled="{!IF(NOT(fw.isRep),false,true)}" value="{!fw.selectedLevelOne}" styleClass="slds-select slds-text-heading_medium slds-p-around_x-small" id="select-01" style="color: #7e8793; font-size: 21px; border-radius: 0; height: auto; padding: 6px 30px 6px 8px;">
+                                                                        <apex:actionSupport status="filterStatus" event="onchange" onComplete="reloadCrumb();validateSave();"  action="{!levelOneAction}" rerender="repList,levelList,roleList,crumbText"/>
+                                                                        <apex:selectoptions value="{!fw.levelOne}"> 
+                                                                        </apex:selectoptions>                                                
+                                                                      </apex:selectList> 
+                                                             <!--   </apex:actionRegion> -->
+                                                            </div>
+                                                        </div>
+                                                        <apex:outputText style="color:red; display:none;margin: 0px 0px 0px 75px; font-size: 15px;" value="Please select a value" id="validlevel"></apex:outputText>
+                                                    </apex:outputPanel> 
+                                                    <apex:outputPanel id="levelList" styleclass="slds-col slds-size_1-of-3">
+                                                        <label class="slds-form-element__label slds-text-heading_medium slds-p-left_small rep" style="font-size: 21px; font-weight: bold; color: #7e8793;" for="select-02">{!fw.labelTwo}{!IF(fw.labelTwo =='Rep','  Name','')}</label><apex:outputPanel id="repol"><apex:image url="{!URLFOR($Resource.Overlay,'Overlay/overlay.png')}" style="margin: -10px 0 0 0;" rendered="{!IF(AND(RepOverlay,!RoleOverlay) ,true,false)}"/></apex:outputPanel>
+                                                        <div class="slds-form-element__control slds-p-around_small" style="margin: -10px 0 0 0;">
+                                                            <div style="position: relative;">
+                                                                <apex:actionRegion > 
+                                                                    <apex:selectList disabled="{!IF(AND(NOT(ISNULL(fw.selectedLevelOne)),NOT(fw.selectedLevelOne='--Select--'),NOT(ISBLANK(fw.selectedLevelOne)),NOT(fw.disableLevelTwo),NOT(fw.isRep)),false,true)}" size="1" value="{!fw.selectedLevelTwo}" styleClass="slds-select slds-text-heading_medium slds-p-around_x-small" id="select-02" style="color: #7e8793; font-size: 21px; border-radius: 0; height: auto; padding: 6px 30px 6px 8px;">
+                                                                        <apex:actionSupport status="filterStatus" event="onchange" onComplete="addCrumb(this,'{!fw.labelOne}');validateSave();" action="{!levelTwoAction}" onbeforedomupdate="repva('{!fw.labelTwo}')" rerender="repList,roleList,levels,levelList,crumbText" />
+                                                                        <apex:selectoptions value="{!fw.levelTwo}"> 
+                                                                        </apex:selectoptions>                                                        
+                                                                    </apex:selectList> 
+                                                               </apex:actionRegion> 
+                                                            </div>
+                                                        </div>
+                                                        <apex:outputText style="color:red; display:none;margin: 0px 0px 0px 75px; font-size: 15px;" value="Please select a value" id="validname"></apex:outputText>
+                                                    </apex:outputPanel>
+                                                    
+                                                    <apex:outputPanel id="roleList" styleclass="slds-col slds-size_1-of-3">
+                                                        <label class="slds-form-element__label slds-text-heading_medium slds-p-left_small" style="font-size: 21px; font-weight: bold; color: #7e8793;" for="select-03">{!fw.labelThree}</label><apex:outputPanel id="roleOl"><apex:image url="{!URLFOR($Resource.Overlay,'Overlay/overlay.png')}" style="margin: -10px 0 0 0;" rendered="{!IF(RoleOverlay ,true,false)}"/></apex:outputPanel>
+                                                        
+                                                        <div class="slds-form-element__control slds-p-around_small" style="margin: -10px 0 0 0;">
+                                                            <div style="position: relative;">
+                                                            <apex:actionRegion >
+                                                                <apex:selectList disabled="{!IF(AND(NOT(ISNULL(fw.selectedLevelOne)),NOT(ISNULL(fw.selectedLevelTwo)),NOT(ISBLANK(fw.selectedLevelOne)),NOT(ISBLANK(fw.selectedLevelTwo)),NOT(fw.disableLevelThree),NOT(fw.isRep)),false,true)}" size="1" value="{!fw.SelectedLevelThree}" styleClass="slds-select slds-text-heading_medium slds-p-around_x-small" id="select-03" style="color: #7e8793; font-size: 21px; border-radius: 0; height: auto; padding: 6px 30px 6px 8px;">
+                                                                    <apex:actionSupport status="filterStatus" event="onchange" rerender="repList" oncomplete="validateSave();" />
+                                                                    <apex:selectoptions value="{!fw.levelThree}"> 
+                                                                    </apex:selectoptions>                                                        
+                                                                </apex:selectList>
+                                                            </apex:actionRegion>  
+                                                            </div>
+                                                        </div>
+                                                        <apex:outputText style="color:red; display:none;margin: 0px 0px 0px 75px; font-size: 15px;" value="Please select a value" id="validmgr"></apex:outputText>
+                                                    </apex:outputPanel>                                                                                                                                              
+                                                </div>
+                                            </div>
+                                                 <div class="slds-large-size_8-of-8 slds-small-size_1-of-1">
+                                                    <div class="slds-grid"> 
+                                                        <apex:outputPanel id="repList" styleclass="slds-col slds-size_1-of-3">
+                                                            <label class="slds-form-element__label slds-text-heading_medium slds-p-left_small" style="font-size: 21px; font-weight: bold; color: #7e8793;" for="select-04">{!fw.labelFour}</label>
+                                                            <div class="slds-form-element__control slds-p-around_small" style="margin: -10px 0 0 0;">
+                                                                <div style="position: relative;">
+                                                                    <apex:actionRegion >
+                                                                        <apex:selectList disabled="{!IF(AND(NOT(ISNULL(fw.SelectedLevelOne)),NOT(fw.SelectedLevelOne='--Select--'),NOT(ISBLANK(fw.SelectedLevelOne)),NOT(fw.isRep)),false,true)}" size="1" value="{!fw.SelectedLevelFour}" styleClass="slds-select slds-text-heading_medium slds-p-around_x-small" id="select-04" style="color: #7e8793; font-size: 21px; border-radius: 0; height: auto; padding: 6px 30px 6px 8px;">
+                                                                            <apex:actionSupport status="filterStatus" event="onchange" onComplete="addreptoCrumb(this,'{!fw.labelOne}');validateSave();"  onbeforedomupdate="repva('{!fw.labelFour}')" rerender="repList,roleList,levels,levelList,crumbText" />
+                                                                            <apex:selectoptions value="{!fw.levelFour}"> 
+                                                                            </apex:selectoptions>                                                        
+                                                                        </apex:selectList> 
+                                                                    </apex:actionRegion>
+                                                                </div>
+                                                            </div>
+                                                            <apex:outputText style="color:red; display:none;margin: 0px 0px 0px 75px; font-size: 15px;" value="Please select a value" id="validrep"></apex:outputText>
+
+                                                        </apex:outputPanel>
+                                                    </div>
+
+                                                </div>
+                                            
+                                            <apex:actionFunction name="show" action="{!showUpdated}" rerender="detailsPanel,roleOl,repol,mg" />     
+                                            
+                                   
+                                  
+                                  
+                                              
+                                                                                   
+                                        </div>
+                                    </apex:outputPanel>
+                                </apex:facet>
+                                                                                                
+                                <apex:facet name="start">
+                                    <apex:outputPanel >
+                                        <div class="slds-grid slds-wrap">                                
+                                            <div class="slds-large-size_8-of-8 slds-small-size_1-of-1">
+                                                <div class="slds-grid">                                                 
+                                                    <apex:outputPanel styleclass="slds-col slds-size_1-of-3"> 
+                                                        <label class="slds-form-element__label slds-text-heading_medium slds-p-left_small" style="font-size: 21px; font-weight: bold; color: #7e8793;" for="select-01">Select Level</label>                              
+                                                        <div class="slds-form-element__control slds-p-around_small" style="margin: -10px 0 0 0;">
+                                                            <div style="position: relative;">
+                                                                <apex:selectList size="1" disabled="true" styleClass="slds-select slds-text-heading_medium slds-p-around_x-small" style="color: #7e8793; font-size: 21px; border-radius: 0; height: auto; padding: 6px 30px 6px 8px;">
+                                                                    <apex:selectoption itemValue="Level" itemLabel="Level"> 
+                                                                    </apex:selectoption>                                               
+                                                                </apex:selectList> 
+                                                            </div>
+                                                        </div>
+                                                    </apex:outputPanel> 
+                                                    <apex:outputPanel styleclass="slds-col slds-size_1-of-3"> 
+                                                        <label class="slds-form-element__label slds-text-heading_medium slds-p-left_small" style="font-size: 21px; font-weight: bold; color: #7e8793;" for="select-01">Select Level</label>                              
+                                                        <div class="slds-form-element__control slds-p-around_small" style="margin: -10px 0 0 0;">
+                                                            <div style="position: relative;">
+                                                                <apex:selectList size="1" disabled="true" styleClass="slds-select slds-text-heading_medium slds-p-around_x-small" style="color: #7e8793; font-size: 21px; border-radius: 0; height: auto; padding: 6px 30px 6px 8px;">
+                                                                    <apex:selectoption itemValue="Level" itemLabel="Level"> 
+                                                                    </apex:selectoption>                                               
+                                                                </apex:selectList>   
+                                                            </div>
+                                                        </div>
+                                                    </apex:outputPanel>
+                                                    
+                                                    <apex:outputPanel styleclass="slds-col slds-size_1-of-3"> 
+                                                        <label class="slds-form-element__label slds-text-heading_medium slds-p-left_small" style="font-size: 21px; font-weight: bold; color: #7e8793;" for="select-01">Select Role</label>                              
+                                                        <div class="slds-form-element__control slds-p-around_small" style="margin: -10px 0 0 0;">
+                                                            <div style="position: relative;">
+                                                                <apex:selectList size="1" disabled="true" styleClass="slds-select slds-text-heading_medium slds-p-around_x-small" style="color: #7e8793; font-size: 21px; border-radius: 0; height: auto; padding: 6px 30px 6px 8px;">
+                                                                    <apex:selectoption itemValue="Role" itemLabel="Role"> 
+                                                                    </apex:selectoption>                                               
+                                                                </apex:selectList>     
+                                                            </div>
+                                                        </div>
+                                                    </apex:outputPanel>                                                                                                                                                                                                                                             
+                                                </div>
+                                            </div>
+                                            <div class="slds-large-size_8-of-8 slds-small-size_1-of-1">
+                                                    <div class="slds-grid">
+                                                        <apex:outputPanel styleclass="slds-col slds-size_1-of-3"> 
+                                                            <label class="slds-form-element__label slds-text-heading_medium slds-p-left_small" style="font-size: 21px; font-weight: bold; color: #7e8793;" for="select-04">Select Level</label>                              
+                                                            <div class="slds-form-element__control slds-p-around_small" style="margin: -10px 0 0 0;">
+                                                                <div style="position: relative;">
+                                                                    <apex:selectList size="1" disabled="true" styleClass="slds-select slds-text-heading_medium slds-p-around_x-small" style="color: #7e8793; font-size: 21px; border-radius: 0; height: auto; padding: 6px 30px 6px 8px;">
+                                                                        <apex:selectoption itemValue="Level" itemLabel="Level"> 
+                                                                        </apex:selectoption>                                               
+                                                                    </apex:selectList> 
+                                                                </div>
+                                                            </div>
+                                                        </apex:outputPanel>
+                                                    </div>
+                                                </div>                                                                                 
+                                        </div>
+                                    </apex:outputPanel>
+                                </apex:facet>                                                                                                
+                                
+                            </apex:actionStatus>
+                        </apex:outputPanel>
+                    </div>
+                </div>
+                <apex:outputPanel id="detailsPanel">
+                  
+                    <apex:outputPanel rendered="{!!isReset}">
+                        <div class="slds-wrap slds-form-element slds-p-around_small" style="background: #f5f5f9;">
+                            
+                            <apex:outputPanel rendered="{!updatenoti}">
+                                <div class="slds-col" id="noti1" style="margin-bottom: 12px;">                                    
+                                    <div class="slds-p-around_small" style="background: #ffcb00; display: inline-block; width: 100%;">
+                                        <span class="slds-icon_container" style="float: left; margin: 4px 0 0 0;">
+                                            <i style="color:#5f666f; font-size: 26px;" class="fas fa-exclamation-triangle" aria-hidden="true" ></i>
+                                        </span>
+                                        
+                                        <span class="slds-text-heading_large slds-p-left_medium slds-p-right_medium" style="color:#5f666f; font-size: 21px; font-weight: 500; float: left; margin: 3px 0 0 0;">You have an update to complete for your team members.</span>
+                                        <span class="">
+                                            <apex:actionFunction id="updatePage" name="updatePage" action="{!navigateToUpdatePage}"></apex:actionFunction>
+                                            <a onclick = "updatePage();" style="background-color: #fff; color: #333333; padding: 5px 30px; border-radius: 30px; font-size: 15px; font-weight: 400; text-decoration:none; float: left;">Update Skills</a>
+                                        </span>
+                                    </div>
+                                </div>
+                            </apex:outputPanel>        
+                            <apex:outputPanel rendered="{!isPendingStatusUpdate}">
+                                <div class="slds-col slds-p-around_medium" id="noti2" >
+                                    <div class="slds-p-around_small" style="background: #ffcb00; display: inline-block; width: 100%;">
+                                        <span class="slds-icon_container" style="float: left; margin: 4px 0 0 0;">
+                                            <i style="color:#5f666f; font-size: 26px;" class="fas fa-exclamation-triangle" aria-hidden="true" ></i>
+                                        </span>
+                                        
+                                        <span class="slds-text-heading_large slds-p-left_medium slds-p-right_medium" style="color:#5f666f; font-size: 21px; font-weight: 500; float: left; margin: 3px 0 0 0;">You have new hires who have completed their onboarding period.</span>
+                                        <span class="">
+                                            
+                                            <apex:actionFunction name="updateStatusPage" action="{!navigateToUpdateStatusPage}"></apex:actionFunction>
+                                            <a onclick = "updateStatusPage();" style="background-color: #fff; color: #333333; padding: 5px 30px; border-radius: 30px; font-size: 15px; font-weight: 400; text-decoration:none; float: left;">Update Skills</a>
+                                        </span>
+                                    </div>
+                                </div>                            
+                            </apex:outputPanel>
+                       
+                            <div class="slds-col">
+                                
+                                <div class="slds-grid slds-grid_align-center" style="justify-content: left;">
+                                    <div class="slds-col slds-m-right_x-large">
+                                        <div style="font-size: 21px; color: #333333; font-weight: 300;">Show:</div>
+                                    </div>
+                                    <div class="slds-col slds-m-right_x-large">
+                                        <div>
+                                            <label class="radio-container">All Employees
+                                              <input type="radio" checked="checked" name="radio" value="All" onclick="sfcall(this);" />
+                                              <span class="checkmark"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="slds-col slds-m-right_x-large">
+                                        <div>
+                                            <label class="radio-container">Tenured Employees
+                                              <input type="radio" name="radio" value="Tenured" onclick="sfcall(this);" />
+                                              <span class="checkmark"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="slds-col">
+                                        <div>
+                                            <label class="radio-container">New Employees
+                                              <input type="radio" name="radio" value="New" onclick="sfcall(this);" />
+                                              <span class="checkmark"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--<div style="display: table; width: 100%;">
+                                  <input style="float: right; margin: -50px 30px 0 0;" type="checkbox" name="radio" value="New" onclick="hidePanel();" />
+                            </div>--> 
+                            <c:Help_popup helpContent="{!help}"/>
+                            <apex:outputPanel id="pg">
+                                <div class="slds-grid">
+                                    <style>.slds-scope .slds-table--bordered:not(.slds-no-row-hover) tbody tr:hover>td:not(.slds-is-selected), .slds-scope .slds-table--bordered:not(.slds-no-row-hover) tbody tr:hover>th:not(.slds-is-selected), .slds-scope .slds-table_bordered:not(.slds-no-row-hover) tbody tr:hover>td:not(.slds-is-selected), .slds-scope .slds-table_bordered:not(.slds-no-row-hover) tbody tr:hover>th:not(.slds-is-selected){box-shadow: none;}</style>
+                                    <table class="slds-table slds-table_bordered slds-table_col-bordered tablesorter certificationtable" style="border: 1px solid #d8dde6;" id="table1">
+                                       
+                                        <thead>
+                                            <tr>
+                                                <th class="name slds-cell-wrap" scope="col" style="background: #7e8793; font-size: 16px;  color: #fff; width:20%;">
+                                                    Name
+                                                    <span class="slds-icon_container" style="position: absolute; bottom: 12px; right: 7px;">
+                                                        <i style="color:#fff; font-size: 16px;" class="fas fa-chevron-down" aria-hidden="true" ></i>
+                                                    </span>
+                                                </th>
+                                                <th class="slds-cell-wrap" scope="col" style="background: #7e8793; color: #fff; font-size: 16px; width:16%;">
+                                                    Role
+                                                    <span class="slds-icon_container" style="position: absolute; top: 10px; right: 6px;" data-tooltip="Sales Role assigned to employee">
+                                                        <i style="color:#fff; font-size: 16px;" class="fa fa-info-circle" aria-hidden="true" ></i>
+                                                    </span>
+                                                    <span class="slds-icon_container" style="position: absolute; bottom: 12px; right: 7px;">
+                                                        <i style="color:#fff; font-size: 16px;" class="fas fa-chevron-down" aria-hidden="true" ></i>
+                                                    </span>
+                                                </th>
+                                                 <th class="slds-cell-wrap" scope="col" style="background: #7e8793;  color: #fff; font-size: 16px; line-height: 16px; width:16%;">
+                                                    YTD Quota <br/> Performance
+                                                    <span class="slds-icon_container" style="position: absolute; top: 10px; right: 6px;" data-tooltip="Percentage of YTD quota attainment">
+                                                        <i style="color:#fff; font-size: 16px;" class="fa fa-info-circle" aria-hidden="true" ></i>
+                                                    </span>
+                                                    <span class="slds-icon_container" style="position: absolute; bottom: 12px; right: 7px;">
+                                                        <i style="color:#fff; font-size: 16px;" class="fas fa-chevron-down" aria-hidden="true" ></i>
+                                                    </span>
+                                                </th>
+                                                <th class="slds-cell-wrap" scope="col" style="background: #7e8793; color: #fff; font-size: 16px; line-height: 16px; width:16%;">
+                                                    Annual Quota <br/>Percentage
+                                                    <span class="slds-icon_container" style="position: absolute; top: 10px; right: 6px;" data-tooltip="Overall prediction of future sales performance">
+                                                        <i style="color:#fff; font-size: 16px;" class="fa fa-info-circle" aria-hidden="true" ></i>
+                                                    </span>
+                                                    <span class="slds-icon_container" style="position: absolute; bottom: 12px; right: 7px;">
+                                                        <i style="color:#fff; font-size: 16px;" class="fas fa-chevron-down" aria-hidden="true" ></i>
+                                                    </span>
+                                                </th>
+                                                <th class="slds-cell-wrap" scope="col" style="background: #7e8793; color: #fff; font-size: 16px; line-height: 16px; width:16%;">
+                                                    Funnelocity Skills Score
+                                                    <span class="slds-icon_container" style="position: absolute; top: 10px; right: 6px;" data-tooltip="Overall prediction of skills/behaviors that contribute to sales">
+                                                        <i style="color:#fff; font-size: 16px;" class="fa fa-info-circle" aria-hidden="true" ></i>
+                                                    </span>
+                                                    <span class="slds-icon_container" style="position: absolute; bottom: 12px; right: 7px;">
+                                                        <i style="color:#fff; font-size: 16px;" class="fas fa-chevron-down" aria-hidden="true" ></i>
+                                                    </span>
+                                                </th>
+                                                <th class="slds-cell-wrap" scope="col" style="background: #7e8793; color: #fff; font-size: 16px; line-height: 18px; width:16%;">
+                                                    Funnelocity Management <br/>  Skills Score
+                                                    <span class="slds-icon_container" style="position: absolute; top: 10px; right: 6px;" data-tooltip="Evaluation of Manager skills/behaviors">
+                                                        <i style="color:#fff; font-size: 16px;" class="fa fa-info-circle" aria-hidden="true" ></i>
+                                                    </span>
+                                                    <span class="slds-icon_container" style="position: absolute; bottom: 12px; right: 7px;">
+                                                        <i style="color:#fff; font-size: 16px;" class="fas fa-chevron-down" aria-hidden="true" ></i>
+                                                    </span>
+                                                </th> 
+                                                
+                                            </tr>
+                                        </thead>
+                                         
+                                        <tbody>
+                                             <tr style="font-size: 18px;" class="static" data-row-index="0">
+                                                
+                                                 <td class="slds-cell-wrap" scope="row" data-label="Name" style="font-size: 16px; background: #00b2ee; color: #fff; width: 20%;display:{!IF(AND(certiTable != null , certiTable.size ==1,mngRecord.size != null ,mngRecord.size < 1 ),'none', '')}">
+                                                    <apex:outputPanel rendered="{!IF(AND(mngRecord.size != null ,mngRecord.size > 0),true,false)}">
+                                                    <a onclick="goToDetailPage('{!mngRecord[0].Sales_Rep_Profile__r.Id}')" style="font-size: 16px; color: #fff; text-decoration: underline; ">
+                                                       {!mngRecord[0].Sales_Rep_Profile__r.Name}<apex:image url="{!URLFOR($Resource.onboardIcon,'OnBoardImg/white.png')}" style="margin: 2px 5px 0 0;float: right;" rendered="{!IF(mngRecord[0].Sales_Rep_Profile__r.Rep_Staus__c == 'New',true,false)}"/> 
+                                                    </a>
+                                                    </apex:outputPanel>
+                                                    <apex:outputPanel rendered="{!IF(AND(mngRecord.size != null ,mngRecord.size > 0),false,true)}">
+                                                     Average 
+                                                    </apex:outputPanel>
+                                                </td>
+                                                <td class="slds-cell-wrap" data-label="Tenure in Mos." style="font-size: 16px; background: #00b2ee; color: #fff; width: 16%;display:{!IF (AND(certiTable != null , certiTable.size ==1,mngRecord.size != null ,mngRecord.size < 1 ),'none', '')}">
+                                                    <apex:outputText value="{!IF(AND(mngRecord.size != null ,mngRecord.size > 0),mngRecord[0].Sales_Rep_Profile__r.Role__c,fw.SelectedLevelThree )}"></apex:outputText>    
+                                                </td>  
+                                                <td class="slds-text-align_center slds-cell-wrap" data-label="Total Rating" style="font-size: 16px; background: #1988c0; color: #fff; width: 16%;display:{!IF (AND(certiTable != null , certiTable.size ==1,mngRecord.size != null ,mngRecord.size < 1 ),'none', '')};">
+                                                    <apex:outputText value="{!IF(AND(mngRecord.size != null ,mngRecord.size > 0),ROUND(mngRecord[0].YTD_Quota_Percentage__c, 2),ROUND(avgResult[0].avgytd, 2))}%" id="av"  rendered="{!IF(OR(AND(mngRecord.size != null ,mngRecord.size > 0,mngRecord[0].YTD_Quota_Percentage__c != null),AND(avgResult.size != null , avgResult.size > 0,avgResult[0].avgytd != null)),true,false)}"></apex:outputText>  
+                                                </td>
+                                                <td class="slds-text-align_center slds-cell-wrap" data-label="Working Knowledge of the products Services?" style="font-size: 16px; background: #00b2ee; color: #fff; width: 16%;display:{!IF (AND(certiTable != null , certiTable.size ==1 ,mngRecord.size != null ,mngRecord.size < 1 ),'none', '')}">
+                                                    <apex:outputText value="{!IF(AND(mngRecord.size != null ,mngRecord.size > 0),ROUND(avgAnnualQuotaPer[0].avgrev, 2),ROUND(avgResult[0].avgannualrev, 2))}%" id="av1"></apex:outputText>    
+                                                </td>
+                                                <td class="slds-text-align_center slds-cell-wrap" data-label="Working Knowledge Competitive Product sets & positioning?" style="font-size: 16px; background: #00b2ee; color: #fff; width: 16%;display:{!IF (AND(certiTable != null , certiTable.size ==1 ,mngRecord.size != null ,mngRecord.size < 1 ),'none', '')}">
+                                                    <apex:outputText value="{!IF(AND(mngRecord.size != null ,mngRecord.size > 0),ROUND(mngRecord[0].Overall_Qualitative_Rating__c, 2),ROUND(avgResult[0].avgoverallqual, 2))}" id="av2"></apex:outputText> 
+                                                </td> 
+                                                <td class="slds-text-align_center slds-cell-wrap" data-label="" style="font-size: 16px; background: #00b2ee; color: #fff; width: 16%;display:{!IF (AND(certiTable != null , certiTable.size ==1 ,mngRecord.size != null ,mngRecord.size < 1 ),'none', '')}">
+                                                    <apex:outputText value="{!IF(AND(mngRecord.size != null ,mngRecord.size > 0),ROUND(mngRecord[0].Management_Qualitative_Score__c , 2),ROUND(avgResult[0].avgmng, 2))}" id="av3" ></apex:outputText>    
+                                                </td> 
+                                            </tr>
+                                            
+                                             
+                                            <apex:actionFunction name="goToDetailPage" id="goToDetailPage" action="{!navigateToDetailPage}" reRender="">
+                                                <apex:param name="profId" value="" assignTo="{!selectedId}"/>
+                                                </apex:actionFunction>
+                                                <apex:repeat value="{!certiTable}" var="ct" >
+                                                
+                                                <tr style="font-size: 18px;">
+                                                    <td class="slds-cell-wrap" scope="row" data-label="Name" style="font-size: 15px; background: #fff; color: #333333; width: 20%;">
+                                                        <a onclick="goToDetailPage('{!ct.Sales_Rep_Profile__r.id}')" style="font-size: 16px; color: #00b2ee; text-decoration: underline; ">
+                                                             {!ct.Sales_Rep_Profile__r.name}<apex:image url="{!URLFOR($Resource.onboardIcon,'OnBoardImg/blue.png')}" style="margin: 2px 5px 0 0;float: right;" rendered="{!IF(ct.Sales_Rep_Profile__r.Rep_Staus__c== 'New',true,false)}"/>
+                                                        </a>
+                                                    </td>
+                                                    <td class="slds-cell-wrap" data-label="Tenure in Mos." style="font-size: 16px; background: #fff; color: #333333; width: 16%;">
+                                                        {!ct.Sales_Rep_Profile__r.Role__c}
+                                                    </td>
+                                                    <td class="slds-text-align_center slds-cell-wrap" data-label="Total Rating" style="font-size: 16px; background: #ff9900; color: #fff; width: 16%;">
+                                                        {!ROUND(ct.YTD_Quota_Percentage__c, 2)} {!IF(ct.YTD_Quota_Percentage__c != null,'%','')}
+                                                    </td>
+                                                    <td class="slds-text-align_center slds-cell-wrap" data-label="Working Knowledge of the products Services?" style="font-size: 16px; background: #fff; color: #333333; width: 16%;">
+                                                        {!ROUND(ct.Sales_Rep_Profile__r.YTD_Revenue_Quota_Percent__c, 2)} {!IF(ct.Sales_Rep_Profile__r.YTD_Revenue_Quota_Percent__c != null,'%','')}
+                                                    </td>
+                                                    <td class="slds-text-align_center slds-cell-wrap" data-label="Working Knowledge Competitive Product sets & positioning?" style="font-size: 16px; background: #fff; color: #333333; width: 16%;">
+                                                        {!ROUND(ct.Overall_Qualitative_Rating__c, 2)}
+                                                    </td> 
+                                                    <td class="slds-text-align_center slds-cell-wrap" data-label="" style="font-size: 16px; background: #fff; color: #333333; width: 16%;">
+                                                        {!ROUND(ct.Management_Qualitative_Score__c , 2)}
+                                                    </td>
+                                                </tr>
+                                           </apex:repeat>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                 <script type="text/javascript">
+     
+            
+                                $(document).ready(function(){
+                                   
+                                      $("#table1").tablesorter({
+                                        
+                                        // use save sort widget
+                                        widgets : ['saveSort','staticRow'],
+                                        emptyTo: 'bottom',
+                                        sortList: [[2,1]],
+                                        headers : { 0: {  sorter: true},
+                                                    1: { sorter: true},
+                                                    2: { sorter: true },
+                                                    3: { sorter: true}
+                                                    
+                                         }
+                                       
+                                        
+                                     });
+                                     
+                                          
+                                    });
+                                    
+              
+                    </script>
+                            </apex:outputPanel>
+                        </div>
+                       
+                    </apex:outputPanel>
+                </apex:outputPanel>
+            </div>
+        </div>
+    </apex:form>
+    
+    
+    <script type="text/javascript">   
+         
+       
+         showChart();
+        
+   
+         
+        function validateSave(){
+            var inp1 = $('[id$=select-01]').val();
+            var inp2 = $('[id$=select-02]').val();
+            var inp3 = $('[id$=select-03]').val();
+            
+            var validSave = 'true';
+            
+            console.log(inp1 );
+            console.log(inp2 );
+            console.log(inp3 );
+            if(inp1 == '--Select--'){
+                $('[id$=validlevel]').css("display","block");
+                validSave = 'false';
+            }
+            if(inp2 == '--Select--'){
+                $('[id$=validname]').css("display","block");
+                validSave = 'false';
+            }
+            if(inp3 == '--Select--'){
+               $('[id$=validmgr]').css("display","block");
+                validSave = 'false';
+            }
+           
+            console.log(validSave);
+            if(validSave == 'true'){
+                console.log(validSave); 
+                $('[id$=validlevel]').css("display","none");
+                $('[id$=validname]').css("display","none");
+                $('[id$=validmgr]').css("display","none");
+                
+                show();
+            }
+            setTimeout(function() { showChart(); }, 2000);
+        }
+        
+        
+    </script> 
+    
+    
+    
+    </html>
+</apex:page>

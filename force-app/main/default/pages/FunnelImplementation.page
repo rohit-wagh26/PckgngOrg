@@ -1,0 +1,100 @@
+<apex:page docType="html-5.0" controller="FunnelHistController" extensions="FunnelSCROMAPI" showHeader="true" sidebar="false" lightningStylesheets="true">
+    <apex:form >
+        <apex:outputPanel id="messagePanel" onclick="clearMessage();">
+           <apex:pageMessages id="message"></apex:pageMessages>
+        </apex:outputPanel>
+        <apex:outputPanel id="timerPanel">
+            <apex:actionPoller reRender="messagePanel"  interval="5"  enabled="{!timer}"   action="{!timerOff}"/> 
+        </apex:outputPanel>
+        <apex:actionFunction name="clearMessage"  action="{!timerOff}"  reRender="messagePanel"/>
+       
+        <div style="margin-left: 75px;margin-top: 64px;">
+           
+          <h1>2. Create historical data for the selected date</h1>
+          <br/>
+          <apex:input type="date" value="{!histDateValue}"/>&nbsp; &nbsp; &nbsp;
+ 
+          <apex:commandButton action="{!createHistData}" value="Create Data"/>
+           
+          <br/>
+          <br/>
+          
+          <h1>3. Setup qualitative measures for initial input</h1>
+          <br/>                    
+          <apex:commandButton action="{!updateQualAnswers}" value="Update qualitative measures"/>
+          <br/>
+          <br/> 
+          <!--h1>4. Create customer in postgres</h1>
+          <br/>          
+          <apex:commandButton action="{!createCustomer}" value="Create customer"/>
+          <br/>
+          <br/> 
+          <h1>5. Push qual and quant definitions</h1>
+          <br/>          
+          <apex:commandButton action="{!pushDefinitions}" value="Push definitions"/>
+          <br/>
+          <br/> 
+          <h1>6. Push quant data</h1>
+          <br/>
+          <apex:input type="date" value="{!quantDateValue}"/> &nbsp; &nbsp; &nbsp;
+          <apex:commandButton action="{!pushQuantData}" value="Push"/>
+          <br/>
+          <br/> 
+          <h1>7. Push qual data</h1>
+          <br/>       
+          <apex:input type="date" value="{!qualDateValue}"/>
+          &nbsp; &nbsp;  &nbsp;
+          <apex:commandButton action="{!pushQualData}" value="Push"/>
+          <br/>
+          <br/-->
+           
+          <h1>4. Schedule monthly batch</h1>
+          <br/>          
+          <apex:commandButton action="{!scheduleMonthlyBatch}" value="Schedule monthly batch"/>
+          <br/>
+          <br/>
+          <h1>5. Schedule daily batch</h1>
+          <br/>          
+          <apex:commandButton action="{!scheduleDailyBatch}" value="Schedule daily batch"/>
+          <br/>
+          <br/>
+          <h1>6. Schedule data pull</h1>
+          <br/>          
+          <apex:commandButton action="{!scheduleDataPull}" value="Schedule"/>
+          <br/>
+          <br/>
+           
+          
+          
+           <!--h1>12. Pull scores</h1>
+          <br/>
+          <br/>
+          <apex:commandButton action="{!pullScores}" value="Pull scores"/>
+          <br/>
+          <br/>
+           <h1>13. Pull qual ratings</h1>
+          <br/>
+          <br/>
+          <apex:commandButton action="{!pullQualRatings}" value="Pull qual ratings"/>
+          <br/>
+          <br/>
+           <h1>14. Pull quant ratings</h1>
+          <br/>
+          <br/>
+          <apex:commandButton action="{!pullQuantRatings}" value="Pull quant ratings"/>
+     
+          <br/>
+          <br/--> 
+          <apex:input type="date" value="{!csDt}"/>
+          &nbsp; &nbsp;  &nbsp;                
+          <apex:commandButton action="{!changeCSDt}" value="Update Fiscal year"/>
+          
+          <br/>
+          <br/>
+          <apex:commandButton action="{!createMT}" value="Activate triggers"/>
+          <br/>
+          <br/>
+          <apex:commandButton action="{!deactiveTrigger}" value="Deactivate triggers"/>
+      </div>
+    </apex:form>
+</apex:page>

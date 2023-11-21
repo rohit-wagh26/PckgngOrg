@@ -1,0 +1,6 @@
+<apex:page sidebar="false">
+  
+  <div style="margin-left: 40%;font-size: 25px;margin-top: 2%;">
+      <h1>No Report Found!</h1>
+  </div> 
+</apex:page>

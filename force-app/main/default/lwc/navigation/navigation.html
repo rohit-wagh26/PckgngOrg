@@ -1,0 +1,19 @@
+<template>
+	<lightning-layout vertical-align="center">
+		<lightning-layout-item padding="horizontal-small" size="6">
+			<img src={fmlogo} style="width: 128px;">
+		</lightning-layout-item>
+		<lightning-layout-item size="6">
+			<lightning-layout vertical-align="center" horizontal-align="end" if:true={menuItems}>
+				<template for:each={menuItems} for:item="menuItem">
+					<lightning-layout-item padding="horizontal-small" key={menuItems.pageId} if:true={menuItem.selected}>
+						<strong><a href="#" name={menuItem.pageId} onclick={navigate}>{menuItem.label}</a></strong>
+					</lightning-layout-item>
+					<lightning-layout-item padding="horizontal-small" key={menuItems.pageId} if:false={menuItem.selected}>
+						<a class="slds-text-color_default" href="#" name={menuItem.pageId} onclick={navigate}>{menuItem.label}</a>
+					</lightning-layout-item>
+				</template>
+			</lightning-layout>
+		</lightning-layout-item>
+	</lightning-layout>
+</template>

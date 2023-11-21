@@ -1,0 +1,20 @@
+<template>
+    <div class="filteredContainer">
+		<lightning-tabset class="tabset" active-tab-value="">
+			<c-fm-filter class="filters" filter-items={filterItems} onfilterchange={handleFilterChangeEvent}>
+				<lightning-tab label="Dashboard" value="Dashboard">
+					<c-fm-dashboards filtered-sales-rep-profiles={filteredSalesRepProfiles}></c-fm-dashboards>
+				</lightning-tab>
+				<lightning-tab label="People" value="People">
+					<c-fm-sales-representative filtered-sales-rep-profiles={filteredSalesRepProfiles} ></c-fm-sales-representative>
+				</lightning-tab>
+				<lightning-tab style="width:1200px" label="Action Plans" value="Action Plans">
+					<c-fm-action-plan filtered-sales-rep-profiles={filteredSalesRepProfiles}></c-fm-action-plan>
+				</lightning-tab>
+				<lightning-tab label="Metrics Reports" value="Metrics Reports">
+					<c-fm-metrics-report filtered-sales-rep-profiles={filteredSalesRepProfiles}></c-fm-metrics-report>
+				</lightning-tab>
+			</c-fm-filter>
+		</lightning-tabset>
+	</div>
+</template>

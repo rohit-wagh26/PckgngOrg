@@ -1,0 +1,634 @@
+<apex:page docType="html-5.0" sidebar="false" controller="FunnelRoleGroupingController" extensions="FunnelInstallation">
+    <style>
+        .slds-scope .slds-button a:focus{text-decoration: none;}
+        .slds-modal__container .slds-form-element__label{padding-top: 0; margin-bottom: 0;}
+        .slds-select[disabled], .slds-select.slds-is-disabled {background-color: #ecebea !important;}
+        .select:disabled {background-color:: #ecebea !important;}
+        .slds-scope .slds-checkbox [type=checkbox]:checked+.slds-checkbox--faux:after, .slds-scope .slds-checkbox [type=checkbox]:checked+.slds-checkbox__label .slds-checkbox--faux:after, .slds-scope .slds-checkbox [type=checkbox]:checked+.slds-checkbox__label .slds-checkbox_faux:after, .slds-scope .slds-checkbox [type=checkbox]:checked+.slds-checkbox_faux:after, .slds-scope .slds-checkbox [type=checkbox]:checked~.slds-checkbox--faux:after, .slds-scope .slds-checkbox [type=checkbox]:checked~.slds-checkbox_faux:after{border-bottom: 2px solid #ff9900; border-left: 2px solid #ff9900;}
+    </style>
+    <apex:form id="pageForm" >
+        <apex:actionRegion >
+            <html   lang="en">
+                <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/jquery-1.12.4.js')}"/>
+                <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/jquery-ui.js')}"/>
+                 
+                <apex:stylesheet value="{!URLFOR($Resource.SldsCss,'SldsResources/styles/salesforce-lightning-design-system.css')}"/>
+                <apex:stylesheet value="{!URLFOR($Resource.SldsCss,'SldsResources/styles/salesforce-lightning-design-system.min')}"/>
+                 
+                 <apex:stylesheet value="{!URLFOR($Resource.FunnelScriptFolder,'Design/css/newall.css')}"/>
+            
+                <apex:stylesheet value="{!URLFOR($Resource.FunnelScriptFolder,'Design/css/3.3.7.bootstrap.min.css')}"/>
+                <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/js/3.3.7.bootstrap.min.js')}"/>   
+                
+                <apex:stylesheet value="{!URLFOR($Resource.FunnelScriptFolder,'Design/css/4.0.7.select2.min.css')}"/>    
+                <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/js/4.0.7.select2.min.js')}"/>                          
+                <style>
+                    body { font-size: 75%; }
+                    html{font-size: 100% !important;}
+                    .noSidebarCell, .sidebarCell .fixed { padding: 10px; font-family: sldsFont; }
+                    @font-face {
+                    font-family: sldsFont;
+                    src: url({!URLFOR($Resource.SldsCss,'SldsResources/fonts/SalesforceSans-Light.ttf')});
+                    }
+                    .bPageHeader .phHeader td.left{display: block;}
+                    .navigation{display: table; width: 100%; text-align: center;}
+                    .navigation ul{margin: 0; padding: 0;}
+                    .navigation ul li{display: inline-block; padding: 0 8px; border-left: 2px solid #7e8793; line-height: 17px; margin-left: 0;}
+                    .navigation ul li a{color: #7e8793; font-size: 17px; font-weight: bold;}
+                    .navigation ul li a:hover{color: #66cc33; text-decoration: none;}
+                    .navigation ul li a:focus{outline: none; text-decoration: none;}
+                    .navigation ul li {color: #7e8793; font-size: 17px; font-weight: bold;}
+                    .navigation ul li:hover{color: #66cc33; text-decoration: none;}
+                    .navigation ul li.selected a{color: #66cc33;}
+                    .navigation ul li.home{border: none; padding-left: 0; margin-bottom: 10px;}
+                    .navigation ul li.home a{color: #00b2ee;}
+                    .navigation ul li:last-child{padding-right: 0;}
+                    .navigation ul li.scorenav a{background: url({!$Resource.CertificationNavigationIcon}) no-repeat; padding: 0 0 0 25px; background-position: 0 0; height: 19px; width: 20px;}
+                    .navigation ul li.scorenav a:hover {background-position: 0 -23px;}
+                    .navigation ul li.funnelanalyticsnav > a{background: url({!$Resource.AnalyticsNavigationIcon}) no-repeat; padding: 0 0 0 25px; background-position: 0 5px; height: 19px; width: 20px; color: #7e8793;}
+                    .navigation ul li.funnelanalyticsnav > a:hover{background-position: 0 -17px; color: #66cc33;}
+                    .myapp{min-width: 500px; font-family: sldsFont;background-color: #fff; }
+                    .slds-modal {background: none;}
+                    .navigation ul li.reportnav{position: relative; display: inline-block;cursor: pointer;}
+                    .navigation ul li.reportnav ul.subnav{position: absolute; z-index: 1; width: 240px; background: #fff; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); display: none;}
+                    .navigation ul li.reportnav ul.subnav li{display: block; text-align: left; border: none; padding: 0;}
+                    .navigation ul li.reportnav ul.subnav li a {color: #7e8793; padding: 10px; display: block; width: 100%;}
+                    .navigation ul li.reportnav ul.subnav li a:hover{background: #66cc33; color: #fff;}
+                    .navigation ul li.reportnav:hover ul.subnav {display: block;}
+                    
+                    .navigation ul li.reportnav ul.subnavlast{right:0; position: absolute; z-index: 1; width: 240px; background: #fff; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); display: none;}
+                    .navigation ul li.reportnav ul.subnavlast li{display: block; text-align: left; border: none; padding: 0;}
+                    .navigation ul li.reportnav ul.subnavlast li a {color: #7e8793; padding: 10px; display: block; width: 100%;}
+                    .navigation ul li.reportnav ul.subnavlast li a:hover{background: #66cc33; color: #fff;}
+                    .navigation ul li.reportnav:hover ul.subnavlast{display: block;}
+                    
+                    .navigation ul li.checklisticon{border-right: 2px solid #7e8793; color: #00b2ee; border-left: 0; margin-right: 5px; cursor: pointer;}
+
+                    .navigation ul li.checklisticon a{color: #00b2ee;}
+        
+                    button a:hover{text-decoration: none;}
+                    button a:focus{text-decoration: none; outline: none;}
+                    select{background: url('{!URLFOR($Resource.Selectarrow )}') no-repeat right -20px center #fff !important; -moz-appearance: none; -webkit-appearance: none;}
+                    .slds-size_1-of-8, .slds-size--1-of-8 {width: 16.5%;}
+                    .rolesblock .select2-container{width: 100% !important;}
+                    .rolesblock .select2-container .select2-selection{border: 1px solid #dddbda; color: #333333; font-size: 18px; border-radius: 0; padding: 0.5rem;}
+                    .rolesblock .select2-container .select2-selection__rendered{padding: 0;}
+                    .rolesblock .select2-container .select2-selection__rendered li{margin-left: auto;}
+                    .rolesblock .select2-container .select2-selection__choice{margin-left: auto;}
+                    .select2-results__option{margin-left: auto;}
+                    .select2-container--default .select2-selection--multiple .select2-selection__choice { background-color: #ffffff; border: 1px solid #ff9900;}
+                    .select2-container--default .select2-selection--multiple .select2-selection__choice__remove { color: #ff9900;}
+                    .select2-results__option[aria-selected=true] {
+    display: none;
+}
+                </style>
+                <style>
+                    .fixed-table-container th{
+                    border-bottom: 1px solid #dddbda;
+                    }
+                    .fixed-table-container th + th {
+                    border-left: 1px solid #dddbda;
+                    }
+                    .fixed-table-container td {
+                    border-bottom: 1px solid #dddbda;
+                    padding: 10px 5px;
+                    text-align: center; /* IE */
+                    font-size: 16px;
+                    color: #333333;
+                    background: none;
+                    }
+                    .fixed-table-container td + td {
+                    border-left: 1px solid #dddbda;
+                    }
+                    .fixed-table-container th {
+                    padding: 10px 5px;
+                    text-align: center; /* IE */
+                    font-size: 16px;
+                    color: #00b2ee;
+                    }
+                    /* above this is decorative, not part of the test */
+                    .fixed-table-container {
+                    width: 100%;
+                    /*border: 1px solid black;*/
+                    margin: 10px auto;
+                    /*background-color: white;*/
+                    /* above is decorative or flexible */
+                    position: relative; /* could be absolute or relative */
+                    padding-top: 0; /* height of header */
+                    }
+                    .fixed-table-container-inner {
+                    overflow-x: hidden;
+                    overflow-y: auto;
+                    height: 100%;
+                    /*  max-height: 350px;*/
+                    }
+                    .header-background {
+                    /*background-color: #fff;*/
+                    height: 50px; /* height of header */
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    left: 0;
+                    }
+                    table {
+                    /*background-color: white;*/
+                    width: 100%;
+                    overflow-x: hidden;
+                    overflow-y: auto;
+                    }
+                    .th-inner {
+                    position: absolute;
+                    top: 0;
+                    line-height: 50px; /* height of header */
+                    text-align: center;
+                    border-left: 1px solid #ccc;
+                    padding-left: 5px;
+                    margin-left: -5px;
+                    }
+                    .first .th-inner {
+                    border-left: none;
+                    padding-left: 6px;
+                    }
+                    /* extra-wrap */
+                    .extrawrap th {
+                    text-align: center;
+                    }
+                    .extra-wrap {
+                    width: 100%;
+                    }
+                    }
+                </style>
+                <style>
+                    /*Start Delete modal CSS*/
+                    /*.modal-lg{width: 1100px;}*/
+                    #confirm .modal-dialog {width: 50%;}
+                    .modal.in .modal-dialog {-webkit-transform: translate(0,0);-ms-transform: translate(0,0);-o-transform: translate(0,0);transform: translate(0,0); max-width: none;min-width: 40rem;display: flex;flex-direction: column;height: 100%;padding: 3rem 0;}
+                    .modal-content { border-radius: 0;padding: 20px;overflow: hidden;overflow-y: auto;}
+                    .modal-header{padding: 0;border: none;}
+                    .modal-header .close{position: absolute; right: 10px; margin: 0; top: 10px; opacity: 1; border: none;background: transparent; color: #7e8793; font-size: 44px; width: 25px; height: 20px; line-height: 18px;}
+                    .modal-header h4{background: #BFB178;}
+                    .modal-header h4 ul{padding: 0; margin: 0; display: table; width: 100%;}
+                    .modal-header h4 ul li{display: table-cell; font-size: 24px; color: #333333; width: 50%; padding: 10px; border: none; text-align: left; font-weight: bold;font-family: sldsfont;}
+                    .modal-body{padding: 0;}
+                    .modal-body .delete-content-block{padding: 0;}
+                    .modal-body .delete-content-block label{font-size: 21px; color: #00b2ee;font-family: sldsfont;font-weight: normal;}
+                    .modal-body .delete-content-block p{margin: 23px; font-size: 21px;  color: #777; text-align: center;}
+                    .modal-footer{border: none; padding: 20px 30px;}
+                    .modal-footer .btn-block{display: table; width: auto; margin: 0 auto;}
+                    .modal-footer a{background-color: #7e8793;color: #fff;padding: 15px 60px;border-radius: 30px;font-size: 24px;border: none;margin-left: 0;}
+                    .modal-footer a:hover{color: #fff; text-decoration: none;}
+                    .modal-footer a.save{background: #ff9900;}
+                    .modal-footer a i{color: #fff;}
+                    /*End Delete modal CSS*/
+                    .k-widget { padding: 0; border: none;font-family: arial; }
+                </style>
+                <!--Navigation-->    
+                <apex:outputPanel id="detailsPanel">
+                    <div class="slds-scope">
+                        <div class="myapp" style="background: #f5f5f9;">
+                            <!--Navigation-->
+                            <div class="slds-grid slds-wrap slds-form-element slds-p-around_small">
+                                <div class="slds-size_1-of-1">
+                                    <div class="navigation">
+                                       <ul>
+                                            <li class="checklisticon" >
+                                                <apex:outputPanel rendered="{!(admin && wizardComp && (!checkListComp))}">
+                                                    <apex:commandLink action="{!navigateToChecklistPage}"><i class="fa fa-check-circle" aria-hidden="true"></i></apex:commandLink>
+                                                </apex:outputPanel>
+                                            </li>
+                                    
+                                            <li class="home">
+                                                <apex:commandLink action="{!navigateToHomePage}"><i class="fas fa-home"></i></apex:commandLink>
+                                            </li>
+                                            <li class="scorenav">
+                                                <apex:commandLink action="{!navigateToCertification}"> FUNNELOCITY SCORING</apex:commandLink>
+                                            </li>
+                                            <li>
+                                                <apex:commandLink action="{!navigateToDashboard}"><span><i class="fas fa-tachometer-alt"></i></span> PERFORMANCE DASHBOARD</apex:commandLink>
+                                            </li>
+                                            
+                                            <li class=" reportnav">
+                                                <i class="fas fa-chart-bar"></i> REPORTING 
+                                                <ul class="subnav">
+                                                    <li>
+                                                        <apex:commandLink action="{!navigateToCertificateReports}">Funnelocity Reports</apex:commandLink>
+                                                    </li>
+                                                    <li>
+                                                        <apex:commandLink action="{!navigateToReportsPage}">Sales Management Reports</apex:commandLink>
+                                                    </li>
+                                                    <li>
+                                                        <apex:commandLink action="{!navigateToAnnualizationDashboard}">Tenured and New Hire Performance Dashboard</apex:commandLink>
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                             
+                                            <li class="reportnav funnelanalyticsnav " >
+                                                <a> FUNNELOCITY ANALYTICS </a>  
+                                                <ul class="subnav">
+                                                    <li>
+                                                        <apex:commandLink action="{!navigateToFunnelAnalytic}">Funnelocity Quantitative Scoring </apex:commandLink>
+                                                    </li>
+                                                    <li>
+                                                        <apex:commandLink action="{!navigateToFunnelAnalyticQualitative}">Funnelocity Qualitative Scoring </apex:commandLink>
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                             
+                                            <li style="display:none">
+                                                <apex:commandLink ><i class="fas fa-star"></i> TERRITORY PLAN</apex:commandLink>
+                                            </li>
+                                            <apex:outputPanel rendered="{!displayMetricCalculator}">
+                                                <li><apex:commandLink action="{!navigateToCalculator}"><i class="fas fa-calculator"></i> METRICS CALCULATOR</apex:commandLink></li>
+                                            </apex:outputPanel>
+                                            <apex:outputPanel rendered="{!appSetup = ''}">
+                                                <li class=" reportnav"> <i class="fas fa-chart-bar"></i> ADMIN 
+                                                    <ul class="subnavlast">
+                                                        <li><apex:commandLink action="{!navigateToFunnelAddEditSRP}" rendered="{!adminUser}">Sales Rep Profiles and Hierarchy</apex:commandLink></li>
+                                                        <li><apex:commandLink action="{!navigateToAppSetup}" rendered="{!adminUser}">Metrics and Skills</apex:commandLink></li>
+                                                        <li><apex:commandLink action="{!navigateToGoals}">Goal Management</apex:commandLink></li>
+                                                        <li><apex:commandLink action="{!navigateToFunnelSetup}" rendered="{!adminUser}">Custom Updates</apex:commandLink></li>                                        
+                                                    </ul>
+                                                </li>
+                                            </apex:outputPanel>
+                                        </ul> 
+                                    </div>
+                                </div>
+                            </div>
+                            <!--Navigation-->    
+                            <div class="slds-wrap slds-p-around_medium">
+                                <div class="slds-grid">
+                                    <style>
+                                        .slds-scope .slds-tabs--default__item.slds-active:after, .slds-scope .slds-tabs--default__item.slds-is-active:after, .slds-scope .slds-tabs_default__item.slds-active:after, .slds-scope .slds-tabs_default__item.slds-is-active:after{background: none;}
+                                        .slds-scope .slds-tabs--default__item:hover:after, .slds-scope .slds-tabs_default__item:hover:after{background: none;}
+                                    </style>
+                                    <apex:actionFunction id="ratings" name="ratings" action="{!navigateToRatings}"></apex:actionFunction>
+                                    <apex:actionFunction id="assignRole" name="assignRole" action="{!navigateToAssignRole}"></apex:actionFunction>
+                                    <apex:actionFunction id="custommetric" name="custommetric" action="{!navigateToCustomMetric}"></apex:actionFunction>
+                                    <apex:actionFunction id="notificationPage" name="notificationPage" action="{!navigateToNotifications}"></apex:actionFunction>
+                                    <apex:actionFunction id="evaluationGuidelines" name="evaluationGuidelines" action="{!navigateToFunnelEvaluationGuidelines}"></apex:actionFunction>
+                                    <apex:actionFunction id="setup" name="setup" action="{!navigateToFunnelSetup}"></apex:actionFunction>
+                                    <apex:actionFunction id="goalmanagement" name="goalmanagement" action="{!navigateToFunnelReviewGoals}"></apex:actionFunction>
+                                    <apex:actionFunction id="teamgoals" name="teamgoals" action="{!navigateToFunnelManagerUpdate}"></apex:actionFunction>
+                                    <div class="slds-tabs_default">
+                                        <div style="background: #f5f5f9; display: table; width: 100%; padding-bottom: 30px;">
+                                            <ul class="slds-tabs_default__nav slds-m-top_x-large slds-m-bottom_large" role="tablist" style="justify-content: center;background: #7e8793; height: 40px; border: none; margin-top: 0;">
+                                                <!--     <li class="slds-tabs_default__item" title="CREATE AND EDIT RATINGS" role="presentation" style="margin-right: 45px;"><a class="slds-tabs_default__link" onclick="categoryPage()" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-3" id="tab-default-3__item" style="color: #fff; font-size: 18px; font-weight: bold;">ADD AND EDIT CATEGORIES</a></li> -->
+                                                <apex:outputPanel rendered="{!adminPer}">
+                                                    <li class="slds-tabs_default__item" role="presentation" style="margin-left: 0; margin-right: 0;"><a class="slds-tabs_default__link" onclick="ratings()"  role="tab" tabindex="0" aria-selected="true" aria-controls="tab-default-1" id="tab-default-1__item" style="color: #fff; font-size: 16px; padding: 0; display: block; font-weight: bold; text-transform: none;">Create &#38; Edit Metrics/Skills</a></li>
+                                                </apex:outputPanel>
+                                                <apex:outputPanel rendered="{!adminPer}">
+                                                    <li class="slds-tabs_default__item" role="presentation" style="margin-right: 0; margin-left: 0;"><a class="slds-tabs_default__link" onclick="custommetric()" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-2" id="tab-default-2__item" style="color: #fff; font-size: 16px; font-weight: bold; text-transform: none;">Custom Metrics</a></li>
+                                                </apex:outputPanel>
+                                                <apex:outputPanel rendered="{!adminPer}">
+                                                    <li class="slds-tabs_default__item" role="presentation" style="margin-right: 0; margin-left: 0;"><a class="slds-tabs_default__link" onclick="assignRole()" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-2" id="tab-default-2__item" style="color: #fff; font-size: 16px; padding: 0; display: block; font-weight: bold; text-transform: none;">Assign Skills</a></li>
+                                                </apex:outputPanel>
+                                                <apex:outputPanel rendered="{!adminPer}">
+                                                    <li class="slds-tabs_default__item" role="presentation" style="margin-right: 0; margin-left: 0;"><a class="slds-tabs_default__link" onclick="evaluationGuidelines()" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-3" id="tab-default-3__item" style="color: #fff; font-size: 16px; font-weight: bold; text-transform: none;">Evaluation Guidelines</a></li>
+                                                </apex:outputPanel>
+                                                <!--<apex:outputPanel rendered="{!adminPer}">
+                                                    <li class="slds-tabs_default__item" role="presentation" style="margin-right: 0; margin-left: 0; "><a class="slds-tabs_default__link" onclick="goalmanagement()" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-2" id="tab-default-2__item"  style="color: #fff; font-size: 16px; font-weight: bold; text-transform: none;">Goal Management</a></li>
+                                                </apex:outputPanel>
+                                                <apex:outputPanel rendered="{!adminPer}">
+                                                    <li class="slds-tabs_default__item" role="presentation" style="margin-right: 0; margin-left: 0;"><a class="slds-tabs_default__link" onclick="teamgoals()" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-3" id="tab-default-3__item" style="color: #fff; font-size: 16px; font-weight: bold; text-transform: none;">Team Goals</a></li>
+                                                </apex:outputPanel>
+                                                <apex:outputPanel rendered="{!adminPer}">
+                                                    <li class="slds-tabs_default__item" role="presentation" style="margin-right: 0; margin-left: 0;"><a class="slds-tabs_default__link" onclick="setup()" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-3" id="tab-default-3__item" style="color: #fff; font-size: 16px; font-weight: bold; text-transform: none;">Installation</a></li>
+                                                </apex:outputPanel>-->
+                                                <apex:outputPanel rendered="{!adminPer}">
+                                                    <li class="slds-tabs_default__item" role="presentation" style="margin-right: 0; margin-left: 0;" ><a class="slds-tabs_default__link" onclick="notificationPage()" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-3" id="tab-default-3__item" style="color: #fff; font-size: 16px; font-weight: bold; text-transform: none;">Settings</a></li>
+                                                </apex:outputPanel>
+                                            </ul>
+                                        </div>
+                                        
+                                        <apex:actionFunction id="displayAddEditRoleGroup" name="displayAddEditRoleGroup" action="{!displayAddEditRoleGroup}"  reRender="modalid"/>
+                                        <apex:actionFunction id="hideAddEditGroup" name="hideAddEditGroup" action="{!hideAddEditGroup}"  reRender="modalid"/>
+                                        <apex:actionFunction id="save" name="save" action="{!save}"  reRender="rg,crDisplaypanelID"></apex:actionFunction>
+                                        <apex:actionFunction action="{!deleteGroup}" name="deleteg" reRender="rg,crDisplaypanelID">
+                                            <apex:param name="deleteId" value="" assignTo="{!deleteId}"/>
+                                        </apex:actionFunction>
+                                        
+                                        <div id="tab-default-1" class="slds-tabs_default__content slds-show" role="tabpanel" aria-labelledby="tab-default-1__item" style="padding: 0;">
+                                            <div class="slds-wrap" style="background: #fff;">
+                                                <div class="slds-grid">
+                                                    <div class="slds-size_8-of-8" style="margin-top: 15px;">
+                                                        <div class="slds-p-around_medium">
+                                                            <style>
+                                                                .slds-scope a{color:#fff;text-decoration:none;}
+                                                                .slds-scope a:hover{color:#fff;text-decoration:none !important;}
+                                                            </style>
+                                                             
+                                                                    <a style="background-color: #ff9900; color: #fff; padding: 15px 40px; border-radius: 30px; font-size: 20px; font-weight: bold;" onclick="displayAddEditRoleGroup();mod();" >    
+                                                                    <span class="color:#fff;">ADD ROLE GROUP</span>
+                                                                    </a>
+                                                                 
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <apex:outputPanel id="crDisplaypanelID">
+                                                     <apex:outputPanel >
+                                                        <div class="slds-grid">
+                                                           <div class="slds-size_8-of-8">
+                                                              <div class="slds-p-around_medium">
+                                                                 <div class="fixed-table-container">
+                                                                    <div class="header-background"></div>
+                                                                    <div class="fixed-table-container-inner extrawrap">
+                                                                       <table  >
+                                                                          <thead>
+                                                                             <tr class="slds-text-title">
+                                                                                <th class="first" style="width: 25%; position: relative; text-align: left;">
+                                                                                   Group Name
+                                                                                </th>
+                                                                                <th style="width: 65%; position: relative; text-align: left;">
+                                                                                   Roles                                                                  
+                                                                                </th>
+                                                                                <th style="width: 5%; position: relative; text-align: left;">
+                                                                                   Edit
+                                                                                </th>
+                                                                                <th style="width: 5%; position: relative; text-align: left;">
+                                                                                   Delete
+                                                                                </th>
+                                                                                
+                                                                             </tr>
+                                                                          </thead>
+                                                                          <tbody class="tableBody">
+                                                                             <apex:repeat var="rg" value="{!roleGroups}" id="rg">
+                                                                                    <tr>
+                                                                                        <td style="width: 25%; text-align: left;"  >
+                                                                                             {!rg.Group_Name__c } 
+                                                                                        </td>
+                                                                                        <td style="width: 65%; text-align: left;" >
+                                                                                            {!rg.Roles__c}
+                                                                                        </td>
+                                                                                        <td style="width: 5%; text-align: center;" >
+                                                                                        <apex:actionRegion >
+                                                                                            <apex:commandLink action="{!displayAddEditRoleGroup}" rerender="modalid" html-data-toggle="modal" html-data-target="#autoSaveConfirm" >
+                                                                                                  <i aria-hidden="true" class="fas fa-pencil-alt " style="color: #333333; font-size: 20px;"></i>       
+                                                                                                   <apex:param name="groupId" assignTo="{!groupId}" value="{!rg.id}"/>
+                                                                                             </apex:commandLink> 
+                                                                                         </apex:actionRegion>
+                                                                                        </td>
+                                                                                        <td style="width: 5%; text-align: center;" >
+                                                                                            <a data-toggle="modal" data-target="#deletegp" onclick="deletegp('{!rg.id}');"><i   class="fa fa-trash-alt " aria-hidden="true"  style="color: #333333; font-size: 20px;"></i></a> 
+                                                                                        </td>
+                                                                                        
+                                                                                         
+                                                                                    </tr>
+                                                                              
+                                                                                </apex:repeat>
+                                                                            
+                                                                          </tbody>
+                                                                       </table>
+                                                                    </div>
+                                                                 </div>
+                                                              </div>
+                                                           </div>
+                                                        </div>
+                                                    </apex:outputPanel>
+                                                </apex:outputPanel>
+                                                 
+                                                 
+                                                 
+                                                 
+                                            </div>
+                                        </div>
+                                        <div id="tab-default-2" class="slds-tabs_default__content slds-hide" role="tabpanel" aria-labelledby="tab-default-2__item">Item Two Content</div>
+                                        <div id="tab-default-3" class="slds-tabs_default__content slds-hide" role="tabpanel" aria-labelledby="tab-default-3__item">Item Three Content</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </apex:outputPanel>
+                
+              <div class="modal fade " id="autoSaveConfirm" role="dialog">
+                    <div class="modal-dialog modal-md">
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" onclick="hideAddEditGroup();">&times;</button>
+                                <h4 class="modal-title">
+                                    <ul>
+                                        <li>EDIT OR ADD ROLE GROUP</li>
+                                    </ul>
+                                </h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="delete-content-block">
+                                    <apex:outputPanel id="modalid">
+                                        <div class="slds-grid">
+                                            <div class="slds-size_8-of-8">
+                                                <div class="">
+                                                    <div class="slds-form-element slds-size_1-of-1">
+                                                        <label class="slds-form-element__label slds-p-top_small slds-p-left_small slds-p-right_small" for="text-input-id-1" style="color: #00b2ee; font-size: 21px;">Name</label> 
+                                                        <div class="slds-form-element__control slds-p-left_small slds-p-right_small">
+                                                             
+                                                             <apex:inputField style="color: #333333; font-size: 18px; border-radius:0;" styleClass="slds-input slds-p-around_x-small" value="{!groupSelected.Group_Name__c}" id="ratingName"/>
+                                                            
+                                                             <apex:outputText style="color:red;display:none; margin: 0px 0px 0px 0px; font-size: 15px;" value="Enter   Name" id="validname"></apex:outputText>
+                                                            
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="slds-grid">
+                                            <div class="slds-size_8-of-8">
+                                                <div class="rolesblock">
+                                                    <div class="slds-form-element">
+                                                    <apex:actionFunction name="fn" action="{!dfRoles}" reRender="dfr" />
+                                                        <label class="slds-form-element__label slds-p-top_small slds-p-left_small slds-p-right_small" for="textarea-id-01" style="color: #00b2ee; font-size: 21px;">Roles</label>
+                                                         
+                                                        <div class="slds-p-around_small" style="padding-top: 0; padding-bottom: 0;">
+                                                            <!--<apex:inputField value="{!groupSelected.Roles__c}" style="color: #333333; font-size: 18px; resize: none; border-radius:0;" styleClass="slds-textarea slds-p-around_x-small" id="descname"/>-->
+                                                            <apex:selectList size="1" value="{!SelectedValue}" style="color: #333333; font-size: 21px; border-radius:0; height: auto; padding: 8px 30px 8px 8px;" Styleclass="slds-select slds-p-around_x-small" id="roleGp" multiselect="true" >
+                                                                 <apex:selectOptions value="{!Role}"/>
+                                                                  <apex:actionSupport event="onchange" action="{!dfRoles}" reRender="dfr"/>  
+                                                            </apex:selectList>
+                                                            <apex:outputText style="color:red;display:none; margin: 0px 0px 0px 0px; font-size: 15px;" value="Select Roles" id="roleNames"></apex:outputText>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                         </div>
+                                         
+                                          <apex:outputPanel rendered="{!IF(groupSelected.id =='',true,false)}">
+                                             <div class="slds-grid">
+                                                <div class="slds-size_8-of-8">
+                                                    <div class="rolesblock">
+                                                        <div class="slds-form-element">
+                                                            <label class="slds-form-element__label slds-p-top_small slds-p-left_small slds-p-right_small" for="textarea-id-01" style="color: #00b2ee; font-size: 21px;">Select default role</label>
+                                                             
+                                                            <div class="slds-p-around_small" style="padding-top: 0; padding-bottom: 0;">
+                                                                <!--<apex:inputField value="{!groupSelected.Roles__c}" style="color: #333333; font-size: 18px; resize: none; border-radius:0;" styleClass="slds-textarea slds-p-around_x-small" id="descname"/>-->
+                                                                 
+                                                                <apex:selectList size="1" value="{!dfRole}" style="color: #333333; font-size: 18px; border-radius:0; height: auto; padding: 8px 30px 8px 8px;" Styleclass="slds-select slds-p-around_x-small" id="dfr">
+                                                                     <apex:selectOptions value="{!dfRoleoptions}" />
+                                                                     <!--<apex:actionSupport event="onchange" action="{!cr}" reRender="crDisplaypanelID,crpanelID,crDisplaypanelIDbutton,crpanelIDbutton"/> -->
+                                                                </apex:selectList>
+                                                                 
+                                                            </div>
+                                                            
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </apex:outputPanel>
+                                         
+                                          <div class="slds-grid">
+                                            <div class="slds-size_8-of-8">
+                                                <div class="slds-p-around_small">
+                                                    <div class="slds-form-element">
+                                                         Note: If you add a new role to the group the current answers records and measures will be removed and new answer records and measure will be assigned based on Group.
+                                                         
+                                                         
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                         
+                                         
+                                      <script  type="text/javascript">
+                                         svl=[];
+                                         <apex:repeat var="v" value="{!selectedValueList}">
+                                         svl.push("{!v}");  
+                                          
+                                         </apex:repeat>
+                                       
+                                        
+                                        $(function() {
+                                           
+                                         $("[id*='roleGp']").select2({
+                                            multiple: true,
+                                             
+                                          });
+                                          $("[id*='roleGp']").val(svl).trigger('change');
+                                        
+                                        });
+                                      
+                                        
+                                    </script>   
+                                         
+                                         
+                                         
+                                         
+                                    </apex:outputPanel>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <div class="btn-block">
+                                    <a data-dismiss="modal"  class="cancel"   onclick="hideAddEditGroup();">  CANCEL</a>
+                                    <a onclick="saveRating();" style="background-color: #ff9900; color: #fff; padding: 15px 60px; border-radius: 30px; font-size: 24px; border: none; margin-left: 18px;">
+                                    SAVE
+                                    </a >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+   
+        <!-- Modal --  autosave -- end -->
+                <div class="modal fade " id="deletegp" role="dialog">
+                    <div class="modal-dialog modal-lg">
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" onclick="hideAddEditGroup();">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="delete-content-block">
+                                    <apex:outputPanel id="modalidconfirm">
+                                        <p>Are you sure you want to delete this role group?</p>
+                                    </apex:outputPanel>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <div class="btn-block">
+                                    
+                                    
+                                    <a style="font-size: 18px; padding: 12px 50px;" data-dismiss="modal"  class="cancel" >  NO</a>
+                                    <a onclick="deleterecord();" data-dismiss="modal" style="background-color: #ff9900; color: #fff; padding: 12px 50px; border-radius: 30px; font-size: 18px; border: none;margin-left: 25px;">
+                                    YES
+                                    </a >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>  
+                
+                <!-- Modal --  autosave -- end -->
+                <apex:outputPanel id="mn">
+                    <script type="text/javascript">
+                     var del ;
+                     
+                     function deletegp(obj){
+                          del = obj;
+                      }
+              
+                      function deleterecord(){
+                        
+                          deleteg(del);
+                      }  
+                        
+                    </script>
+                </apex:outputPanel>
+                <script type="text/javascript">
+                     
+                    function saveRating(){
+                        console.log('saveRating');
+                        var b = true;
+                        
+                        $=jQuery;
+                        
+                    
+                         
+                          
+                          var inp = $(" [id*='ratingName']").val();
+                          console.log(inp);
+                         if( inp.length == 0 || inp == null || jQuery.trim(inp).length==0){
+                             $(" span[id*='validname']").css("display", "block");
+                             b = false;
+                             $(" [id*='ratingName']").focus();
+                         } else{
+                             $(" span[id*='validname']").css("display", "none");
+                             
+                         }
+                          var inp1 = $(" [id*='roleGp']").val();
+                          console.log(inp1);
+                         if(inp1 == null || jQuery.trim(inp1).length==0){
+                             $(" span[id*='roleNames']").css("display", "block");
+                             b = false;
+                             $(" [id*='descname']").focus();
+                         }else{
+                             $(" span[id*='roleNames']").css("display", "none");
+                         }
+                         
+                          if(b){
+                              
+                              save();
+                              $('#autoSaveConfirm').modal('hide'); 
+                              
+                          }
+                         
+                    }
+                </script>
+                <script type="text/javascript">
+                   function mod(){
+                          
+                          $(" span[id*='validname']").css("display", "none");
+                          $(" span[id*='roleNames']").css("display", "none");
+                          //displayAddEditRating();
+                          $('#autoSaveConfirm').modal('show'); 
+                          
+                          
+                      }
+                    $("#autoSaveConfirm").on("hidden.bs.modal", function () {
+                            hideAddEditGroup();
+                    });   
+                     
+                </script>
+            </html>
+        </apex:actionRegion>
+    </apex:form>
+</apex:page>

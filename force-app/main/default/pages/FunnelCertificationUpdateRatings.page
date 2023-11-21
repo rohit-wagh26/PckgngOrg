@@ -1,0 +1,1086 @@
+<apex:page sidebar="false" controller="FunnelUpdateRatings_Controller" extensions="FunnelInstallation">
+    <!--Navigation-->
+    <apex:stylesheet value="{!URLFOR($Resource.FunnelScriptFolder,'Design/css/v5.0.8-fontawesome.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.FunnelScriptFolder,'Design/css/v5.0.8-solid.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.FunnelScriptFolder,'Design/css/newall.css')}"/>
+    
+    <apex:stylesheet value="{!URLFOR($Resource.SldsCss,'SldsResources/styles/salesforce-lightning-design-system.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.SldsCss,'SldsResources/styles/salesforce-lightning-design-system.min')}"/>
+    <!--Navigation-->
+    <!--<apex:slds />-->
+    <!--Navigation-->
+    <style>
+         body { font-size: 75%;font-size: 12px !important}
+         .validate_error{color: #c1272d;margin: 5px 0px -5px 3px;font-size: 14px;}
+        .noSidebarCell, .sidebarCell .fixed { padding: 10px; font-family: sldsFont; }
+        
+         @font-face {
+         font-family: sldsFont;
+             src: url({!URLFOR($Resource.SldsCss,'SldsResources/fonts/SalesforceSans-Light.ttf')});
+         }
+         
+         
+         .bPageHeader .phHeader td.left{display: block;}
+        .navigation{display: table; width: 100%; text-align: center;}
+        
+        .navigation ul{margin: 0; padding: 0;}
+        .navigation ul li{display: inline-block; padding: 0 8px; border-left: 1px solid #7e8793; line-height: 17px; margin-left: 0; font-weight: bold;}
+        .navigation ul li a{color: #7e8793; font-size: 17px;}
+        .navigation ul li a:hover{color: #66cc33; text-decoration: none;}
+        .navigation ul li {color: #7e8793; font-size: 17px; font-weight: bold;}
+        .navigation ul li:hover{color: #66cc33; text-decoration: none;}
+        .navigation ul li.selected a{color: #66cc33;}
+        .navigation ul li.home{border: none; padding-left: 0; padding-bottom: 10px;}
+        .navigation ul li.home a{color: #00b2ee;}
+        .navigation ul li:last-child{padding-right: 0;}
+        
+        .navigation ul li.scorenav a{background: url({!$Resource.CertificationNavigationIcon}) no-repeat; padding: 0 0 0 25px; background-position: 0 0; height: 19px; width: 20px;} 
+         .navigation ul li.scorenav a:hover {background-position: 0 -23px;}
+        
+        .navigation ul li.funnelanalyticsnav > a{background: url({!$Resource.AnalyticsNavigationIcon}) no-repeat; padding: 0 0 0 25px; background-position: 0 5px; height: 19px; width: 20px; color: #7e8793;}
+        .navigation ul li.funnelanalyticsnav > a:hover{background-position: 0 -17px; color: #66cc33;}
+        
+        .navigation ul li.checklisticon{border-right: 2px solid #7e8793; color: #00b2ee; border-left: 0; margin-right: 5px; cursor: pointer;}
+
+        .navigation ul li.checklisticon a{color: #00b2ee;}
+        
+        .myapp{min-width: 500px; font-family: sldsFont;background-color: #fff; } 
+        
+        .navigation ul li.reportnav{position: relative; display: inline-block; cursor: pointer;}
+        .navigation ul li.reportnav ul.subnav{position: absolute; z-index: 1; width: 240px; background: #fff; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); display: none;}
+        .navigation ul li.reportnav ul.subnav li{display: block; text-align: left; border: none; padding: 0;}
+        .navigation ul li.reportnav ul.subnav li a {color: #7e8793; padding: 10px; display: block; width: 100%;}
+        .navigation ul li.reportnav ul.subnav li a:hover{background: #66cc33; color: #fff;}
+        .navigation ul li.reportnav:hover ul.subnav {display: block;}
+        
+        .navigation ul li.reportnav ul.subnavlast{right:0; position: absolute; z-index: 1; width: 240px; background: #fff; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); display: none;}
+        .navigation ul li.reportnav ul.subnavlast li{display: block; text-align: left; border: none; padding: 0;}
+        .navigation ul li.reportnav ul.subnavlast li a {color: #7e8793; padding: 10px; display: block; width: 100%;}
+        .navigation ul li.reportnav ul.subnavlast li a:hover{background: #66cc33; color: #fff;}
+        .navigation ul li.reportnav:hover ul.subnavlast{display: block;}
+        
+        button a:hover{text-decoration: none;}
+        button a:focus{text-decoration: none; outline: none;}
+        
+        select{background: url('{!URLFOR($Resource.Selectarrow )}') no-repeat right -20px center #fff !important; -moz-appearance: none; -webkit-appearance: none;}
+        
+        .popup{background-color: #ff9900 !important;color: #fff !important;padding: 7px 25px;margin-top: -7px;border-radius: 30px;font-size: 14px !important;text-decoration: none !important;display: inline-block;}
+        .popup:hover, .popup:focus{outline: none; text-decoration: none; color: #fff;}
+        
+        /*Start Delete modal CSS*/
+             /*.modal-lg{width: 1100px;}*/
+             #confirm .modal-dialog {width: 50%;}
+             .modal.in .modal-dialog {-webkit-transform: translate(0,0);-ms-transform: translate(0,0);-o-transform: translate(0,0);transform: translate(0,0);width: 90%;max-width: none;min-width: 40rem;display: flex;flex-direction: column;height: 100%;padding: 3rem 0;}
+             .modal-content { border-radius: 0;padding: 20px;overflow: hidden;overflow-y: auto;}
+             .modal-header{padding: 0 !important;border: none !important;}
+             .modal-header .close{position: absolute; right: 10px; margin: 0; top: 10px; opacity: 1; border: none;background: transparent; color: #7e8793; font-size: 44px; width: 25px; height: 20px; line-height: 18px;}
+             .modal-header h4{background: #BFB178;}
+             .modal-header h4 ul{padding: 0; margin: 0; display: table; width: 100%;}
+             .modal-header h4 ul li{display: table-cell; font-size: 24px; color: #333333; width: 50%; padding: 10px; border: none; text-align: left; font-weight: bold;font-family: sldsfont;}
+             .modal-body{padding: 0;}
+             .modal-body .delete-content-block{padding: 10px;}
+             .modal-body .delete-content-block label{font-size: 21px; color: #00b2ee;font-family: sldsfont;font-weight: normal;}
+             .modal-body .delete-content-block p{margin: 0; font-size: 18px;  color: #777; text-align: center;}
+             .modal-footer{border: none !important; padding: 20px 30px !important;}
+             .modal-footer .btn-block{display: table; width: auto; margin: 0 auto;}
+             .modal-footer a{background-color: #7e8793;color: #fff;padding: 15px 100px;border-radius: 30px;font-size: 24px;border: none;margin-left: 18px;}
+             .modal-footer a:hover{color: #fff; text-decoration: none;}
+             .modal-footer a.save{background: #ff9900;}
+             .modal-footer a i{color: #fff;}
+             
+            /*End Delete modal CSS*/
+    </style>
+    <!--Navigation-->
+    
+    <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/jquery-1.12.4.js')}"/>
+     
+    <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/jquery-ui.js')}"/>
+    
+    <apex:form id="pageForm">
+    <html   lang="en">
+            <div class="slds-scope" id="focusName">
+                <div class="myapp">
+                    <!--Navigation-->
+                    <div class="slds-grid slds-wrap slds-form-element slds-p-around_small">
+                        <div class="slds-size_1-of-1">
+                            <div class="navigation">
+                                <ul>
+                                    <li class="checklisticon" >
+                                        <apex:outputPanel rendered="{!(admin && wizardComp && (!checkListComp))}">
+                                            <apex:commandLink action="{!navigateToChecklistPage}"><i class="fa fa-check-circle" aria-hidden="true"></i></apex:commandLink>
+                                        </apex:outputPanel>
+                                    </li>
+                                    <li class="home"><apex:commandLink action="{!navigateToHomePage}"><i class="fas fa-home"></i></apex:commandLink></li>
+                                    <li class="scorenav"><apex:commandLink action="{!navigateToCertification}"> FUNNELOCITY SCORING</apex:commandLink></li>
+                                    <li><apex:commandLink action="{!navigateToDashboard}"><span><i class="fas fa-tachometer-alt"></i></span> PERFORMANCE DASHBOARD</apex:commandLink></li>
+                                    <li class=" reportnav"> <i class="fas fa-chart-bar"></i> REPORTING 
+                                        <ul class="subnav">
+                                            <!--li><apex:commandLink action="{!navigateToCertificateReports}">Funnelocity Reports</apex:commandLink></li-->
+                                            <li><apex:commandLink action="{!navigateToReportsPage}">Sales Management Reports</apex:commandLink></li>
+                                            <li><apex:commandLink action="{!navigateToAnnualizationDashboard}">Tenured and New Hire Performance Dashboard</apex:commandLink></li>
+                                        <li><apex:commandLink action="{!navigateToTrendingByRep}">Trending By Rep Dashboard</apex:commandLink></li>
+                                        <li><apex:commandLink action="{!navigateToTrendingBySkill}">Trending By Metric/Skill Dashboard</apex:commandLink></li>
+                                        </ul>
+                                    </li>
+                                     <li class="reportnav funnelanalyticsnav " >   <a> FUNNELOCITY ANALYTICS </a>  
+                                        <ul class="subnav">
+                                            <li><apex:commandLink action="{!navigateToFunnelAnalytic}">Funnelocity Quantitative Scoring </apex:commandLink></li>
+                                            <li><apex:commandLink action="{!navigateToFunnelAnalyticQualitative}">Funnelocity Qualitative Scoring </apex:commandLink></li>
+                                        </ul>
+                                     </li>                                                                      
+                                     <li style="display:none"><apex:commandLink ><i class="fas fa-star"></i> TERRITORY PLAN</apex:commandLink></li> 
+                                         <apex:outputPanel rendered="{!displayMetricCalculator}">
+                                    <li><apex:commandLink action="{!navigateToCalculator}"><i class="fas fa-calculator"></i> METRICS CALCULATOR</apex:commandLink></li>
+                                </apex:outputPanel> 
+                                    <apex:outputPanel rendered="{!appSetup = ''}">
+                                        <li class=" reportnav"> <i class="fas fa-chart-bar"></i> ADMIN 
+                                            <ul class="subnavlast">
+                                                <li><apex:commandLink action="{!navigateToFunnelAddEditSRP}" rendered="{!adminUser}">Sales Rep Profiles and Hierarchy</apex:commandLink></li>
+                                                <li><apex:commandLink action="{!navigateToAppSetup}" rendered="{!adminUser}">Metrics and Skills</apex:commandLink></li>
+                                                <li><apex:commandLink action="{!navigateToGoals}">Goal Management</apex:commandLink></li>
+                                                <li><apex:commandLink action="{!navigateToFunnelSetup}" rendered="{!adminUser}">Custom Updates</apex:commandLink></li>                                        
+                                            </ul>
+                                        </li>
+                                    </apex:outputPanel>                               
+                                </ul>
+                            </div>  
+                        </div>
+                    </div>
+                    <!--Navigation--> 
+                    <apex:actionFunction name="submit" action="{!submit}" reRender=""/>    
+                            <div class="slds-grid slds-wrap slds-p-around_x-large" style="background: #00b2ee; color: #fff;">
+                                <div class="slds-large-size_8-of-8 slds-small-size--1-of-1 slds-p-top_medium">
+                                    <div class="slds-grid slds-p-bottom_x-large">
+                                        <div>
+                                            <div class="slds-text-heading_large slds-p-right_small" style="font-size: 40px;">{!sr.name}</div>
+                                        </div>
+                                        <div class="slds-border_left" style="border-width: 5px; border-color: #fff;">
+                                            <div class="slds-text-heading_large slds-p-left_small slds-p-top_small slds-p-bottom_small" style="font-size: 24px;">{!sr.User_Record_Name__r.title}</div>
+                                        </div>
+                                    </div>
+                                 <!--   <div class="slds-grid slds-wrap slds-p-bottom_x-large">
+                                        <div class="slds-col slds-border_left slds-p-left_small slds-large-size_1-of-5 slds-small-size_6-of-12" style="border-width: 5px; border-color: #fff; margin-bottom: 20px;">                                            
+                                            <div class="slds-text-body_regular" style="font-size: 24px;">Role</div>
+                                            <div class="slds-text-heading_medium" style="font-size: 32px;">{!sr.Role__c}</div>
+                                        </div>
+                                        <div class="slds-col slds-border_left slds-p-left_small slds-large-size_1-of-5 slds-small-size_6-of-12" style="border-width: 5px; border-color: #fff; margin-bottom: 20px;">                                            
+                                            <div class="slds-text-body_regular" style="font-size: 24px;">Managed by</div>
+                                            <div class="slds-text-heading_medium" style="font-size: 32px;">{!sr.Sales_Manager__r.Name}</div>
+                                        </div>
+                                        <div class="slds-col slds-border_left slds-p-left_small slds-large-size_1-of-5 slds-small-size_6-of-12" style="border-width: 5px; border-color: #fff; margin-bottom: 20px;">                                            
+                                            <div class="slds-text-body_regular" style="font-size: 24px;">Territory</div>
+                                            <div class="slds-text-heading_medium" style="font-size: 32px;">{!sr.Territory__c}</div>
+                                        </div>
+                                        <div class="slds-col slds-border_left slds-p-left_small slds-large-size_1-of-5 slds-small-size_6-of-12" style="border-width: 5px; border-color: #fff; margin-bottom: 20px;">
+                                            <div class="slds-text-body_regular" style="font-size: 24px;">Tenure in Current Role</div>
+                                            <div class="slds-text-heading_medium" style="font-size: 32px;">{!sr.Tenure_in_current_role__c}</div>                                            
+                                        </div>
+                                        <div class="slds-col slds-border_left slds-p-left_small slds-large-size_1-of-5 slds-small-size_6-of-12" style="border-width: 5px; border-color: #fff; margin-bottom: 20px;">
+                                            <div class="slds-text-body_regular" style="font-size: 24px;">Hire date</div>
+                                            <div class="slds-text-heading_medium" style="font-size: 32px;"><apex:outputText value="{0,date,dd'/'MM'/'yyyy}"><apex:param value="{!sr.User_Record_Name__r.CreatedDate}"/></apex:outputText></div>                                            
+                                        </div>
+                                    </div> -->
+                                </div>
+                            </div>
+                             
+                              <apex:actionFunction action="{!popup}" name="popup" reRender="popup">
+                                <apex:param name="popClose" value="" assignTo="{!popClose}"/>
+                            </apex:actionFunction>
+                            <apex:outputPanel id="popup">
+                            <apex:outputPanel rendered="{!displayPopup}">  
+                                <div id="tab-default-1" class="slds-tabs_default__content slds-show" role="tabpanel" aria-labelledby="tab-default-1__item" style="padding: 0;">
+                                   <div class="slds-wrap slds-is-relative" style="background: #fff; font-family: Arial;">
+                                      <div class="slds-grid slds-is-absolute" style="position:fixed; top: 0; z-index: 999; right: 0; border: 2px solid #ff9900; border-radius: 5px; background: #fff; width: 480px; height: 100vh; box-shadow: 0 0 10px 0 rgba(0,0,0,0.3);">
+                                         <div class="close" style="position: absolute; top: 10px; right: 20px; height: 20px; width: 20px; text-align: center; font-size: 14px; line-height: 14px; cursor: pointer;" onclick="popup('close')">
+                                            <apex:image url="{!URLFOR($Resource.EvaluationIcon,'Evaluationicon/close.jpg')}" />
+                                         </div>
+                                         <div class="slds-p-around_medium" style="overflow: auto;">
+                                            <apex:repeat value="{!guildlineList}" var="g">
+                                               <h3 style="color:#00b2ef; font-size: 18px; font-weight: bold;" class="site-text-heading--medium slds-p-bottom_x-small {!IF(g.name =='Outstanding','','slds-p-top_medium')} slds-grid">{!g.name}</h3>
+                                               <div style="color:#333; font-size: 16px; font-weight: normal;">
+                                                  <apex:outputField value="{!g.Description__c}" styleClass="slds-p-bottom_x-small" />
+                                               </div>
+                                            </apex:repeat>
+                                         </div>
+                                      </div>
+                                   </div>
+                                </div> 
+                                 
+                                </apex:outputPanel>                                                     
+                            </apex:outputPanel>
+                                                                                 
+                                                     
+                            <div class="slds-grid slds-wrap slds-p-around_x-large" style="background: #f5f5f9;">
+                                <div class="slds-grid slds-wrap slds-p-around_x-large" style="background: #fff; font-family: sldsfont;">
+                                <apex:outputText style="color:#fff;display:none;font-size: 21px;width: 100%;text-align: center;background: #c1272d;padding: 5px;" value="Please select a score for all Required Ratings." id="validation"></apex:outputText>
+                                    <div class="slds-grid slds-size_8-of-8 slds-align_absolute-center" style="font-family: sldsfont;" >
+                                        <span class="slds-p-around_medium">
+                                                
+                                                <apex:commandLink oncomplete="location.reload();" styleClass="slds-button slds-text-heading_medium" style="background-color: #7e8793; color: #fff; padding: 15px 40px; border-radius: 30px; font-size: 24px;" action="{!saveForLater}">
+                                                    <style>
+                                                        .slds-scope a{color:#fff;text-decoration:none;}
+                                                        .slds-scope a:hover{color:#fff;text-decoration:none !important;}
+                                                    </style>
+                                                    <span class="color:#fff;">SAVE FOR LATER</span>
+                                                </apex:commandLink>
+                                        </span>
+                                        <span class="slds-p-around_medium">
+                                            <!--<button class="slds-button slds-text-heading_medium" style="background-color: #ff9900; color: #fff; padding: 15px 40px; border-radius: 30px; font-size: 24px;">-->
+                                                <apex:outputPanel rendered="{!updateNoti}">
+                                                    <a oncomplete="location.reload();" Class="slds-button slds-text-heading_medium" style="background-color: #ff9900; color: #fff; padding: 15px 40px; border-radius: 30px; font-size: 24px;"  onclick="submitVal();" >
+                                                        <style>
+                                                            .slds-scope a{color:#fff;text-decoration:none;}
+                                                            .slds-scope a:hover{color:#fff;text-decoration:none !important;}
+                                                        </style>
+                                                        
+                                                        <span class="color:#fff;">SUBMIT SCORE</span>
+                                                    </a>
+                                                </apex:outputPanel>
+                                            <!--</button>-->
+                                            
+                                        </span>
+                                        
+                                    </div>
+                                    <!--<div class="slds-grid slds-size_8-of-8">
+                                        <div class="slds-col slds-p-around_medium slds-size_7-of-8">
+                                            <div class="slds-text-heading_large slds-m-top_x-large" style="color:#7e8793; font-size: 24px; font-weight: 500;">Funnelocity Sales Execution Score</div>
+                                        </div>
+                                        <div class="slds-col slds-p-around_medium slds-size_1-of-8">
+                                            <div class="slds-text-heading_large" style="color:#ff9900; font-size: 60px; font-weight: 500; text-align: right;">4.00</div>
+                                        </div>
+                                    </div>-->
+                                    
+                                    <style>
+                                        .slds-scope .slds-checkbox--toggle .slds-checkbox--faux, 
+                                        .slds-scope .slds-checkbox--toggle .slds-checkbox_faux, 
+                                        .slds-scope .slds-checkbox_toggle .slds-checkbox--faux, 
+                                        .slds-scope .slds-checkbox_toggle .slds-checkbox_faux{
+                                            border: 1px solid #cccccc;
+                                            background-color: #cccccc;
+                                            width: 48px;
+                                            height: 24px;
+                                        }
+                                        .slds-scope .slds-checkbox--toggle .slds-checkbox--faux:after, 
+                                        .slds-scope .slds-checkbox--toggle .slds-checkbox_faux:after, 
+                                        .slds-scope .slds-checkbox_toggle .slds-checkbox--faux:after, 
+                                        .slds-scope .slds-checkbox_toggle .slds-checkbox_faux:after{
+                                            background-color: #7e8793;
+                                            height: 20px;
+                                            width: 20px;
+                                        }
+                                        .slds-scope .slds-checkbox--toggle .slds-checkbox--faux:focus, 
+                                        .slds-scope .slds-checkbox--toggle .slds-checkbox--faux:hover, 
+                                        .slds-scope .slds-checkbox--toggle .slds-checkbox_faux:focus, 
+                                        .slds-scope .slds-checkbox--toggle .slds-checkbox_faux:hover, 
+                                        .slds-scope .slds-checkbox_toggle .slds-checkbox--faux:focus, 
+                                        .slds-scope .slds-checkbox_toggle .slds-checkbox--faux:hover, 
+                                        .slds-scope .slds-checkbox_toggle .slds-checkbox_faux:focus, 
+                                        .slds-scope .slds-checkbox_toggle .slds-checkbox_faux:hover{
+                                            background-color: #cccccc;
+                                        }
+                                        .slds-scope .slds-checkbox--toggle [type=checkbox]:focus+.slds-checkbox--faux, 
+                                        .slds-scope .slds-checkbox--toggle [type=checkbox]:focus+.slds-checkbox--faux_container .slds-checkbox--faux, 
+                                        .slds-scope .slds-checkbox--toggle [type=checkbox]:focus+.slds-checkbox_faux, 
+                                        .slds-scope .slds-checkbox--toggle [type=checkbox]:focus+.slds-checkbox_faux_container .slds-checkbox_faux, 
+                                        .slds-scope .slds-checkbox--toggle [type=checkbox]:focus~.slds-checkbox--faux, 
+                                        .slds-scope .slds-checkbox--toggle [type=checkbox]:focus~.slds-checkbox_faux, 
+                                        .slds-scope .slds-checkbox_toggle [type=checkbox]:focus+.slds-checkbox--faux, 
+                                        .slds-scope .slds-checkbox_toggle [type=checkbox]:focus+.slds-checkbox--faux_container .slds-checkbox--faux, 
+                                        .slds-scope .slds-checkbox_toggle [type=checkbox]:focus+.slds-checkbox_faux, 
+                                        .slds-scope .slds-checkbox_toggle [type=checkbox]:focus+.slds-checkbox_faux_container .slds-checkbox_faux, 
+                                        .slds-scope .slds-checkbox_toggle [type=checkbox]:focus~.slds-checkbox--faux, 
+                                        .slds-scope .slds-checkbox_toggle [type=checkbox]:focus~.slds-checkbox_faux{
+                                            background-color: #cccccc;
+                                        }
+                                        .slds-scope .slds-checkbox--toggle [type=checkbox]:checked+.slds-checkbox--faux, 
+                                        .slds-scope .slds-checkbox--toggle [type=checkbox]:checked+.slds-checkbox--faux_container .slds-checkbox--faux, 
+                                        .slds-scope .slds-checkbox--toggle [type=checkbox]:checked+.slds-checkbox_faux, 
+                                        .slds-scope .slds-checkbox--toggle [type=checkbox]:checked+.slds-checkbox_faux_container .slds-checkbox_faux, 
+                                        .slds-scope .slds-checkbox--toggle [type=checkbox]:checked~.slds-checkbox--faux, 
+                                        .slds-scope .slds-checkbox--toggle [type=checkbox]:checked~.slds-checkbox_faux, 
+                                        .slds-scope .slds-checkbox_toggle [type=checkbox]:checked+.slds-checkbox--faux, 
+                                        .slds-scope .slds-checkbox_toggle [type=checkbox]:checked+.slds-checkbox--faux_container .slds-checkbox--faux, 
+                                        .slds-scope .slds-checkbox_toggle [type=checkbox]:checked+.slds-checkbox_faux, 
+                                        .slds-scope .slds-checkbox_toggle [type=checkbox]:checked+.slds-checkbox_faux_container .slds-checkbox_faux, 
+                                        .slds-scope .slds-checkbox_toggle [type=checkbox]:checked~.slds-checkbox--faux, 
+                                        .slds-scope .slds-checkbox_toggle [type=checkbox]:checked~.slds-checkbox_faux{
+                                            border-color: #cccccc;
+                                            background-color: #cccccc;
+                                        }
+                                        .slds-scope .slds-checkbox--toggle [type=checkbox]:checked+.slds-checkbox--faux:before, 
+                                        .slds-scope .slds-checkbox--toggle [type=checkbox]:checked+.slds-checkbox--faux_container .slds-checkbox--faux:before, 
+                                        .slds-scope .slds-checkbox--toggle [type=checkbox]:checked+.slds-checkbox_faux:before, 
+                                        .slds-scope .slds-checkbox--toggle [type=checkbox]:checked+.slds-checkbox_faux_container .slds-checkbox_faux:before, 
+                                        .slds-scope .slds-checkbox--toggle [type=checkbox]:checked~.slds-checkbox--faux:before, 
+                                        .slds-scope .slds-checkbox--toggle [type=checkbox]:checked~.slds-checkbox_faux:before, 
+                                        .slds-scope .slds-checkbox_toggle [type=checkbox]:checked+.slds-checkbox--faux:before, 
+                                        .slds-scope .slds-checkbox_toggle [type=checkbox]:checked+.slds-checkbox--faux_container .slds-checkbox--faux:before, 
+                                        .slds-scope .slds-checkbox_toggle [type=checkbox]:checked+.slds-checkbox_faux:before, 
+                                        .slds-scope .slds-checkbox_toggle [type=checkbox]:checked+.slds-checkbox_faux_container .slds-checkbox_faux:before, 
+                                        .slds-scope .slds-checkbox_toggle [type=checkbox]:checked~.slds-checkbox--faux:before, 
+                                        .slds-scope .slds-checkbox_toggle [type=checkbox]:checked~.slds-checkbox_faux:before{
+                                            background-color: #66cc33;
+                                            height: 20px;
+                                            width: 20px;
+                                        }
+                                        .slds-scope .slds-checkbox--toggle [type=checkbox]:checked+.slds-checkbox--faux:after, 
+                                        .slds-scope .slds-checkbox--toggle [type=checkbox]:checked+.slds-checkbox--faux_container .slds-checkbox--faux:after, 
+                                        .slds-scope .slds-checkbox--toggle [type=checkbox]:checked+.slds-checkbox_faux:after, 
+                                        .slds-scope .slds-checkbox--toggle [type=checkbox]:checked+.slds-checkbox_faux_container .slds-checkbox_faux:after, 
+                                        .slds-scope .slds-checkbox--toggle [type=checkbox]:checked~.slds-checkbox--faux:after, 
+                                        .slds-scope .slds-checkbox--toggle [type=checkbox]:checked~.slds-checkbox_faux:after, 
+                                        .slds-scope .slds-checkbox_toggle [type=checkbox]:checked+.slds-checkbox--faux:after, 
+                                        .slds-scope .slds-checkbox_toggle [type=checkbox]:checked+.slds-checkbox--faux_container .slds-checkbox--faux:after, 
+                                        .slds-scope .slds-checkbox_toggle [type=checkbox]:checked+.slds-checkbox_faux:after, 
+                                        .slds-scope .slds-checkbox_toggle [type=checkbox]:checked+.slds-checkbox_faux_container .slds-checkbox_faux:after, 
+                                        .slds-scope .slds-checkbox_toggle [type=checkbox]:checked~.slds-checkbox--faux:after, 
+                                        .slds-scope .slds-checkbox_toggle [type=checkbox]:checked~.slds-checkbox_faux:after{
+                                            border: none;
+                                        }
+                                        .slds-scope .slds-checkbox--toggle [type=checkbox]:checked+.slds-checkbox--faux:focus, 
+                                        .slds-scope .slds-checkbox--toggle [type=checkbox]:checked+.slds-checkbox--faux:hover, 
+                                        .slds-scope .slds-checkbox--toggle [type=checkbox]:checked+.slds-checkbox--faux_container .slds-checkbox--faux:focus, 
+                                        .slds-scope .slds-checkbox--toggle [type=checkbox]:checked+.slds-checkbox--faux_container .slds-checkbox--faux:hover, 
+                                        .slds-scope .slds-checkbox--toggle [type=checkbox]:checked+.slds-checkbox_faux:focus, 
+                                        .slds-scope .slds-checkbox--toggle [type=checkbox]:checked+.slds-checkbox_faux:hover, 
+                                        .slds-scope .slds-checkbox--toggle [type=checkbox]:checked+.slds-checkbox_faux_container .slds-checkbox_faux:focus, 
+                                        .slds-scope .slds-checkbox--toggle [type=checkbox]:checked+.slds-checkbox_faux_container .slds-checkbox_faux:hover, 
+                                        .slds-scope .slds-checkbox--toggle [type=checkbox]:checked~.slds-checkbox--faux:focus, 
+                                        .slds-scope .slds-checkbox--toggle [type=checkbox]:checked~.slds-checkbox--faux:hover, 
+                                        .slds-scope .slds-checkbox--toggle [type=checkbox]:checked~.slds-checkbox_faux:focus, 
+                                        .slds-scope .slds-checkbox--toggle [type=checkbox]:checked~.slds-checkbox_faux:hover, 
+                                        .slds-scope .slds-checkbox_toggle [type=checkbox]:checked+.slds-checkbox--faux:focus, 
+                                        .slds-scope .slds-checkbox_toggle [type=checkbox]:checked+.slds-checkbox--faux:hover, 
+                                        .slds-scope .slds-checkbox_toggle [type=checkbox]:checked+.slds-checkbox--faux_container .slds-checkbox--faux:focus, 
+                                        .slds-scope .slds-checkbox_toggle [type=checkbox]:checked+.slds-checkbox--faux_container .slds-checkbox--faux:hover, 
+                                        .slds-scope .slds-checkbox_toggle [type=checkbox]:checked+.slds-checkbox_faux:focus, 
+                                        .slds-scope .slds-checkbox_toggle [type=checkbox]:checked+.slds-checkbox_faux:hover, 
+                                        .slds-scope .slds-checkbox_toggle [type=checkbox]:checked+.slds-checkbox_faux_container .slds-checkbox_faux:focus, 
+                                        .slds-scope .slds-checkbox_toggle [type=checkbox]:checked+.slds-checkbox_faux_container .slds-checkbox_faux:hover, 
+                                        .slds-scope .slds-checkbox_toggle [type=checkbox]:checked~.slds-checkbox--faux:focus, 
+                                        .slds-scope .slds-checkbox_toggle [type=checkbox]:checked~.slds-checkbox--faux:hover, 
+                                        .slds-scope .slds-checkbox_toggle [type=checkbox]:checked~.slds-checkbox_faux:focus, 
+                                        .slds-scope .slds-checkbox_toggle [type=checkbox]:checked~.slds-checkbox_faux:hover{
+                                            background-color: #cccccc;
+                                        }
+                                        .slds-scope .slds-checkbox--toggle [type=checkbox]:checked:focus+.slds-checkbox--faux, 
+                                        .slds-scope .slds-checkbox--toggle [type=checkbox]:checked:focus+.slds-checkbox--faux_container .slds-checkbox--faux, 
+                                        .slds-scope .slds-checkbox--toggle [type=checkbox]:checked:focus+.slds-checkbox_faux, 
+                                        .slds-scope .slds-checkbox--toggle [type=checkbox]:checked:focus+.slds-checkbox_faux_container .slds-checkbox_faux, 
+                                        .slds-scope .slds-checkbox--toggle [type=checkbox]:checked:focus~.slds-checkbox--faux, 
+                                        .slds-scope .slds-checkbox--toggle [type=checkbox]:checked:focus~.slds-checkbox_faux, 
+                                        .slds-scope .slds-checkbox_toggle [type=checkbox]:checked:focus+.slds-checkbox--faux, 
+                                        .slds-scope .slds-checkbox_toggle [type=checkbox]:checked:focus+.slds-checkbox--faux_container .slds-checkbox--faux, 
+                                        .slds-scope .slds-checkbox_toggle [type=checkbox]:checked:focus+.slds-checkbox_faux, 
+                                        .slds-scope .slds-checkbox_toggle [type=checkbox]:checked:focus+.slds-checkbox_faux_container .slds-checkbox_faux, 
+                                        .slds-scope .slds-checkbox_toggle [type=checkbox]:checked:focus~.slds-checkbox--faux, 
+                                        .slds-scope .slds-checkbox_toggle [type=checkbox]:checked:focus~.slds-checkbox_faux{
+                                            background-color: #cccccc;
+                                        }
+                                    </style>
+                                    
+                                    <script type="text/javascript">
+                                        $=jQuery;
+                                        function updateScore(obj) {
+                                            
+                                            if(obj.checked){
+                                                $(obj).next('input[type=hidden]').val('10');
+                                            }
+                                            else{
+                                                $(obj).next('input[type=hidden]').val('0');
+                                            }
+                                        }
+                                        
+                                        
+                                        
+                                        function submitVal(){
+                                            j$ = $;
+                                            j$('.validate_error').remove(); 
+                                            j$(".myapp  span[id*='validation']").css("display", "none");
+                                             flag =true;
+                                             j$('.finalScore select').each(function(){ 
+                                             
+                                              var cur = j$(this);
+                                              id = j$(this).attr("id");
+                                              console.log('id',id);
+                                              j$(this).css("border-color", "#dddbda");
+                                              console.log('cur.val()'+j$.trim(cur.val()));
+                                              if (j$.trim(cur.val()) == ''){ 
+                                                  console.log('cue',cur.val());
+                                                
+                                               j$(this).parent().append('<div id="title_error" class="validate_error">Select evaluation score</div>');
+                                               j$(this).css({"border-color": "#c1272d"});
+                                               console.log(id);
+                                               flag= false;
+                                               
+                                              }
+                                              
+                                             });
+                                             
+                                             if(flag){
+                                                  //submit();
+                                                 j$('#confirm').modal('show');
+                                              
+                                              }else{
+                                                  j$(".myapp  span[id*='validation']").css("display", "block");
+                                                
+                                              }
+                                        }
+                                        
+                                        function submitValSel(obj){
+                                            console.log('obj'+obj);
+                                            var opt = $(obj).val() ;
+                                            console.log('opt'+opt);
+                                            if(opt != ''){
+                                                $(obj).css({"border-color": "#dddbda"});
+                                                $(obj).next('#title_error').remove(); 
+                                                
+                                                flag1 =true;
+                                                 
+                                                j$('.finalScore select').each(function(){ 
+                                                     var cur = j$(this);
+                                                      id = j$(this).attr("id");
+                                                      if (j$.trim(cur.val()) == ''){ 
+                                                          flag1 = false;
+                                                       }
+                                                      
+                                                 });
+                                                 
+                                                 if(flag1){
+                                                      j$(".myapp  span[id*='validation']").css("display", "none");
+                                                  
+                                                  }
+                                            }
+                                        }
+                                    </script>
+                                    
+                                    <div class="slds-size_8-of-8">
+                                            <div class="slds-grid slds-size_8-of-8" style="align-items: center; justify-content: space-between;">
+                                                <div class="slds-grid" style="align-items: center;">
+                                                    <div class="slds-col slds-p-around_medium">
+                                                        <div class="slds-text-heading_large" style="color:#5f666f; font-size: 16px; font-weight: 700;">Score Key:</div>
+                                                    </div>
+                                                    <div class="slds-grid slds-p-around_medium" style="align-items: center; margin: 0 50px 0 0;">
+                                                        <div class="slds-text-heading_large" style="color:#333333; font-size: 16px; font-weight: 400; text-align:right;">Greatly exceeds <br/>expectations </div><div class="slds-p-left_small"><span style="color: #fff; font-size: 16px; font-weight: 700; height: 28px; width: 28px; display: inline-flex; justify-content: center; align-items: center; background: #62cd21; border-radius: 20px;">10</span></div>
+                                                    </div>
+                                                    <div class="slds-grid slds-p-around_medium" style="align-items: center; margin: 0 50px 0 0;">
+                                                        <div class="slds-text-heading_large" style="color:#333333; font-size: 16px; font-weight: 400; text-align:right;">Exceeds <br/>expectations </div><div class="slds-p-left_small"><span style="color: #fff; font-size: 16px; font-weight: 700; height: 28px; width: 28px; display: inline-flex; justify-content: center; align-items: center; background: #00b0f0; border-radius: 20px;">8</span></div>
+                                                    </div>
+                                                    <div class="slds-grid slds-p-left_large" style="align-items: center; margin: 0 50px 0 0;">
+                                                        <div class="slds-text-heading_large" style="color:#333333; font-size: 16px; font-weight: 400; text-align:right;">Meets <br/>expectations </div><div class="slds-p-left_small"><span style="color: #fff; font-size: 16px; font-weight: 700; height: 28px; width: 28px; display: inline-flex; justify-content: center; align-items: center; background: #ffce00; border-radius: 20px;">5</span></div>
+                                                    </div>
+                                                    <div class="slds-grid slds-p-around_medium" style="align-items: center; margin: 0 50px 0 0;">
+                                                        <div class="slds-text-heading_large" style="color:#333333; font-size: 16px; font-weight: 400; text-align:right;">Below <br/>expectations </div><div class="slds-p-left_small"><span style="color: #fff; font-size: 16px; font-weight: 700; height: 28px; width: 28px; display: inline-flex; justify-content: center; align-items: center; background: #ff9900; border-radius: 20px;">2</span></div>
+                                                    </div>
+                                                    <div class="slds-grid slds-p-around_medium" style="align-items: center; margin:">
+                                                        <div class="slds-text-heading_large" style="color:#333333; font-size: 16px; font-weight: 400; text-align:right;">Greatly below <br/>expectations </div><div class="slds-p-left_small"><span style="color: #fff; font-size: 16px; font-weight: 700; height: 28px; width: 28px; display: inline-flex; justify-content: center; align-items: center; background: #f13f26; border-radius: 20px;">0</span></div>
+                                                    </div>
+                                                </div>
+                                                <div class="slds-grid" style="margin: 6px 0 0 0;">
+                                                    <div class="slds-col slds-p-around_medium">
+                                                         <a onclick="popup('pop')"  class="popup" style="color:#fff; font-size: 14px; font-weight: 700;" > SEE EVALUATION GUIDELINES</a>  
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <apex:repeat var="key" value="{!updateMapValue}" rendered="{!Req}">
+                                        <div class="slds-size_8-of-8 slds-border_bottom " style="border-width: 2px; border-color: #7e8793;">
+                                            <div class="slds-grid slds-size_8-of-8">
+                                                <div class="slds-col slds-p-around_medium slds-size_8-of-8">
+                                                    <div class="slds-text-heading_large" style="color:#5f666f; font-size: 24px; font-weight: 700;">Required Ratings</div>
+                                                    <div class="slds-text-heading_large slds-m-top_xx-small" style="color:#333333; font-size: 16px; font-weight: 700;">These ratings are due at the end of the month and will be final after they are submitted. Please note, there is a 255 character limit per comment.</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                         
+                                      
+                                        <apex:repeat var="u" value="{!updateMapValue[key]}">
+                                            <apex:outputPanel rendered="{!u.Rating_Start_Date__c <= todaysDate }" style="width:100%" >
+                                                <apex:outputPanel rendered="{!u.Certifcation_Rating__r.Calculation_type__c =='Y/N'}" style="width:100%">
+                                                    <div class="slds-size_8-of-8 " style="border-width: 2px; border-color: #7e8793;">
+                                                        <div class="slds-grid slds-p-around_large slds-border_bottom" style="border-color: #d8dde6; flex-direction: column;">
+                                                            <div class="slds-col slds-text-heading_medium slds-size_8-of-8" style="margin-bottom: 10px;">
+                                                                <span class="slds-icon_container slds-p-right_medium">
+                                                                    <i aria-hidden="true" class="fas fa-exclamation-triangle" style="color:#c1272d; font-size: 24px;"></i>
+                                                                </span>
+                                                                <span style="font-size: 16px; color: #333333; font-weight: 700;">{!u.Certifcation_Rating__r.Name} - {!u.Certifcation_Rating__r.Description__c}</span>
+                                                                <div class="slds-col slds-size_2-of-8" style="margin-top: 20px; text-align: right;float:right">
+                                                                    <span style="font-size: 14px; color: #333333; font-weight: 700;">{!IF(u.Certifcation_Rating__r.Timing__c =='End of month','Monthly',IF(u.Certifcation_Rating__r.Timing__c =='End of quarter','Quarterly',u.Certifcation_Rating__r.Timing__c))} - Due &nbsp; <apex:outputText value="{0,date,MM/dd/yy}"> <apex:param value="{!u.Due_Date__c}" /> </apex:outputText></span>
+                                                                </div>
+                                                                <div class="slds-size_8-of-8 slds-grid" style="justify-content: space-between; align-items: center;">
+                                                                    <div class="slds-col slds-size_2-of-8" style="margin-top: 20px;">
+                                                                        <apex:outputPanel rendered="{!u.Rating_Score__c == 10}">
+                                                                            <label class="slds-checkbox_toggle slds-grid">                                                                                                                                                
+                                                                                <span class="slds-form-element__label slds-m-bottom_none" style="margin: 0; color:#333333; font-size: 16px; font-weight: 400;">No</span>
+                                                                                    <span id="toggle-desc" class="slds-checkbox_faux_container" aria-live="assertive" style="margin: 0 10px;"  >                                                                                                                                                                        
+                                                                                        <input type="checkbox" name="checkbox" aria-describedby="toggle-desc"  onclick="updateScore(this);" checked="true" >
+                                                                                            <apex:inputHidden value="{!u.Rating_Score__c}"/>  
+                                                                                        </input>                                                                                                                                                                        
+                                                                                        <span class="slds-checkbox_faux"></span>
+                                                                                    </span>                                                                                
+                                                                                <span class="slds-form-element__label slds-m-bottom_none" style="margin: 0; color:#333333; font-size: 16px; font-weight: 400;">Yes</span>
+                                                                            </label>
+                                                                        </apex:outputPanel>
+                                                                        <apex:outputPanel rendered="{!u.Rating_Score__c != 10 }">
+                                                                            <label class="slds-checkbox_toggle slds-grid">   
+                                                                                <span class="slds-form-element__label slds-m-bottom_none" style="margin: 0; color:#333333; font-size: 16px; font-weight: 400;">No</span>
+                                                                                    <span id="toggle-desc" class="slds-checkbox_faux_container" aria-live="assertive" style="margin: 0 10px;"  >                                                                                                                                                                        
+                                                                                        <input type="checkbox" name="checkbox" aria-describedby="toggle-desc"  onclick="updateScore(this);" >
+                                                                                            <apex:inputHidden value="{!u.Rating_Score__c}"/>  
+                                                                                        </input>                                                                                                                                                                        
+                                                                                        <span class="slds-checkbox_faux"></span>
+                                                                                    </span>                                                                                
+                                                                                <span class="slds-form-element__label slds-m-bottom_none" style="margin: 0; color:#333333; font-size: 16px; font-weight: 400;">Yes</span>
+                                                                            </label>
+                                                                        </apex:outputPanel>
+                                                                        
+                                                                    </div>
+                                                                    <apex:repeat var="p" value="{!prevCa}">
+                                                                        <apex:outputPanel rendered="{!p.Name ==u.Name}">
+                                                                            <span class="slds-p-right_medium" style="font-size: 16px; color: #333333; font-weight: 700;float:right; margin-top:5px">Last Update</span><br/>
+                                                                            <apex:outputPanel rendered="{!p.Rating_Score__c = 10}">
+                                                                                <div class="slds-grid " style="float:right;">
+                                                                                    <div class="slds-text-heading_large" style="color:#333333; font-size: 16px; font-weight: 400; text-align:right;margin-left:0px;">Greatly exceeds<br/> expectations </div><div class="slds-p-left_small" style="margin:5px;"><span style="color: #fff; font-size: 16px; font-weight: 700; height: 28px; width: 28px; display: inline-flex; justify-content: center; align-items: center; background: #62cd21; border-radius: 20px;">10</span></div>
+                                                                                </div>
+                                                                            </apex:outputPanel>
+                                                                            <apex:outputPanel rendered="{!p.Rating_Score__c = 8}">
+                                                                                <div class="slds-grid" style="float:right;">
+                                                                                    <div class="slds-text-heading_large" style="color:#333333; font-size: 16px; font-weight: 400; text-align:right;">Meets<br/> expectations </div><div class="slds-p-left_small" style="margin:5px;"><span style="color: #fff; font-size: 16px; font-weight: 700; height: 28px; width: 28px; display: inline-flex; justify-content: center; align-items: center; background: #ffce00; border-radius: 20px;">5</span></div>
+                                                                                </div>
+                                                                            </apex:outputPanel>
+                                                                            <apex:outputPanel rendered="{!p.Rating_Score__c = 5}">
+                                                                                <div class="slds-grid " style="float:right;">
+                                                                                    <div class="slds-text-heading_large" style="color:#333333; font-size: 16px; font-weight: 400; text-align:right;">Meets<br/> expectations </div><div class="slds-p-left_small" style="margin:5px;"><span style="color: #fff; font-size: 16px; font-weight: 700; height: 28px; width: 28px; display: inline-flex; justify-content: center; align-items: center; background: #ffce00; border-radius: 20px;">5</span></div>
+                                                                                </div>
+                                                                            </apex:outputPanel>
+                                                                            <apex:outputPanel rendered="{!p.Rating_Score__c = 2}">
+                                                                                <div class="slds-grid " style="float:right;">
+                                                                                    <div class="slds-text-heading_large" style="color:#333333; font-size: 16px; font-weight: 400; text-align:right;">Below<br/> expectations </div><div class="slds-p-left_small" style="margin:5px;"><span style="color: #fff; font-size: 16px; font-weight: 700; height: 28px; width: 28px; display: inline-flex; justify-content: center; align-items: center; background: #ff9900; border-radius: 20px;">2</span></div>
+                                                                                </div>
+                                                                            </apex:outputPanel>
+                                                                            <apex:outputPanel rendered="{!p.Rating_Score__c = 0}">
+                                                                                <div class="slds-grid " style="float:right;">
+                                                                                    <div class="slds-text-heading_large" style="color:#333333; font-size: 16px; font-weight: 400; text-align:right;">Greatly below<br/> expectations </div><div class="slds-p-left_small" style="margin:5px;"><span style="color: #fff; font-size: 16px; font-weight: 700; height: 28px; width: 28px; display: inline-flex; justify-content: center; align-items: center; background: #f13f2; border-radius: 20px;">0</span></div>
+                                                                                </div>
+                                                                            </apex:outputPanel>
+                                                                        </apex:outputPanel>
+                                                                    </apex:repeat>
+                                                                </div>
+                                                        
+                                                            </div>
+                                                            
+                                                             
+                                                            <div class="slds-col slds-size_8-of-8">
+                                                                <label style="font-size: 16px; color: #333333; font-weight: 700; margin-bottom: 5px; display: block;"><i class="far fa-comment-dots"></i> Comment</label>
+                                                                <apex:inputText maxlength="255" style="width: 100%; border: 1px solid #7e8793; padding: 6px 10px; font-size: 16px; color: #333333;" value="{!u.Comment__c}"/>
+                                                            </div>
+                                                            <script>
+                                                            function show(obj)
+                                                            {
+                                                                if(document.getElementById(obj).style.display == 'block')
+                                                                {
+                                                                    document.getElementById(obj).style.display = 'none';
+                                                                }
+                                                                else
+                                                                    document.getElementById(obj).style.display = 'block';
+                                                            }
+                                                            </script>
+                                                    		<div>
+                                                                <!--a href="javascript:;" onclick="show(this.nextSibling.nextSibling.id);"><span style="font-size: 16px; color: #333333; font-weight: 700; margin-top:5px">Previous Comments</span></a>
+                                                                <div id="expand"-->
+                                                                <apex:pageBlock id="pb1">
+                                                                        <style>
+                                                                          body .bPageBlock .pbBody .yellow .pbSubheader{
+                                                                          background-color: #00b0f0;
+                                                                            font-size:16px;
+                                                                          }
+                                                                        </style>
+                                                                        <apex:outputPanel styleClass="yellow" layout="block">
+                                                                <apex:pageBlockSection collapsible="true" title="Previous Comments" >
+                                                                    <apex:pageBlockSectionItem >
+                                                                    <!--table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered scoring-table">
+                                                                        <tbody>
+                                                                            <tr>
+                                                                                <td-->
+                                                                                    <apex:repeat var="c" value="{!prevCmnt}">
+                                                                                        <apex:outputPanel rendered="{!c.Name ==u.Name}">
+                                                                                            <div class="slds-grid">
+                                                                                                <div class="slds-text-heading_large" style="color:#333333; font-size: 16px; font-weight: 400; text-align:right;margin-left:0px;">{!c.Comment__c} </div>
+                                                                                            </div>
+                                                                                        </apex:outputPanel>
+                                                                                    </apex:repeat>
+                                                                                <!--/td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table-->
+                                                                    </apex:pageBlockSectionItem>
+                                                                    </apex:pageBlockSection>
+                                                                    </apex:outputPanel>
+                                                                    </apex:pageBlock>
+                                                                <!--/div-->
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </apex:outputPanel>
+                                            
+                                                
+                                                
+                                                <apex:outputPanel rendered="{!u.Certifcation_Rating__r.Calculation_type__c =='Evaluation'}" style="width:100%">
+                                                    
+                                                    <div class="slds-size_8-of-8 finalScore" style="border-width: 2px; border-color: #7e8793;" >
+                                                        <div class="slds-grid slds-p-around_large slds-border_bottom" style="border-color: #d8dde6; flex-direction: column;">
+                                                            <div class="slds-col slds-text-heading_medium slds-size_8-of-8" style="margin: 10px 0 20px;">
+                                                                <span class="slds-icon_container slds-p-right_medium">
+                                                                    <i aria-hidden="true" class="fas fa-exclamation-triangle" style="color:#c1272d; font-size: 24px;"></i>
+                                                                </span>
+                                                                <span style="font-size: 16px; color: #333333; font-weight: 700;">{!u.Certifcation_Rating__r.Name} - {!u.Certifcation_Rating__r.Description__c}</span>
+                                                                <div class="slds-col slds-size_2-of-8" style="margin-top: 20px; text-align: right;float:right">
+                                                                        <span style="font-size: 14px; color: #333333; font-weight: 700;">{!IF(u.Certifcation_Rating__r.Timing__c =='End of month','Monthly',IF(u.Certifcation_Rating__r.Timing__c =='End of quarter','Quarterly',u.Certifcation_Rating__r.Timing__c))} - Due &nbsp; <apex:outputText value="{0,date,MM/dd/yy}"> <apex:param value="{!u.Due_Date__c}" /> </apex:outputText></span><br/>
+                                                                </div>        
+                                                                <div class="slds-size_8-of-8 slds-grid" style="justify-content: space-between; align-items: center;">
+                                                                    <div class="slds-col slds-size_2-of-8" style="margin-top: 20px;">
+                                                                        <apex:selectList value="{!u.Rating_Score__c}" size="1" style="color:#333333; font-size: 17px; border-radius:0; height: auto;" Styleclass="slds-select slds-p-around_x-small"  onchange="submitValSel(this);" >
+                                                                            <apex:selectoptions value="{!surveyVal}"/>
+                                                                        </apex:selectList>
+                                                                    </div>
+                                                                    <apex:repeat var="p" value="{!prevCa}">
+                                                                        <apex:outputPanel rendered="{!p.Name ==u.Name}">
+                                                                            <span class="slds-p-right_medium" style="font-size: 16px; color: #333333; font-weight: 700;float:right; margin-top:5px">Last Update</span><br/>
+                                                                            <apex:outputPanel rendered="{!p.Rating_Score__c = 10}">
+                                                                                <div class="slds-grid " style="float:right;">
+                                                                                    <div class="slds-text-heading_large" style="color:#333333; font-size: 16px; font-weight: 400; text-align:right;margin-left:0px;">Greatly exceeds<br/> expectations </div><div class="slds-p-left_small" style="margin:5px;"><span style="color: #fff; font-size: 16px; font-weight: 700; height: 28px; width: 28px; display: inline-flex; justify-content: center; align-items: center; background: #62cd21; border-radius: 20px;">10</span></div>
+                                                                                </div>
+                                                                            </apex:outputPanel>
+                                                                            <apex:outputPanel rendered="{!p.Rating_Score__c = 8}">
+                                                                                <div class="slds-grid" style="float:right;">
+                                                                                    <div class="slds-text-heading_large" style="color:#333333; font-size: 16px; font-weight: 400; text-align:right;">Meets<br/> expectations </div><div class="slds-p-left_small" style="margin:5px;"><span style="color: #fff; font-size: 16px; font-weight: 700; height: 28px; width: 28px; display: inline-flex; justify-content: center; align-items: center; background: #ffce00; border-radius: 20px;">5</span></div>
+                                                                                </div>
+                                                                            </apex:outputPanel>
+                                                                            <apex:outputPanel rendered="{!p.Rating_Score__c = 5}">
+                                                                                <div class="slds-grid " style="float:right;">
+                                                                                    <div class="slds-text-heading_large" style="color:#333333; font-size: 16px; font-weight: 400; text-align:right;">Meets<br/> expectations </div><div class="slds-p-left_small" style="margin:5px;"><span style="color: #fff; font-size: 16px; font-weight: 700; height: 28px; width: 28px; display: inline-flex; justify-content: center; align-items: center; background: #ffce00; border-radius: 20px;">5</span></div>
+                                                                                </div>
+                                                                            </apex:outputPanel>
+                                                                            <apex:outputPanel rendered="{!p.Rating_Score__c = 2}">
+                                                                                <div class="slds-grid " style="float:right;">
+                                                                                    <div class="slds-text-heading_large" style="color:#333333; font-size: 16px; font-weight: 400; text-align:right;">Below<br/> expectations </div><div class="slds-p-left_small" style="margin:5px;"><span style="color: #fff; font-size: 16px; font-weight: 700; height: 28px; width: 28px; display: inline-flex; justify-content: center; align-items: center; background: #ff9900; border-radius: 20px;">2</span></div>
+                                                                                </div>
+                                                                            </apex:outputPanel>
+                                                                            <apex:outputPanel rendered="{!p.Rating_Score__c = 0}">
+                                                                                <div class="slds-grid " style="float:right;">
+                                                                                    <div class="slds-text-heading_large" style="color:#333333; font-size: 16px; font-weight: 400; text-align:right;">Greatly below<br/> expectations </div><div class="slds-p-left_small" style="margin:5px;"><span style="color: #fff; font-size: 16px; font-weight: 700; height: 28px; width: 28px; display: inline-flex; justify-content: center; align-items: center; background: #f13f2; border-radius: 20px;">0</span></div>
+                                                                                </div>
+                                                                            </apex:outputPanel>
+                                                                        </apex:outputPanel>
+                                                                    </apex:repeat>    
+                                                                </div>
+                                                            </div>
+                                                            <div class="slds-col slds-size_8-of-8">
+                                                            <label style="font-size: 16px; color: #333333; font-weight: 700; margin-bottom: 5px; display: block;"><i class="far fa-comment-dots"></i> Comment</label>
+                                                            <apex:inputText maxlength="255" style="width: 100%; border: 1px solid #7e8793; padding: 6px 10px; font-size: 16px; color: #333333;" value="{!u.Comment__c}"/>
+                                                         	
+                                                            </div>
+                                                            <div>   
+                                                                <!--a href="javascript:;" onclick="showdrop(this.nextSibling.nextSibling.id);"><span style="font-size: 16px; color: #333333; font-weight: 700; margin-top:5px">Previous Comments</span></a>
+                                                                <div id="expand1"-->
+                                                                <apex:pageBlock id="pb">
+                                                                        <apex:outputPanel styleClass="yellow" layout="block">
+                                                                <apex:pageBlockSection id="redSection" collapsible="true" title="Previous Comments" >
+                                                                    <apex:pageBlockSectionItem >
+                                                                                    <apex:repeat var="c" value="{!prevCmnt}">
+                                                                                        <apex:outputPanel rendered="{!c.Name ==u.Name}">
+                                                                                            <div class="slds-grid">
+                                                                                                <div class="slds-text-heading_large" style="color:#333333; font-size: 16px; font-weight: 400; text-align:right;margin-left:0px;">{!c.Comment__c} </div>
+                                                                                            </div>
+                                                                                        </apex:outputPanel>
+                                                                                    </apex:repeat>
+                                                                    </apex:pageBlockSectionItem>
+                                                                    
+                                                                </apex:pageBlockSection>
+                                                                    </apex:outputPanel>
+                                                                </apex:pageBlock>
+                                                                <!--/div-->
+                                                            </div>
+                                                         </div>
+                                                         
+                                                     </div>
+                                                     
+                                                     </apex:outputPanel>
+                                                </apex:outputPanel>
+                                        </apex:repeat>
+                                    </apex:repeat>
+                                    <!-- Optional --> 
+                                                            
+                                    <apex:repeat var="key" value="{!updateMapValue}" rendered="{!Opt}">
+                                         <div class="slds-size_8-of-8 slds-border_bottom " style="border-width: 2px; border-color: #7e8793;">
+                                            <div class="slds-grid slds-size_8-of-8">
+                                                <div class="slds-col slds-p-around_medium slds-size_8-of-8">
+                                                    <div class="slds-text-heading_large slds-m-top_x-large" style="color:#5f666f; font-size: 24px; font-weight: 700;">Upcoming Ratings</div>
+                                                    <div class="slds-text-heading_large slds-m-top_xx-small" style="color:#333333; font-size: 16px; font-weight: 700;">These ratings may be quarterly or annual ratings and are not due in the current month. You will be able to save these and update them in subsequent months. Please note, there is a 255 character limit per comment.</div>
+                                                </div>
+                                            </div>
+                                        </div>  
+                                        
+                                        <!--  <div class="slds-size_8-of-8">
+                                            <div class="slds-grid slds-size_8-of-8" style="align-items: center; justify-content: space-between;">
+                                                <div class="slds-grid" style="align-items: center;">
+                                                    <div class="slds-col slds-p-around_medium">
+                                                        <div class="slds-text-heading_large" style="color:#5f666f; font-size: 16px; font-weight: 700;">Score Key:</div>
+                                                </div>
+                                                    <div class="slds-col slds-p-around_medium">
+                                                        <div class="slds-text-heading_large" style="color:#7e8793; font-size: 16px; font-weight: 400;">Outstanding <span style="color: #fff; font-size: 16px; font-weight: 700; height: 28px; width: 28px; display: inline-flex; justify-content: center; align-items: center; background: #62cd21; border-radius: 20px;">10</span></div>
+                                                </div>
+                                                    <div class="slds-col slds-p-around_medium">
+                                                        <div class="slds-text-heading_large" style="color:#7e8793; font-size: 16px; font-weight: 400;">Strong <span style="color: #fff; font-size: 16px; font-weight: 700; height: 28px; width: 28px; display: inline-flex; justify-content: center; align-items: center; background: #00b0f0; border-radius: 20px;">8</span></div>
+                                                </div>
+                                                    <div class="slds-col slds-p-around_medium">
+                                                        <div class="slds-text-heading_large" style="color:#7e8793; font-size: 16px; font-weight: 400;">Average <span style="color: #fff; font-size: 16px; font-weight: 700; height: 28px; width: 28px; display: inline-flex; justify-content: center; align-items: center; background: #ffce00; border-radius: 20px;">5</span></div>
+                                                </div>
+                                                    <div class="slds-col slds-p-around_medium">
+                                                        <div class="slds-text-heading_large" style="color:#7e8793; font-size: 16px; font-weight: 400;">Marginal <span style="color: #fff; font-size: 16px; font-weight: 700; height: 28px; width: 28px; display: inline-flex; justify-content: center; align-items: center; background: #ff9900; border-radius: 20px;">2</span></div>
+                                                </div>
+                                                    <div class="slds-col slds-p-around_medium">
+                                                        <div class="slds-text-heading_large" style="color:#7e8793; font-size: 16px; font-weight: 400;">Needs Improvement <span style="color: #fff; font-size: 16px; font-weight: 700; height: 28px; width: 28px; display: inline-flex; justify-content: center; align-items: center; background: #f13f26; border-radius: 20px;">0</span></div>
+                                                    </div>
+                                                </div>
+                                                <div class="slds-grid" style="margin: 6px 0 0 0;">
+                                                    <div class="slds-col slds-p-around_medium">
+                                                         <a onclick="popup('pop')"  class="popup" style="color:#fff; font-size: 14px; font-weight: 700;" > SEE EVALUATION GUIDELINES</a>  
+                                                </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        -->
+                                        <apex:repeat var="u" value="{!updateMapValue[key]}">
+                                            <apex:outputPanel rendered="{!u.Rating_Start_Date__c > todaysDate }" style="width:100%">
+                                                <apex:outputPanel rendered="{!u.Certifcation_Rating__r.Calculation_type__c =='Y/N'}" style="width:100%">
+                                                    <div class="slds-size_8-of-8 " style="border-width: 2px; border-color: #7e8793;">
+                                                        <div class="slds-grid slds-p-around_large slds-border_bottom" style="border-color: #d8dde6; flex-direction: column;">
+                                                            <div class="slds-col slds-text-heading_medium slds-size_8-of-8" style="margin-bottom: 10px;">
+                                                                <span class="slds-icon_container slds-p-right_medium">
+                                                                    <i aria-hidden="true" class="fas fa-exclamation-triangle" style="color:#c1272d; font-size: 24px;"></i>
+                                                                </span>
+                                                            <span style="font-size: 16px; color: #333333; font-weight: 700;">{!u.Certifcation_Rating__r.Name} - {!u.Certifcation_Rating__r.Description__c}</span>
+                                                            <div class="slds-col slds-size_2-of-8" style="margin-top: 20px; text-align: right;float:right">
+                                                            	<span style="font-size: 14px; color: #333333; font-weight: 700;">{!IF(u.Certifcation_Rating__r.Timing__c =='End of month','Monthly',IF(u.Certifcation_Rating__r.Timing__c =='End of quarter','Quarterly',u.Certifcation_Rating__r.Timing__c))} - Due &nbsp; <apex:outputText value="{0,date,MM/dd/yy}"> <apex:param value="{!u.Due_Date__c}" /> </apex:outputText></span>
+                                                            </div>
+                                                            <div class="slds-size_8-of-8 slds-grid" style="justify-content: space-between; align-items: center;">
+                                                                    <div class="slds-col slds-size_2-of-8" style="margin-top: 20px;">
+                                                                        <apex:outputPanel rendered="{!u.Rating_Score__c == 10}">
+                                                                            <label class="slds-checkbox_toggle slds-grid">                                                                                                                                                
+                                                                                <span class="slds-form-element__label slds-m-bottom_none" style="margin: 0; color:#333333; font-size: 16px; font-weight: 400;">No</span>
+                                                                                    <span id="toggle-desc" class="slds-checkbox_faux_container" aria-live="assertive" style="margin: 0 10px;"  >                                                                                                                                                                        
+                                                                                        <input type="checkbox" name="checkbox" aria-describedby="toggle-desc"  onclick="updateScore(this);" checked="true" >
+                                                                                            <apex:inputHidden value="{!u.Rating_Score__c}"/>  
+                                                                                        </input>                                                                                                                                                                        
+                                                                                        <span class="slds-checkbox_faux"></span>
+                                                                                    </span>                                                                                
+                                                                                <span class="slds-form-element__label slds-m-bottom_none" style="margin: 0; color:#333333; font-size: 16px; font-weight: 400;">Yes</span>
+                                                                            </label>
+                                                                        </apex:outputPanel>
+                                                                        <apex:outputPanel rendered="{!u.Rating_Score__c != 10 }">
+                                                                            <label class="slds-checkbox_toggle slds-grid">   
+                                                                                <span class="slds-form-element__label slds-m-bottom_none" style="margin: 0; color:#333333; font-size: 16px; font-weight: 400;">No</span>
+                                                                                    <span id="toggle-desc" class="slds-checkbox_faux_container" aria-live="assertive" style="margin: 0 10px;"  >                                                                                                                                                                        
+                                                                                        <input type="checkbox" name="checkbox" aria-describedby="toggle-desc"  onclick="updateScore(this);" >
+                                                                                            <apex:inputHidden value="{!u.Rating_Score__c}"/>  
+                                                                                        </input>                                                                                                                                                                        
+                                                                                        <span class="slds-checkbox_faux"></span>
+                                                                                    </span>                                                                                
+                                                                                <span class="slds-form-element__label slds-m-bottom_none" style="margin: 0; color:#333333; font-size: 16px; font-weight: 400;">Yes</span>
+                                                                            </label>
+                                                                        </apex:outputPanel>
+                                                                       
+                                                                    </div>
+                                                                    <apex:repeat var="p" value="{!prevCa}">
+                                                                        <apex:outputPanel rendered="{!p.Name ==u.Name}">
+                                                                            <span class="slds-p-right_medium" style="font-size: 16px; color: #333333; font-weight: 700;float:right; margin-top:5px">Last Update</span><br/>
+                                                                            <apex:outputPanel rendered="{!p.Rating_Score__c = 10}">
+                                                                                <div class="slds-grid " style="float:right;">
+                                                                                    <div class="slds-text-heading_large" style="color:#333333; font-size: 16px; font-weight: 400; text-align:right;margin-left:0px;">Greatly exceeds<br/> expectations </div><div class="slds-p-left_small" style="margin:5px;"><span style="color: #fff; font-size: 16px; font-weight: 700; height: 28px; width: 28px; display: inline-flex; justify-content: center; align-items: center; background: #62cd21; border-radius: 20px;">10</span></div>
+                                                                                </div>
+                                                                            </apex:outputPanel>
+                                                                            <apex:outputPanel rendered="{!p.Rating_Score__c = 8}">
+                                                                                <div class="slds-grid" style="float:right;">
+                                                                                    <div class="slds-text-heading_large" style="color:#333333; font-size: 16px; font-weight: 400; text-align:right;">Meets<br/> expectations </div><div class="slds-p-left_small" style="margin:5px;"><span style="color: #fff; font-size: 16px; font-weight: 700; height: 28px; width: 28px; display: inline-flex; justify-content: center; align-items: center; background: #ffce00; border-radius: 20px;">5</span></div>
+                                                                                </div>
+                                                                            </apex:outputPanel>
+                                                                            <apex:outputPanel rendered="{!p.Rating_Score__c = 5}">
+                                                                                <div class="slds-grid " style="float:right;">
+                                                                                    <div class="slds-text-heading_large" style="color:#333333; font-size: 16px; font-weight: 400; text-align:right;">Meets<br/> expectations </div><div class="slds-p-left_small" style="margin:5px;"><span style="color: #fff; font-size: 16px; font-weight: 700; height: 28px; width: 28px; display: inline-flex; justify-content: center; align-items: center; background: #ffce00; border-radius: 20px;">5</span></div>
+                                                                                </div>
+                                                                            </apex:outputPanel>
+                                                                            <apex:outputPanel rendered="{!p.Rating_Score__c = 2}">
+                                                                                <div class="slds-grid " style="float:right;">
+                                                                                    <div class="slds-text-heading_large" style="color:#333333; font-size: 16px; font-weight: 400; text-align:right;">Below<br/> expectations </div><div class="slds-p-left_small" style="margin:5px;"><span style="color: #fff; font-size: 16px; font-weight: 700; height: 28px; width: 28px; display: inline-flex; justify-content: center; align-items: center; background: #ff9900; border-radius: 20px;">2</span></div>
+                                                                                </div>
+                                                                            </apex:outputPanel>
+                                                                            <apex:outputPanel rendered="{!p.Rating_Score__c = 0}">
+                                                                                <div class="slds-grid " style="float:right;">
+                                                                                    <div class="slds-text-heading_large" style="color:#333333; font-size: 16px; font-weight: 400; text-align:right;">Greatly below<br/> expectations </div><div class="slds-p-left_small" style="margin:5px;"><span style="color: #fff; font-size: 16px; font-weight: 700; height: 28px; width: 28px; display: inline-flex; justify-content: center; align-items: center; background: #f13f2; border-radius: 20px;">0</span></div>
+                                                                                </div>
+                                                                            </apex:outputPanel>
+                                                                        </apex:outputPanel>
+                                                                    </apex:repeat>
+                                                                </div>
+                                                            </div>
+                                                        
+                                                         
+                                                            <div class="slds-col slds-size_8-of-8">
+                                                                <label style="font-size: 16px; color: #333333; font-weight: 700; margin-bottom: 5px; display: block;"><i class="far fa-comment-dots"></i> Comment</label>
+                                                                <apex:inputText maxlength="255" style="width: 100%; border: 1px solid #7e8793; padding: 6px 10px; font-size: 16px; color: #333333;" value="{!u.Comment__c}"/>
+                                                            </div>
+                                                            <script>
+                                                            function show(obj)
+                                                            {
+                                                                if(document.getElementById(obj).style.display == 'block')
+                                                                {
+                                                                    document.getElementById(obj).style.display = 'none';
+                                                                }
+                                                                else
+                                                                    document.getElementById(obj).style.display = 'block';
+                                                            }
+                                                            </script>
+                                                    		<div>
+                                                                <!--a href="javascript:;" onclick="show(this.nextSibling.nextSibling.id);"><span style="font-size: 16px; color: #333333; font-weight: 700; margin-top:5px">Previous Comments</span></a>
+                                                                <div id="expand"-->
+                                                                <apex:pageBlock id="pb1">
+                                                                        <style>
+                                                                          body .bPageBlock .pbBody .yellow .pbSubheader{
+                                                                          background-color: #00b0f0;
+                                                                            font-size:16px;
+                                                                          }
+                                                                        </style>
+                                                                        <apex:outputPanel styleClass="yellow" layout="block">
+                                                                <apex:pageBlockSection collapsible="true" title="Previous Comments" >
+                                                                    <apex:pageBlockSectionItem >
+                                                                    <!--table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered scoring-table">
+                                                                        <tbody>
+                                                                            <tr>
+                                                                                <td-->
+                                                                                    <apex:repeat var="c" value="{!prevCmnt}">
+                                                                                        <apex:outputPanel rendered="{!c.Name ==u.Name}">
+                                                                                            <div class="slds-grid">
+                                                                                                <div class="slds-text-heading_large" style="color:#333333; font-size: 16px; font-weight: 400; text-align:right;margin-left:0px;">{!c.Comment__c} </div>
+                                                                                            </div>
+                                                                                        </apex:outputPanel>
+                                                                                    </apex:repeat>
+                                                                                <!--/td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table-->
+                                                                    </apex:pageBlockSectionItem>
+                                                                    </apex:pageBlockSection>
+                                                                    </apex:outputPanel>
+                                                                    </apex:pageBlock>
+                                                                <!--/div-->
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </apex:outputPanel>
+                                            
+                                                
+                                                
+                                                <apex:outputPanel rendered="{!u.Certifcation_Rating__r.Calculation_type__c =='Evaluation'}" style="width:100%">
+                                                    
+                                                    <div class="slds-size_8-of-8" style="border-width: 2px; border-color: #7e8793;">
+                                                        <div class="slds-grid slds-p-around_large slds-border_bottom" style="border-color: #d8dde6; flex-direction: column;">
+                                                            <div class="slds-col slds-text-heading_medium slds-size_8-of-8" style="margin: 10px 0 20px;">
+                                                                <span class="slds-icon_container slds-p-right_medium">
+                                                                    <i aria-hidden="true" class="fas fa-exclamation-triangle" style="color:#c1272d; font-size: 24px;"></i>
+                                                                </span>
+                                                                <span style="font-size: 16px; color: #333333; font-weight: 700;">{!u.Certifcation_Rating__r.Name} - {!u.Certifcation_Rating__r.Description__c}</span>
+                                                                <div class="slds-col slds-size_2-of-8" style="margin-top: 20px; text-align: right;float:right">
+                                                                        <span style="font-size: 14px; color: #333333; font-weight: 700;">{!IF(u.Certifcation_Rating__r.Timing__c =='End of month','Monthly',IF(u.Certifcation_Rating__r.Timing__c =='End of quarter','Quarterly',u.Certifcation_Rating__r.Timing__c))} - Due &nbsp; <apex:outputText value="{0,date,MM/dd/yy}"> <apex:param value="{!u.Due_Date__c}" /> </apex:outputText></span><br/>
+                                                                </div>
+                                                            <div class="slds-size_8-of-8 slds-grid" style="justify-content: space-between; align-items: center;">
+                                                                    <div class="slds-col slds-size_2-of-8" style="margin-top: 20px;">
+                                                                    <apex:selectList value="{!u.Rating_Score__c}" size="1" style="color:#333333; font-size: 17px; border-radius:0; height: auto;" Styleclass="slds-select slds-p-around_x-small"  onchange="submitValSel(this);" >
+                                                                        <apex:selectoptions value="{!surveyVal}"/>
+                                                                    </apex:selectList> 
+                                                                   
+                                                                </div>
+                                                                    <apex:repeat var="p" value="{!prevCa}">
+                                                                        <apex:outputPanel rendered="{!p.Name ==u.Name}">
+                                                                            <span class="slds-p-right_medium" style="font-size: 16px; color: #333333; font-weight: 700;float:right; margin-top:5px">Last Update</span><br/>
+                                                                            <apex:outputPanel rendered="{!p.Rating_Score__c = 10}">
+                                                                                <div class="slds-grid " style="float:right;">
+                                                                                    <div class="slds-text-heading_large" style="color:#333333; font-size: 16px; font-weight: 400; text-align:right;margin-left:0px;">Greatly exceeds<br/> expectations </div><div class="slds-p-left_small" style="margin:5px;"><span style="color: #fff; font-size: 16px; font-weight: 700; height: 28px; width: 28px; display: inline-flex; justify-content: center; align-items: center; background: #62cd21; border-radius: 20px;">10</span></div>
+                                                                                </div>
+                                                                            </apex:outputPanel>
+                                                                            <apex:outputPanel rendered="{!p.Rating_Score__c = 8}">
+                                                                                <div class="slds-grid" style="float:right;">
+                                                                                    <div class="slds-text-heading_large" style="color:#333333; font-size: 16px; font-weight: 400; text-align:right;">Meets<br/> expectations </div><div class="slds-p-left_small" style="margin:5px;"><span style="color: #fff; font-size: 16px; font-weight: 700; height: 28px; width: 28px; display: inline-flex; justify-content: center; align-items: center; background: #ffce00; border-radius: 20px;">5</span></div>
+                                                                                </div>
+                                                                            </apex:outputPanel>
+                                                                            <apex:outputPanel rendered="{!p.Rating_Score__c = 5}">
+                                                                                <div class="slds-grid " style="float:right;">
+                                                                                    <div class="slds-text-heading_large" style="color:#333333; font-size: 16px; font-weight: 400; text-align:right;">Meets<br/> expectations </div><div class="slds-p-left_small" style="margin:5px;"><span style="color: #fff; font-size: 16px; font-weight: 700; height: 28px; width: 28px; display: inline-flex; justify-content: center; align-items: center; background: #ffce00; border-radius: 20px;">5</span></div>
+                                                                                </div>
+                                                                            </apex:outputPanel>
+                                                                            <apex:outputPanel rendered="{!p.Rating_Score__c = 2}">
+                                                                                <div class="slds-grid " style="float:right;">
+                                                                                    <div class="slds-text-heading_large" style="color:#333333; font-size: 16px; font-weight: 400; text-align:right;">Below<br/> expectations </div><div class="slds-p-left_small" style="margin:5px;"><span style="color: #fff; font-size: 16px; font-weight: 700; height: 28px; width: 28px; display: inline-flex; justify-content: center; align-items: center; background: #ff9900; border-radius: 20px;">2</span></div>
+                                                                                </div>
+                                                                            </apex:outputPanel>
+                                                                            <apex:outputPanel rendered="{!p.Rating_Score__c = 0}">
+                                                                                <div class="slds-grid " style="float:right;">
+                                                                                    <div class="slds-text-heading_large" style="color:#333333; font-size: 16px; font-weight: 400; text-align:right;">Greatly below<br/> expectations </div><div class="slds-p-left_small" style="margin:5px;"><span style="color: #fff; font-size: 16px; font-weight: 700; height: 28px; width: 28px; display: inline-flex; justify-content: center; align-items: center; background: #f13f2; border-radius: 20px;">0</span></div>
+                                                                                </div>
+                                                                            </apex:outputPanel>
+                                                                        </apex:outputPanel>
+                                                                    </apex:repeat>
+                                                                </div>
+                                                            </div>
+                                                            <div class="slds-col slds-size_8-of-8">
+                                                            <label style="font-size: 16px; color: #333333; font-weight: 700; margin-bottom: 5px; display: block;"><i class="far fa-comment-dots"></i> Comment</label>
+                                                            <apex:inputText maxlength="255" style="width: 100%; border: 1px solid #7e8793; padding: 6px 10px; font-size: 16px; color: #333333;" value="{!u.Comment__c}"/>
+                                                         </div> 
+                                                            <script>
+                                                            function showdrop(obj)
+                                                            {
+                                                                if(document.getElementById(obj).style.display == 'block')
+                                                                {
+                                                                    document.getElementById(obj).style.display = 'none';
+                                                                }
+                                                                else
+                                                                    document.getElementById(obj).style.display = 'block';
+                                                            }
+                                                            </script>
+                                                            <div>   
+                                                                <!--a href="javascript:;" onclick="showdrop(this.nextSibling.nextSibling.id);"><span style="font-size: 16px; color: #333333; font-weight: 700; margin-top:5px">Previous Comments</span></a>
+                                                                <div id="expand1"-->
+                                                                <apex:pageBlock id="pb">
+                                                                        <apex:outputPanel styleClass="yellow" layout="block">
+                                                                <apex:pageBlockSection id="redSection" collapsible="true" title="Previous Comments" >
+                                                                    <apex:pageBlockSectionItem >
+                                                                                    <apex:repeat var="c" value="{!prevCmnt}">
+                                                                                        <apex:outputPanel rendered="{!c.Name ==u.Name}">
+                                                                                            <div class="slds-grid">
+                                                                                                <div class="slds-text-heading_large" style="color:#333333; font-size: 16px; font-weight: 400; text-align:right;margin-left:0px;">{!c.Comment__c} </div>
+                                                                                            </div>
+                                                                                        </apex:outputPanel>
+                                                                                    </apex:repeat>
+                                                                    </apex:pageBlockSectionItem>
+                                                                    
+                                                                </apex:pageBlockSection>
+                                                                    </apex:outputPanel>
+                                                                </apex:pageBlock>
+                                                                <!--/div-->
+                                                            </div>  
+                                                         </div>
+                                                         
+                                                     </div>
+                                                     
+                                                     </apex:outputPanel>
+                                                </apex:outputPanel>
+                                        </apex:repeat>
+                                    </apex:repeat>
+                                    <!--<apex:repeat var="key1" value="{!staticMapValue}">
+                                        <div class="slds-grid slds-size_8-of-8">
+                                            <div class="slds-col slds-p-around_medium slds-size_7-of-8" >
+                                                <div class="slds-text-heading_large slds-m-top_x-large" style="color:#7e8793; font-size: 24px; font-weight: 500;">{!key1}</div>
+                                            </div>
+                                            <div class="slds-col slds-p-around_medium slds-size_1-of-8">
+                                                <div class="slds-text-heading_large" style="color:#ff9900; font-size: 60px; font-weight: 500; text-align: right;"></div>
+                                            </div>
+                                        </div>
+                                        
+                                        <apex:repeat var="s" value="{!staticMapValue[key1]}">
+                                            <div class="slds-size_8-of-8 slds-border_top slds-m-bottom_x-large" style="border-width: 2px; border-color: #7e8793;">
+                                                <div class="slds-grid slds-p-around_large slds-border_bottom" style="border-color: #d8dde6;">
+                                                    <div class="slds-col slds-text-heading_medium slds-size_7-of-8" style="color:#7e8793; font-size: 16px; font-weight: 400;">
+                                                        <span class="slds-icon_container slds-p-right_medium">
+                                                            <i aria-hidden="true" class="fas fa-check-circle" style="color:#66cc33; font-size: 24px;"></i>
+                                                        </span>
+                                                        {!s.Certifcation_Rating__r.Description__c}
+                                                        
+                                                    </div>
+                                                    <div class="slds-col slds-text-heading_medium slds-size_1-of-8" style="color:#7e8793; font-size: 16px; text-align: right; font-weight: 400;">{!if(s.Rating_Score__c == 4,'Yes','No')}</div>
+                                                </div>
+                                            </div>
+                                        </apex:repeat>
+                                    </apex:repeat>-->                                                                                                            
+                                   
+                                    <div class="slds-grid slds-size_8-of-8 slds-align_absolute-center" style="font-family: sldsfont;">
+                                        <span class="slds-p-around_medium">
+                                                
+                                                <apex:commandLink oncomplete="location.reload();" styleClass="slds-button slds-text-heading_medium" style="background-color: #7e8793; color: #fff; padding: 15px 40px; border-radius: 30px; font-size: 24px;" action="{!saveForLater}">
+                                                    <style>
+                                                        .slds-scope a{color:#fff;text-decoration:none;}
+                                                        .slds-scope a:hover{color:#fff;text-decoration:none !important;}
+                                                    </style>
+                                                    <span class="color:#fff;">SAVE FOR LATER</span>
+                                                </apex:commandLink>
+                                        </span>
+                                        <span class="slds-p-around_medium">
+                                            <!--<button class="slds-button slds-text-heading_medium" style="background-color: #ff9900; color: #fff; padding: 15px 40px; border-radius: 30px; font-size: 24px;">-->
+                                                <apex:outputPanel rendered="{!updateNoti}">
+                                                    <a oncomplete="location.reload();" Class="slds-button slds-text-heading_medium" style="background-color: #ff9900; color: #fff; padding: 15px 40px; border-radius: 30px; font-size: 24px;"  onclick="submitVal();" >
+                                                        <style>
+                                                            .slds-scope a{color:#fff;text-decoration:none;}
+                                                            .slds-scope a:hover{color:#fff;text-decoration:none !important;}
+                                                        </style>
+                                                        
+                                                        <span class="color:#fff;">SUBMIT SCORE</span>
+                                                    </a>
+                                              </apex:outputPanel>  
+                                            <!--</button>-->
+                                            
+                                        </span>
+                                    </div>
+                                    <apex:outputText style="color:#fff;display:none;font-size: 21px;width: 100%;text-align: center;background: #c1272d;padding: 5px;" value="Please select a score for all Required Ratings." id="validation1"></apex:outputText>
+                                </div>
+                            </div>                                                          
+                </div>
+            </div>  
+             <script>
+               window.onload = function() {
+               
+                    //document.getElementById('focusName').scrollIntoView();
+
+                    };
+                 
+            </script> 
+            <!-- Modal --  autosave -- end -->
+        
+        <div class="modal fade " id="confirm" role="dialog">
+                    <div class="modal-dialog modal-lg">
+              <!-- Modal content-->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" >&times;</button>
+                                
+                            </div>
+                            <div class="modal-body">
+                                <div class="delete-content-block">
+                                <apex:outputPanel id="modalidconfirm">
+                                
+                                     
+                                     <p>Ratings for this time period will be final once submitted. Would you like to proceed?</p>
+                                     
+                                </apex:outputPanel>
+                                </div>
+                                
+                            </div>
+                            <div class="modal-footer">
+                        <div class="btn-block">
+                            <a style="font-size: 18px; padding: 12px 50px;" data-dismiss="modal"  class="cancel"  >  NO</a>
+                             
+                             
+                            <a onclick="submit();" data-dismiss="modal" style="background-color: #ff9900; color: #fff; padding: 12px 50px; border-radius: 30px; font-size: 18px; border: none;">
+                               YES
+                            </a >
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+   
+        <!-- Modal --  autosave -- end -->    
+            </html>    
+    </apex:form>
+    <apex:stylesheet value="{!URLFOR($Resource.FunnelScriptFolder,'Design/css/3.3.7.bootstrap.min.css')}"/>
+            <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/js/3.3.7.bootstrap.min.js')}"/>       
+</apex:page>

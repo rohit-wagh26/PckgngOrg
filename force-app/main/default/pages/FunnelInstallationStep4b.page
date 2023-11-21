@@ -1,0 +1,980 @@
+<apex:page docType="html-5.0" sidebar="false"  controller="FunnelInstallationStep4bController" extensions="FunnelAssignRoleController">
+    <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/jquery-1.12.4.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/jquery-ui.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/jquery.ns-autogrow.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/jquery-1.12.4.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/jquery-ui.js')}"/>
+     
+    <apex:stylesheet value="{!URLFOR($Resource.FunnelScriptFolder,'Design/css/all.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.FunnelScriptFolder,'Design/css/3.3.7.bootstrap.min.css')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/js/3.3.7.bootstrap.min.js')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.FunnelScriptFolder,'Design/css/4.0.7.select2.min.css')}"/>    
+    <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/js/4.0.7.select2.min.js')}"/>    
+      
+    <style>
+        body { font-size: 75%; }
+        .noSidebarCell, .sidebarCell .fixed { padding: 10px; font-family: sldsFont; }
+        .bPageHeader .phHeader td.left{display: block;}
+        @font-face {
+        font-family: sldsFont;
+        src: url({!URLFOR($Resource.SldsCss,'SldsResources/fonts/SalesforceSans-Light.ttf')});
+        }  
+        .outer{background: #f5f5f9;}
+        .header{display: flex; flex-direction: column;}
+        .logo{background: #fff; width: 100%; display: flex; justify-content: center; padding: 10px 0;}
+        .logo img{width: 250px;}
+        .stepper{display: flex; width: 100%; background: #00b2ee; padding: 20px 0; justify-content: center;}
+        .stepper .step {font-family: sldsFont !important; font-size: 16px; font-weight: bold; text-align: center; color: #5f666f; cursor: default; margin: 0 3px; padding: 14px 10px 15px 30px; min-width: 5%; float: left; position: relative; background-color: #f5f5f9; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; transition: background-color 0.2s ease;}
+        .stepper .step:after,
+        .stepper .step:before {content: " "; position: absolute; top: 0; right: -17px; width: 0; height: 0; border-top: 25px solid transparent; border-bottom: 25px solid transparent; border-left: 17px solid #f5f5f9; z-index: 2; transition: border-color 0.2s ease; }
+        .stepper .step:before {right: auto; left: 0; border-left: 17px solid #00b2ee; z-index: 0;}
+        .stepper .step:first-child:before {border: none;}
+        .stepper .step:first-child {border-top-left-radius: 4px; border-bottom-left-radius: 4px;}
+        .stepper .step span {position: relative;}
+        /*.stepper .step span:before {opacity: 0; content: "✔"; position: absolute; top: -2px; left: -20px;}*/
+        .stepper .step.done {color: #fff; background-color: #66cc33;}
+        .stepper .step.done i{font-size: 20px;}
+        .stepper .step.done:after {border-left: 17px solid #66cc33;}
+        .stepper .step.done span:before {opacity: 1; -webkit-transition: opacity 0.3s ease 0.5s; -moz-transition: opacity 0.3s ease 0.5s; -ms-transition: opacity 0.3s ease 0.5s; transition: opacity 0.3s ease 0.5s;}
+        .stepper .step.current {color: #fff; background-color: #ff9900;}
+        .stepper .step.current:after {border-left: 17px solid #ff9900;}
+        .content-section{padding: 40px;}
+        .content-section-inner{background: #fff;}
+        .content-heading{background: #7e8793; display: flex; justify-content: center; padding: 16px;}
+        .content-heading h2{font-family: sldsFont !important; font-size: 24px; font-weight: bold; color: #fff;margin: 0;line-height: 36px;}
+        .content-body{padding: 40px;}
+        .content-body .content-steps{margin: 25px 0; display: flex; align-items: center;}
+        .content-body .content-body-inner{padding-bottom: 100px; padding-left: 20px;}
+        .content-body h4{font-family: sldsFont !important; font-size: 18px; font-weight: bold; color: #5f666f;}
+        .content-steps p{font-family: sldsFont !important; font-size: 18px; color: #5f666f; margin: 0; display: flex; width: 100%;}
+        .content-steps p .count{font-size: 18px; color: #ff9900; font-weight: bold; margin: 0 10px 0 0;}
+        .content-steps input[type=date]{border: none; border-bottom: 2px solid #7e8793; font-size: 18px; color: #5f666f; font-family: sldsFont !important;}
+        .content-steps input[type=text]{border: none; border-bottom: 2px solid #7e8793; width: 60px; min-width: auto; font-size: 18px; color: #5f666f; font-family: sldsFont !important;}
+        .content-steps input[type=number]{border: none; border-bottom: 2px solid #7e8793; width: 65px; min-width: auto; font-size: 18px; color: #5f666f; font-family: sldsFont !important;}
+        .content-steps input:focus-visible{outline: none;}
+        .content-steps .inputbig-block-outer{width: 100%;}
+        .content-steps .inputbig-block{flex: 1;}
+        .content-steps .inputbig-block input{width: 100% !important;}
+        .content-button{display: flex; justify-content: center;}
+        .content-button button{background: #ff9900; border-radius: 30px; border: none; color: #fff; font-size: 20px; padding: 14px 40px; margin: 0 10px; cursor: pointer; font-family: sldsFont !important;}
+        .content-button a{font-weight: bold;text-decoration: none !important;background: #ff9900; border-radius: 30px; border: none; color: #fff !important; font-size: 20px; padding: 14px 40px; margin: 0 10px; cursor: pointer; font-family: sldsFont !important;}
+        .content-button a.back{font-weight: bold;background: #7e8793;text-decoration: none !important;}
+        .content-button button.back{background: #7e8793;}
+        .content-steps select{background: url('{!URLFOR($Resource.OrangeArrow )}') no-repeat right 8px center #fff !important; -moz-appearance: none; -webkit-appearance: none; border: none; border-bottom: 2px solid #7e8793; font-size: 18px; color: #5f666f; font-family: sldsFont !important; padding: 0 30px 5px 5px; border-radius: 0;}
+        .content-steps select:focus-visible{outline: none;}
+        .content-steps .slds-form-element__label{font-size: 18px; color: #5f666f;}
+        .ml5{margin-left: 5px;}
+        .ml10{margin-left: 10px;}
+        /*.content-steps input[type=checkbox] {display:none;}
+        .content-steps input[type=checkbox] + label{background: #999; height: 16px; width: 16px; display:inline-block; padding: 0 0 0 0px;}
+        .content-steps input[type=checkbox]:checked + label{background: #0080FF; height: 16px; width: 16px; display:inline-block; padding: 0 0 0 0px;}*/
+        /* Add this attribute to the element that needs a tooltip */
+        [data-tooltip] {
+        position: relative;
+        z-index: 2;
+        cursor: pointer;
+        }
+        /* Hide the tooltip content by default */
+        [data-tooltip]:before,
+        [data-tooltip]:after {
+        visibility: hidden;
+        -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+        filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=0);
+        opacity: 0;
+        pointer-events: none;
+        }
+        /* Position tooltip above the element */
+        [data-tooltip]:before {
+        position: absolute;
+        bottom: 100%;
+        left: 0;
+        margin-bottom: 5px;
+        margin-left: -100px;
+        padding: 7px;
+        width: 200px; 
+        -webkit-border-radius: 0;
+        -moz-border-radius: 0;
+        border-radius: 5px;
+        background-color: #66cc33;
+        /*background-color: hsla(0, 0%, 20%, 0.9);*/
+        color: #fff;
+        content: attr(data-tooltip);
+        text-align: center;
+        font-size: 14px;
+        line-height: 18px;
+        border: 2px solid #66cc33;
+        }
+        /* Triangle hack to make tooltip look like a speech bubble */
+        [data-tooltip]:after {
+        position: absolute;
+        bottom: 100%;
+        left: 40%;
+        margin-left: -5px;
+        width: 0;
+        border-top: 5px solid #66cc33;
+        /*border-top: 5px solid hsla(0, 0%, 20%, 0.9);*/
+        border-right: 5px solid transparent;
+        border-left: 5px solid transparent;
+        content: " ";
+        font-size: 0;
+        line-height: 0;
+        }
+        /* Show tooltip content on hover */
+        [data-tooltip]:hover:before,
+        [data-tooltip]:hover:after {
+        visibility: visible;
+        -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+        filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=100);
+        opacity: 1;
+        }
+        input[type="date"] {
+        position: relative;
+        }
+        /* create a new arrow, because we are going to mess up the native one
+        see "List of symbols" below if you want another, you could also try to add a font-awesome icon.. */
+        input[type="date"]:after {
+        font-family: "Font Awesome 5 Free";
+        font-weight: 100; 
+        content: "\f073";
+        color: #ff9900;
+        padding: 0 5px;
+        }
+        /* change color of symbol on hover */
+        input[type="date"]:hover:after {
+        color: #ff9900;
+        }
+        /* make the native arrow invisible and stretch it over the whole field so you can click anywhere in the input field to trigger the native datepicker*/
+        input[type="date"]::-webkit-calendar-picker-indicator {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: auto;
+        height: auto;
+        color: transparent;
+        background: transparent;
+        }
+        /* adjust increase/decrease button */
+        input[type="date"]::-webkit-inner-spin-button {
+        z-index: 1;
+        }
+        /* adjust clear button */
+        input[type="date"]::-webkit-clear-button {
+        z-index: 1;
+        }
+        .slds-checkbox [type=checkbox]:checked + .slds-checkbox_faux:after, .slds-checkbox [type=checkbox]:checked + .slds-checkbox--faux:after, .slds-checkbox [type=checkbox]:checked ~ .slds-checkbox_faux:after, .slds-checkbox [type=checkbox]:checked ~ .slds-checkbox--faux:after, .slds-checkbox [type=checkbox]:checked + .slds-checkbox__label .slds-checkbox_faux:after, .slds-checkbox [type=checkbox]:checked + .slds-checkbox__label .slds-checkbox--faux:after{border-bottom: 2px solid #ff9900; border-left: 2px solid #ff9900;}
+        textarea{width: 100%; padding: 2px 1px; border: none; border-bottom: 2px solid #7e8793; font-size: 18px; color: #5f666f; font-family: sldsFont !important; resize: none;overflow: hidden;}
+        .content-steps textarea:focus-visible{outline: none;}
+    </style>
+    <!--Navigation -->
+    <apex:stylesheet value="{!URLFOR($Resource.FunnelScriptFolder,'Design/css/v5.0.8-fontawesome.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.FunnelScriptFolder,'Design/css/v5.0.8-solid.css')}"/>
+    
+    <apex:form >
+        <html lang="en">
+            <apex:stylesheet value="{!URLFOR($Resource.SldsCss,'SldsResources/styles/salesforce-lightning-design-system.css')}"/>
+            <apex:stylesheet value="{!URLFOR($Resource.SldsCss,'SldsResources/styles/salesforce-lightning-design-system.min')}"/>
+            <div class="outer">
+                <c:FunnelInstallationSteps />
+                <div class="content-section">
+                    <div class="content-section-inner">
+                        <div class="content-heading">
+                            <h2>Step 4b - Assign Skills</h2>
+                        </div>
+                        <div class="content-body">
+                            <div class="content-body-inner">
+                                <div >
+                                    <apex:actionRegion >
+                                        <style>
+                                            body { font-size: 75%; }
+                                            html{font-size: 100% !important;}
+                                            .noSidebarCell, .sidebarCell .fixed { padding: 10px; font-family: sldsFont; }
+                                            @font-face {
+                                            font-family: sldsFont;
+                                            src: url({!URLFOR($Resource.SldsCss,'SldsResources/fonts/SalesforceSans-Light.ttf')});
+                                            }
+                                            .bPageHeader .phHeader td.left{display: block;}
+                                            .navigation{display: table; width: 100%; text-align: center;}
+                                            .navigation ul{margin: 0; padding: 0;}
+                                            .navigation ul li{display: inline-block; padding: 0 8px; border-left: 2px solid #7e8793; line-height: 17px; margin-left: 0;}
+                                            .navigation ul li a{color: #7e8793; font-size: 17px; font-weight: bold;}
+                                            .navigation ul li a:hover{color: #66cc33; text-decoration: none;}
+                                            .navigation ul li a:focus{outline: none; text-decoration: none;}
+                                            .navigation ul li {color: #7e8793; font-size: 17px; font-weight: bold;}
+                                            .navigation ul li:hover{color: #66cc33; text-decoration: none;}
+                                            .navigation ul li.selected a{color: #66cc33;}
+                                            .navigation ul li.home{border: none; padding-left: 0; margin-bottom: 10px;}
+                                            .navigation ul li.home a{color: #00b2ee;}
+                                            .navigation ul li:last-child{padding-right: 0;}
+                                            .navigation ul li.scorenav a{background: url({!$Resource.CertificationNavigationIcon}) no-repeat; padding: 0 0 0 25px; background-position: 0 0; height: 19px; width: 20px;}
+                                            .navigation ul li.scorenav a:hover {background-position: 0 -23px;}
+                                            .navigation ul li.funnelanalyticsnav > a{background: url({!$Resource.AnalyticsNavigationIcon}) no-repeat; padding: 0 0 0 25px; background-position: 0 5px; height: 19px; width: 20px; color: #7e8793;}
+                                            .navigation ul li.funnelanalyticsnav > a:hover{background-position: 0 -17px; color: #66cc33;}
+                                            .myapp{min-width: 500px; font-family: sldsFont;background-color: #fff; }
+                                            .slds-modal {background: none;}
+                                            .navigation ul li.reportnav{position: relative; display: inline-block;cursor: pointer;}
+                                            .navigation ul li.reportnav ul.subnav{position: absolute; z-index: 1; width: 240px; background: #fff; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); display: none;}
+                                            .navigation ul li.reportnav ul.subnav li{display: block; text-align: left; border: none; padding: 0;}
+                                            .navigation ul li.reportnav ul.subnav li a {color: #7e8793; padding: 10px; display: block; width: 100%;}
+                                            .navigation ul li.reportnav ul.subnav li a:hover{background: #66cc33; color: #fff;}
+                                            .navigation ul li.reportnav:hover ul.subnav {display: block;}
+                                            button a:hover{text-decoration: none;}
+                                            button a:focus{text-decoration: none; outline: none;}
+                                            select{background: url('{!URLFOR($Resource.Selectarrow )}') no-repeat right -20px center #fff !important; -moz-appearance: none; -webkit-appearance: none;}
+                                            .slds-size_1-of-8, .slds-size--1-of-8 {width: 16.5%;}
+                                            .rolesblock .select2-container{width: 100% !important;}
+                                            .rolesblock .select2-container .select2-selection{border: 1px solid #dddbda; color: #333333; font-size: 18px; border-radius: 0; padding: 0.5rem;}
+                                            .rolesblock .select2-container .select2-selection__rendered{padding: 0;}
+                                            .rolesblock .select2-container .select2-selection__rendered li{margin-left: auto;}
+                                            .rolesblock .select2-container .select2-selection__choice{margin-left: auto;}
+                                            .select2-results__option{margin-left: auto;}
+                                            .select2-container--default .select2-selection--multiple .select2-selection__choice { background-color: #ffffff; border: 1px solid #ff9900;}
+                                            .select2-container--default .select2-selection--multiple .select2-selection__choice__remove { color: #ff9900;}
+                                            .select2-results__option[aria-selected=true] {
+                                            display: none;
+                                            }
+                                        </style>
+                                        <style>
+                                            .fixed-table-container th{
+                                            border-bottom: 1px solid #dddbda;
+                                            }
+                                            .fixed-table-container th + th {
+                                            border-left: 1px solid #dddbda;
+                                            }
+                                            .fixed-table-container td {
+                                            border-bottom: 1px solid #dddbda;
+                                            padding: 10px 5px;
+                                            text-align: center; /* IE */
+                                            font-size: 16px;
+                                            color: #333333;
+                                            background: none;
+                                            }
+                                            .fixed-table-container td + td {
+                                            border-left: 1px solid #dddbda;
+                                            }
+                                            .fixed-table-container th {
+                                            padding: 10px 5px;
+                                            text-align: center; /* IE */
+                                            font-size: 16px;
+                                            color: #00b2ee;
+                                            }
+                                            /* above this is decorative, not part of the test */
+                                            .fixed-table-container {
+                                            width: 100%;
+                                            /*border: 1px solid black;*/
+                                            margin: 10px auto;
+                                            /*background-color: white;*/
+                                            /* above is decorative or flexible */
+                                            position: relative; /* could be absolute or relative */
+                                            padding-top: 0; /* height of header */
+                                            }
+                                            .fixed-table-container-inner {
+                                            overflow-x: hidden;
+                                            overflow-y: auto;
+                                            height: 100%;
+                                            /*  max-height: 350px;*/
+                                            }
+                                            .header-background {
+                                            /*background-color: #fff;*/
+                                            height: 50px; /* height of header */
+                                            position: absolute;
+                                            top: 0;
+                                            right: 0;
+                                            left: 0;
+                                            }
+                                            table {
+                                            /*background-color: white;*/
+                                            width: 100%;
+                                            overflow-x: hidden;
+                                            overflow-y: auto;
+                                            }
+                                            .th-inner {
+                                            position: absolute;
+                                            top: 0;
+                                            line-height: 50px; /* height of header */
+                                            text-align: center;
+                                            border-left: 1px solid #ccc;
+                                            padding-left: 5px;
+                                            margin-left: -5px;
+                                            }
+                                            .first .th-inner {
+                                            border-left: none;
+                                            padding-left: 6px;
+                                            }
+                                            /* extra-wrap */
+                                            .extrawrap th {
+                                            text-align: center;
+                                            }
+                                            .extra-wrap {
+                                            width: 100%;
+                                            }
+                                            }
+                                        </style>
+                                        <style>
+                                            /*Start Delete modal CSS*/
+                                            /*.modal-lg{width: 1100px;}*/
+                                            #confirm .modal-dialog {width: 50%;}
+                                            .modal.in .modal-dialog {-webkit-transform: translate(0,0);-ms-transform: translate(0,0);-o-transform: translate(0,0);transform: translate(0,0); max-width: none;min-width: 40rem;display: flex;flex-direction: column;height: 100%;padding: 3rem 0;}
+                                            .modal-content { border-radius: 0;padding: 20px;overflow: hidden;overflow-y: auto;}
+                                            .modal-header{padding: 0;border: none;}
+                                            .modal-header .close{position: absolute; right: 10px; margin: 0; top: 10px; opacity: 1; border: none;background: transparent; color: #7e8793; font-size: 44px; width: 25px; height: 20px; line-height: 18px;}
+                                            .modal-header h4{background: #BFB178;}
+                                            .modal-header h4 ul{padding: 0; margin: 0; display: table; width: 100%;}
+                                            .modal-header h4 ul li{display: table-cell; font-size: 24px; color: #333333; width: 50%; padding: 10px; border: none; text-align: left; font-weight: bold;font-family: sldsfont;}
+                                            .modal-body{padding: 0;}
+                                            .modal-body .delete-content-block{padding: 0;}
+                                            .modal-body .delete-content-block label{font-size: 21px; color: #00b2ee;font-family: sldsfont;font-weight: normal;}
+                                            .modal-body .delete-content-block p{margin: 23px; font-size: 21px;  color: #777; text-align: center;}
+                                            .modal-footer{border: none; padding: 20px 30px;}
+                                            .modal-footer .btn-block{display: table; width: auto; margin: 0 auto;}
+                                            .modal-footer a{background-color: #7e8793;color: #fff;padding: 15px 60px;border-radius: 30px;font-size: 24px;border: none;margin-left: 0;}
+                                            .modal-footer a:hover{color: #fff; text-decoration: none;}
+                                            .modal-footer a.save{background: #ff9900;}
+                                            .modal-footer a i{color: #fff;}
+                                            /*End Delete modal CSS*/
+                                            .k-widget { padding: 0; border: none;font-family: arial; }
+                                        </style>
+                                        <!--Navigation-->    
+                                        <apex:outputPanel id="detailsPanel">
+                                            <div class="slds-scope">
+                                                <div class="myapp" style="background: #f5f5f9;">
+                                                    <!--Navigation-->
+                                                    <!--Navigation-->    
+                                                    <div class="slds-grid">
+                                                        <style>
+                                                            .slds-scope .slds-tabs--default__item.slds-active:after, .slds-scope .slds-tabs--default__item.slds-is-active:after, .slds-scope .slds-tabs_default__item.slds-active:after, .slds-scope .slds-tabs_default__item.slds-is-active:after{background: none;}
+                                                            .slds-scope .slds-tabs--default__item:hover:after, .slds-scope .slds-tabs_default__item:hover:after{background: none;}
+                                                        </style>
+                                                        <div class="slds-tabs_default">
+                                                            <div id="tab-default-1" class="slds-tabs_default__content slds-show" role="tabpanel" aria-labelledby="tab-default-1__item" style="padding-top: 0; padding-bottom: 0;">
+                                                                <div class="slds-wrap" style="background: #fff;">
+                                                                    <div class="slds-grid">
+                                                                        <div class="slds-size_8-of-8">
+                                                                            <div class="slds-p-around_small slds-grid">
+                                                                                <div class="slds-form-element slds-size_1-of-3">
+                                                                                    <label class="slds-form-element__label slds-p-around_small" for="select-03" style="color: #00b2ee; font-size: 21px; font-weight: bold; padding-left: 0; padding-top: 0;">Select Role   </label>
+                                                                                    <div class="slds-form-element__control slds-p-left_small slds-p-right_small" style="padding-left: 0;">
+                                                                                        <div  style="position: relative;">
+                                                                                            <apex:selectList size="1" value="{!SelectedValue}" style="color: #333333; font-size: 21px; border-radius:0; height: auto; padding: 8px 30px 8px 8px;" Styleclass="slds-select slds-p-around_x-small" id="select-03">
+                                                                                                <apex:selectOptions value="{!Role}"/>
+                                                                                                <apex:actionSupport event="onchange" action="{!cr}" reRender="crDisplaypanelID,crpanelID,crDisplaypanelIDbutton,crpanelIDbutton,rst"/>
+                                                                                            </apex:selectList>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="slds-form-element slds-size_1-of-3"></div>
+                                                                                <!--<div class="slds-form-element slds-size_1-of-3">
+                                                                                    <label class="slds-form-element__label slds-p-around_small" for="select-03" style="color: #00b2ee; font-size: 21px; font-weight: bold; padding-left: 0; padding-top: 0;">&nbsp;</label>
+                                                                                    <div class="slds-form-element__control slds-p-left_small slds-p-right_small" style="padding-left: 0;">
+                                                                                        <div  style="position: relative;">
+                                                                                            <a style="background-color: #ff9900; color: #fff; padding: 8px 40px; border-radius: 30px; font-size: 20px; font-weight: bold;" onclick="roleGroupings();" >    
+                                                                                            <span class="color:#fff;">CREATE/EDIT ROLE GROUP</span>
+                                                                                            </a> 
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>-->
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <apex:outputPanel id="rst" >
+                                                                        <apex:outputPanel rendered="{!displayRolesString}">
+                                                                            <div class="slds-p-around_small slds-grid">
+                                                                                <span style="font-size: 18px; color: #333333; font-weight: 700;width: 22%">Selected Group includes</span>
+                                                                                <ul style="display: block;">
+                                                                                    <apex:repeat value="{!rolestring}" var="r">
+                                                                                        <li style="display: inline-block; color: #00b2ee; font-size: 21px; font-weight: bold;">{!r}</li>
+                                                                                    </apex:repeat>
+                                                                                </ul>
+                                                                            </div>
+                                                                        </apex:outputPanel>
+                                                                    </apex:outputPanel>
+                                                                    <apex:outputPanel id="crDisplaypanelIDbutton">
+                                                                        <apex:outputPanel rendered="{!crDisplaypanel}">
+                                                                            <div class="slds-grid">
+                                                                                <div class="slds-size_8-of-8">
+                                                                                    <div class="slds-p-around_medium">
+                                                                                        <apex:commandLink styleClass="slds-button slds-text-heading_medium" style="background-color: #ff9900; color: #fff; padding: 15px 40px; border-radius: 30px; font-size: 20px;" status="up" action="{!editCerti}" reRender="crDisplaypanelID,crpanelID,crDisplaypanelIDbutton,crpanelIDbutton">
+                                                                                            <style>
+                                                                                                .slds-scope a{color:#fff;text-decoration:none; font-weight: bold;}
+                                                                                                .slds-scope a:hover{color:#fff;text-decoration:none !important;}
+                                                                                            </style>
+                                                                                            <span class="color:#fff;">
+                                                                                                <apex:actionStatus id="up">
+                                                                                                    <apex:facet name="start">
+                                                                                                        LOADING
+                                                                                                    </apex:facet>
+                                                                                                    <apex:facet name="stop">
+                                                                                                        ADD OR REMOVE MEASURES
+                                                                                                    </apex:facet>
+                                                                                                </apex:actionStatus>
+                                                                                            </span>
+                                                                                        </apex:commandLink>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </apex:outputPanel>
+                                                                    </apex:outputPanel>
+                                                                    <div class="slds-wrap slds-p-around_medium">
+                                                                        <div class="slds-grid">
+                                                                            <div class="slds-size_4-of-8">
+                                                                                <div id="Ratingtype">
+                                                                                    <div class="slds-p-around_small" style="padding-left: 0;">
+                                                                                        <p style="color: #00b2ee; font-size: 21px; font-weight: bold;">Type</p>
+                                                                                    </div>
+                                                                                    <div class="slds-p-around_small" style="padding-left: 0;">
+                                                                                        <div class="slds-form-element" style="display: inline-block; margin: 0 25px 0 0;">
+                                                                                            <div class="slds-form-element__control">
+                                                                                                <label class="slds-checkbox" >
+                                                                                                    <apex:inputCheckbox id="allrtc" styleClass="slds-input" onclick="checkallrt('rt');" />
+                                                                                                    <span class="slds-checkbox_faux" style="border: 1px solid #dddbda; border-radius: 10px;"></span>
+                                                                                                    <span class="slds-form-element__label" style="font-size: 18px; color: #333333;font-weight: 700;">All</span>
+                                                                                                </label>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="slds-form-element" style="display: inline-block; margin: 0 25px 0 0;">
+                                                                                            <div class="slds-form-element__control">
+                                                                                                <label class="slds-checkbox" >
+                                                                                                    <apex:inputCheckbox id="rtqnc" styleClass="slds-input1"   onclick="HideQ(this,'Quantitative');" />
+                                                                                                    <span class="slds-checkbox_faux" style="border: 1px solid #dddbda; border-radius: 10px;"></span>
+                                                                                                    <span class="slds-form-element__label" style="font-size: 18px; color: #333333;font-weight: 700;">Quantitative</span>
+                                                                                                </label>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="slds-form-element" style="display: inline-block; margin: 0 25px 0 0;">
+                                                                                            <div class="slds-form-element__control">
+                                                                                                <label class="slds-checkbox" >
+                                                                                                    <apex:inputCheckbox id="rtqac" styleClass="slds-input1" onclick="HideQ(this,'Qualitative');" />
+                                                                                                    <span class="slds-checkbox_faux" style="border: 1px solid #dddbda; border-radius: 10px;"></span>
+                                                                                                    <span class="slds-form-element__label" style="font-size: 18px; color: #333333;font-weight: 700;">Qualitative</span>
+                                                                                                </label>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="slds-size_4-of-8">
+                                                                                <div id="Tenure">
+                                                                                    <div class="slds-p-around_small" style="padding-left: 0;">
+                                                                                        <p style="color: #00b2ee; font-size: 21px; font-weight: bold;">Enabled for</p>
+                                                                                    </div>
+                                                                                    <div class="slds-p-around_small" style="padding-left: 0;">
+                                                                                        <div class="slds-form-element" style="display: inline-block; margin: 0 9px 0 0;">
+                                                                                            <div class="slds-form-element__control">
+                                                                                                <label class="slds-checkbox" >
+                                                                                                    <apex:inputCheckbox id="alltc" styleClass="slds-input" onclick="checkallt('t');" />
+                                                                                                    <span class="slds-checkbox_faux" style="border: 1px solid #dddbda; border-radius: 10px;"></span>
+                                                                                                    <span class="slds-form-element__label" style="font-size: 18px; color: #333333;font-weight: 700;">Show All</span>
+                                                                                                </label>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="slds-form-element" style="display: inline-block; margin: 0 9px 0 0;">
+                                                                                            <div class="slds-form-element__control">
+                                                                                                <label class="slds-checkbox" >
+                                                                                                    <apex:inputCheckbox id="tnc" styleClass="slds-input1" onclick="HideT(this,'New');" />
+                                                                                                    <span class="slds-checkbox_faux" style="border: 1px solid #dddbda; border-radius: 10px;"></span>
+                                                                                                    <span class="slds-form-element__label" style="font-size: 18px; color: #333333;font-weight: 700;">Onboarding</span>
+                                                                                                </label>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="slds-form-element" style="display: inline-block; margin: 0 9px 0 0;">
+                                                                                            <div class="slds-form-element__control">
+                                                                                                <label class="slds-checkbox" >
+                                                                                                    <apex:inputCheckbox id="ttc" styleClass="slds-input1"   onclick="HideT(this,'Tenured');" />
+                                                                                                    <span class="slds-checkbox_faux" style="border: 1px solid #dddbda; border-radius: 10px;"></span>
+                                                                                                    <span class="slds-form-element__label" style="font-size: 18px; color: #333333;font-weight: 700;">Onboarded (New and Tenured)</span>
+                                                                                                </label>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <!--  <div class="slds-form-element" style="display: inline-block; margin: 0 9px 0 0;">
+                                                                                            <div class="slds-form-element__control">
+                                                                                              <label class="slds-checkbox" >
+                                                                                                      <apex:inputCheckbox id="tbc" styleClass="slds-input1"   onclick="HideT(this,'Both');" />
+                                                                                                      <span class="slds-checkbox_faux" style="border: 1px solid #dddbda; border-radius: 3px;"></span>
+                                                                                                      <span class="slds-form-element__label" style="font-size: 18px; color: #7e8793;">New &amp; Tenured</span>
+                                                                                                </label>
+                                                                                              
+                                                                                            </div>
+                                                                                            </div> -->
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <apex:outputPanel id="crDisplaypanelID">
+                                                                        <apex:outputPanel rendered="{!crDisplaypanel}">
+                                                                            <div class="slds-grid">
+                                                                                <div class="slds-size_8-of-8">
+                                                                                    <div class="slds-p-around_medium">
+                                                                                        <div class="fixed-table-container">
+                                                                                            <div class="header-background"></div>
+                                                                                            <div class="fixed-table-container-inner extrawrap">
+                                                                                                <table  >
+                                                                                                    <thead>
+                                                                                                        <tr class="slds-text-title">
+                                                                                                            <th class="first" style="width: 15%; position: relative; text-align: left;">
+                                                                                                                Type
+                                                                                                            </th>
+                                                                                                            <th style="width: 15%; position: relative; text-align: left;">
+                                                                                                                Enable for onboarded reps?                                                                    
+                                                                                                            </th>
+                                                                                                            <th style="width: 13%; text-align: left;">
+                                                                                                                Name
+                                                                                                            </th>
+                                                                                                            <th style="width: 40%; text-align: left;">
+                                                                                                                Description
+                                                                                                            </th>
+                                                                                                            <th style="width: 12%; text-align: center;">
+                                                                                                                Timing 
+                                                                                                            </th>
+                                                                                                            <!--  <th style="width: 10%; text-align: center;">
+                                                                                                                Weight 
+                                                                                                                </th> -->
+                                                                                                            <th style="width: 10%; text-align: center;">
+                                                                                                                Calc Type 
+                                                                                                            </th>
+                                                                                                        </tr>
+                                                                                                    </thead>
+                                                                                                    <tbody class="tableBody">
+                                                                                                        <apex:repeat var="cd" value="{!certificateDisplay}" id="rel">
+                                                                                                            <tr data-rt="{!cd.Assessment_type__c}" data-ten="{!cd.User_Type__c}">
+                                                                                                                <td style="width: 15%; text-align: left;"  >
+                                                                                                                    {!cd.Assessment_type__c} 
+                                                                                                                </td>
+                                                                                                                <td style="width: 15%; text-align: left;" >
+                                                                                                                    {!IF(cd.User_Type__c == 'Tenured','Yes',IF(cd.User_Type__c == 'New','No','Both'))} 
+                                                                                                                </td>
+                                                                                                                <td style="width: 13%; text-align: left;">
+                                                                                                                    {!cd.name} 
+                                                                                                                </td>
+                                                                                                                <td style="width: 15%; text-align: left;">
+                                                                                                                    {!cd.Description__c} 
+                                                                                                                </td>
+                                                                                                                <td style="width: 12%;">
+                                                                                                                    {!cd.Timing__c} 
+                                                                                                                </td>
+                                                                                                                <!--    <td style="width: 10%;">
+                                                                                                                    {!cd.Weight__c} 
+                                                                                                                    </td> -->
+                                                                                                                <td style="width: 10%;">
+                                                                                                                    {!cd.Calculation_type__c} 
+                                                                                                                </td>
+                                                                                                            </tr>
+                                                                                                        </apex:repeat>
+                                                                                                    </tbody>
+                                                                                                </table>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="slds-grid">
+                                                                                <div class="slds-size_8-of-8">
+                                                                                    <div class="slds-p-around_medium">
+                                                                                        <apex:commandLink styleClass="slds-button slds-text-heading_medium" style="background-color: #ff9900; color: #fff; padding: 15px 40px; border-radius: 30px; font-size: 20px;" status="up1" action="{!editCerti}" reRender="crDisplaypanelID,crpanelID,crDisplaypanelIDbutton,crpanelIDbutton">
+                                                                                            <style>
+                                                                                                .slds-scope a{color:#fff;text-decoration:none;}
+                                                                                                .slds-scope a:hover{color:#fff;text-decoration:none !important;}
+                                                                                            </style>
+                                                                                            <span class="color:#fff;">
+                                                                                                <apex:actionStatus id="up1">
+                                                                                                    <apex:facet name="start">
+                                                                                                        LOADING
+                                                                                                    </apex:facet>
+                                                                                                    <apex:facet name="stop">
+                                                                                                        ADD OR REMOVE MEASURES
+                                                                                                    </apex:facet>
+                                                                                                </apex:actionStatus>
+                                                                                            </span>
+                                                                                        </apex:commandLink>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <script type="text/javascript">
+                                                                                j$ = jQuery.noConflict();
+                                                                                 if(!j$('[id$=allrtc]:checked').val()){   
+                                                                                    if(!j$('[id$=rtqac]:checked').val())
+                                                                                          jQuery('[data-rt="Qualitative"]').hide();
+                                                                                            
+                                                                                    if(!j$('[id$=rtqnc]:checked').val())
+                                                                                            jQuery('[data-rt="Quantitative"]').hide();
+                                                                                   }  
+                                                                                if(!j$('[id$=alltc]:checked').val()){                        
+                                                                                    if(!j$('[id$=tnc]:checked').val())
+                                                                                        jQuery('[data-ten="New"]').hide();
+                                                                                       
+                                                                                    
+                                                                                    if(!j$('[id$=ttc]:checked').val())
+                                                                                        jQuery('[data-ten="Tenured"]').hide();
+                                                                                            
+                                                                                  }  
+                                                                                
+                                                                                
+                                                                            </script>
+                                                                        </apex:outputPanel>
+                                                                    </apex:outputPanel>
+                                                                    <apex:outputPanel id="crpanelIDbutton">
+                                                                        <apex:outputPanel rendered="{!crpanel}">
+                                                                            <div class="slds-grid">
+                                                                                <div class="slds-size_8-of-8">
+                                                                                    <div class="slds-p-around_medium">
+                                                                                        <apex:commandLink styleClass="slds-button slds-text-heading_medium" style="background-color: #ff9900; color: #fff; padding: 15px 40px; border-radius: 30px; font-size: 20px;" status="up2" action="{!updatecerti}" reRender="crDisplaypanelID,crpanelID,crDisplaypanelIDbutton,crpanelIDbutton">
+                                                                                            <style>
+                                                                                                .slds-scope a{color:#fff;text-decoration:none;}
+                                                                                                .slds-scope a:hover{color:#fff;text-decoration:none !important;}
+                                                                                            </style>
+                                                                                            <span class="color:#fff;">
+                                                                                                <apex:actionStatus id="up2">
+                                                                                                    <apex:facet name="start">
+                                                                                                        LOADING
+                                                                                                    </apex:facet>
+                                                                                                    <apex:facet name="stop">
+                                                                                                        APPLY
+                                                                                                    </apex:facet>
+                                                                                                </apex:actionStatus>
+                                                                                            </span>
+                                                                                        </apex:commandLink>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </apex:outputPanel>
+                                                                    </apex:outputPanel>
+                                                                    <apex:outputPanel id="crpanelID">
+                                                                        <apex:outputPanel rendered="{!crpanel}">
+                                                                            <div class="slds-grid">
+                                                                                <div class="slds-size_8-of-8">
+                                                                                    <div class="slds-p-around_medium">
+                                                                                        <div class="fixed-table-container">
+                                                                                            <div class="header-background"></div>
+                                                                                            <div class="fixed-table-container-inner extrawrap">
+                                                                                                <table  >
+                                                                                                    <thead>
+                                                                                                        <tr class="slds-text-title">
+                                                                                                            <th class="first" style="width: 4%;">
+                                                                                                            </th>
+                                                                                                            <th style="width: 15%; text-align: left; position: relative;">
+                                                                                                                Type
+                                                                                                            </th>
+                                                                                                            <th style="width: 15%; text-align: left; position: relative;">
+                                                                                                                Tenure
+                                                                                                            </th>
+                                                                                                            <th scope="col" style=" width:13%; text-align: left;">
+                                                                                                                Name
+                                                                                                            </th>
+                                                                                                            <th scope="col" style=" width:36%; text-align: left;">
+                                                                                                                Description
+                                                                                                            </th>
+                                                                                                            <th scope="col" style=" width:12%; text-align: left;">
+                                                                                                                Timing
+                                                                                                            </th>
+                                                                                                            <!--  <th scope="col" style= "width:6%; text-align: center;">
+                                                                                                                Weight
+                                                                                                                </th> -->
+                                                                                                            <th scope="col" style=" width:8%; text-align: center;">
+                                                                                                                Calc Type
+                                                                                                            </th>
+                                                                                                        </tr>
+                                                                                                    </thead>
+                                                                                                    <tbody>
+                                                                                                        <apex:repeat var="c" value="{!cwList}">
+                                                                                                            <tr data-rt="{!c.certificateRating.Assessment_type__c}" data-ten="{!c.certificateRating.User_Type__c}">
+                                                                                                                <td data-label="Category Name" class="slds-cell-wrap">
+                                                                                                                    <div class="slds-form-element slds-align--absolute-left" style="cursor:{!IF(c.certificateRating.Assessment_type__c =='Quantitative','not-allowed','')};">
+                                                                                                                        <label style="display: table; margin: 0 auto;pointer-events:{!IF(c.certificateRating.Assessment_type__c =='Quantitative','none','')};" class="slds-checkbox">
+                                                                                                                            <apex:inputCheckbox styleClass="slds-input" value="{!c.isSelected }"/>
+                                                                                                                            <span style="margin: 0;background:{!IF(c.certificateRating.Assessment_type__c =='Quantitative','#dbdbdb','')};" class="slds-checkbox--faux"></span>             
+                                                                                                                        </label>
+                                                                                                                    </div>
+                                                                                                                </td>
+                                                                                                                <td data-label="Category Name" class="slds-cell-wrap">
+                                                                                                                    <div   title="" style="font-size: 16px; color: #333333; text-align: left;">{!c.certificateRating.Assessment_type__c}</div>
+                                                                                                                </td>
+                                                                                                                <td style="width: 15%; text-align: left;">
+                                                                                                                    {!c.certificateRating.User_Type__c} 
+                                                                                                                </td>
+                                                                                                                <td data-label="Metric Name" class="slds-cell-wrap">
+                                                                                                                    <div   title="" style="font-size: 16px; color: #333333; text-align: left;">{!c.certificateRating.name}</div>
+                                                                                                                </td>
+                                                                                                                <td data-label="Metric Description" class="slds-cell-wrap">
+                                                                                                                    <div   title="" style="font-size: 16px; color: #333333; text-align: left;">{!c.certificateRating.Description__c}</div>
+                                                                                                                </td>
+                                                                                                                <td data-label="Timing" class="slds-cell-wrap">
+                                                                                                                    <div   title="" style="font-size: 16px; color: #333333; text-align: left;">{!c.certificateRating.Timing__c}</div>
+                                                                                                                </td>
+                                                                                                                <!--   <td data-label="Weight" class="slds-cell-wrap">
+                                                                                                                    <div   title="" style="font-size: 16px; color: #333333; text-align: center;">{!c.certificateRating.Weight__c}</div>
+                                                                                                                    </td>  -->
+                                                                                                                <td data-label="Calc Type" class="slds-cell-wrap">
+                                                                                                                    <div   title="" style="font-size: 16px; color: #333333; text-align: center;">{!c.certificateRating.Calculation_type__c}</div>
+                                                                                                                </td>
+                                                                                                            </tr>
+                                                                                                        </apex:repeat>
+                                                                                                    </tbody>
+                                                                                                </table>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="slds-grid">
+                                                                                <div class="slds-size_8-of-8">
+                                                                                    <div class="slds-p-around_medium">
+                                                                                        <!--<button class="slds-button slds-text-heading_medium" style="background-color: #ff9900; color: #fff; padding: 15px 40px; border-radius: 30px; font-size: 20px;">
+                                                                                            <style>
+                                                                                                .slds-scope a{color:#fff;text-decoration:none;}
+                                                                                                .slds-scope a:hover{color:#fff;text-decoration:none !important;}
+                                                                                            </style>
+                                                                                            <span class="color:#fff;">APPLY</span>
+                                                                                            </button> -->
+                                                                                        <apex:commandLink styleClass="slds-button slds-text-heading_medium" style="background-color: #ff9900; color: #fff; padding: 15px 40px; border-radius: 30px; font-size: 20px;" status="up3" action="{!updatecerti}" reRender="crDisplaypanelID,crpanelID,rel,crDisplaypanelIDbutton,crpanelIDbutton">
+                                                                                            <style>
+                                                                                                .slds-scope a{color:#fff;text-decoration:none;}
+                                                                                                .slds-scope a:hover{color:#fff;text-decoration:none !important;}
+                                                                                            </style>
+                                                                                            <span class="color:#fff;">
+                                                                                                <apex:actionStatus id="up3">
+                                                                                                    <apex:facet name="start">
+                                                                                                        LOADING
+                                                                                                    </apex:facet>
+                                                                                                    <apex:facet name="stop">
+                                                                                                        Apply
+                                                                                                    </apex:facet>
+                                                                                                </apex:actionStatus>
+                                                                                            </span>
+                                                                                        </apex:commandLink>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <script type="text/javascript">
+                                                                                j$ = jQuery.noConflict();
+                                                                                
+                                                                                if(!j$('[id$=allrtc]:checked').val()){   
+                                                                                  if(!j$('[id$=rtqac]:checked').val())
+                                                                                        jQuery('[data-rt="Qualitative"]').hide();
+                                                                                        
+                                                                                    if(!j$('[id$=rtqnc]:checked').val())
+                                                                                        jQuery('[data-rt="Quantitative"]').hide();
+                                                                                } 
+                                                                                if(!j$('[id$=alltc]:checked').val()){                         
+                                                                                    if(!j$('[id$=tnc]:checked').val()) 
+                                                                                        jQuery('[data-ten="New"]').hide();
+                                                                                      
+                                                                                    
+                                                                                    if(!j$('[id$=ttc]:checked').val()) 
+                                                                                        jQuery('[data-ten="Tenured"]').hide();
+                                                                                }       
+                                                                            </script>
+                                                                        </apex:outputPanel>
+                                                                    </apex:outputPanel>
+                                                                </div>
+                                                            </div>
+                                                            <div id="tab-default-2" class="slds-tabs_default__content slds-hide" role="tabpanel" aria-labelledby="tab-default-2__item">Item Two Content</div>
+                                                            <div id="tab-default-3" class="slds-tabs_default__content slds-hide" role="tabpanel" aria-labelledby="tab-default-3__item">Item Three Content</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </apex:outputPanel>
+                                    </apex:actionRegion>
+                                </div>
+                            </div>
+                            <div class="content-button">
+                                 <apex:commandLink action="{!navigateToStep4a}" StyleClass="back" ><i class="fa fa-chevron-left" aria-hidden="true"></i> Back</apex:commandLink>
+                                 <apex:commandLink action="{!saveAndExit}">Save &#38; Exit</apex:commandLink>
+                                <apex:commandLink action="{!checkratings}" reRender="nocr,refval" oncomplete="showmd();">Next <i class="fa fa-chevron-right" aria-hidden="true"></i> </apex:commandLink>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+                <apex:actionFunction action="{!navigateToStep5}" name="nav"/>
+            <!-- Modal --  autosave -- end -->
+                <div class="modal fade " id="valRole" role="dialog">
+                    <div class="modal-dialog modal-lg">
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" >&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="delete-content-block">
+                                     
+                            </div>
+                                    <apex:outputPanel id="modalidconfirm1">
+                                        <div style="font-size: 18px; color: #333333; font-weight: 700; text-align: center;"> 
+                                            <p>The following roles have no Skills assigned</p> 
+                                            <p style="color: #00b2ee; font-size: 21px; font-weight: bold; display: block;"><apex:outputText value="{!noratingsAssigned}" id="nocr"/></p>
+                                            <p style="margin-top: 40px; margin-bottom: 20px;">Do you want to continue?</p>
+                                         </div>
+                                    </apex:outputPanel>
+                                </div>
+                                <div class="modal-footer">
+                                <div class="btn-block">
+                                    
+                                    
+                                    <a style="font-size: 18px; padding: 12px 50px; font-weight: bold;" data-dismiss="modal"  class="cancel" >  NO</a>
+                                    <a onclick="nav();" data-dismiss="modal" style="background-color: #ff9900; font-weight: bold; color: #fff; padding: 12px 50px; border-radius: 30px; font-size: 18px; border: none;margin-left: 25px;">
+                                    YES
+                                    </a >
+                                </div>
+                            </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                <apex:outputPanel id="refval"> 
+                <script type="text/javascript">
+                   function showmd(){
+                            
+                          console.log('{!noratingsAssigned }');
+                          if('{!noratingsAssigned }' != ''){
+                              $('#valRole').modal('show'); 
+                          }else{
+                              nav();
+                          }
+                          
+                      }
+                     
+                </script>
+                </apex:outputPanel>  
+        </html>
+    </apex:form>
+    <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/jquery-1.12.3.min.js')}"/>
+    <script type="text/javascript">
+        j$ = jQuery.noConflict();
+         j$(document).ready(function () {
+              j$('[id$=alltc]').click();
+              j$('[id$=allrtc]').click();
+              });
+              
+              
+               
+        function checkallrt(idname){
+          if(idname == "rt"){
+          j$('[id$=allrtc]').prop('checked', true);
+          
+          if(j$('[id$=allrtc]:checked').val()){
+              jQuery('[data-rt="Qualitative"]').show();
+              jQuery('[data-rt="Quantitative"]').show();
+              
+              if(!j$('[id$=alltc]:checked').val()){
+                  if(!j$('[id$=tnc]:checked').val())
+                  jQuery('[data-ten="New"]').hide();
+                      
+                  if(!j$('[id$=ttc]:checked').val())
+                  jQuery('[data-ten="Tenured"]').hide();
+              }
+              j$('[id$=rtqac]').prop('checked', false);
+              j$('[id$=rtqnc]').prop('checked', false);
+              
+           }
+        }
+        
+         
+         
+        }
+        
+        function HideQ(istrue,idname){
+        
+         if(idname == 'Quantitative'){
+          jQuery('[data-rt = Quantitative').show();
+          jQuery('[data-rt = Qualitative]').hide();
+          
+          if(!j$('[id$=alltc]:checked').val()){
+              if(!j$('[id$=tnc]:checked').val())
+                  jQuery('[data-ten="New"]').hide();
+                      
+              if(!j$('[id$=ttc]:checked').val())
+                  jQuery('[data-ten="Tenured"]').hide();
+           
+           }   
+          j$('[id$=rtqnc]').prop('checked', true);
+          j$('[id$=rtqac]').prop('checked', false);
+          j$('[id$=allrtc]').prop('checked', false);
+        }else{
+          jQuery('[data-rt =Quantitative').hide();
+          jQuery('[data-rt =Qualitative]').show();
+          
+          if(!j$('[id$=alltc]:checked').val()){
+              if(!j$('[id$=tnc]:checked').val())
+                  jQuery('[data-ten="New"]').hide();
+                      
+              if(!j$('[id$=ttc]:checked').val())
+                  jQuery('[data-ten="Tenured"]').hide();
+          }    
+          j$('[id$=rtqnc]').prop('checked', false);
+          j$('[id$=rtqac]').prop('checked', true);
+          j$('[id$=allrtc]').prop('checked', false);
+        }
+        
+         
+        
+        
+        }
+        
+        function checkallt(idname){
+        
+         if(idname == "t"){
+              j$('[id$=alltc]').prop('checked', true);
+              
+              if(j$('[id$=alltc]:checked').val()){
+                  jQuery('[data-ten ="New"]').show();
+                  jQuery('[data-ten ="Tenured"]').show();
+           //       jQuery('[data-ten ="Both"]').show();
+                  
+                  if(!j$('[id$=allrtc]:checked').val()){
+                      if(!j$('[id$=rtqac]:checked').val())
+                      jQuery('[data-rt="Qualitative"]').hide();
+                  
+                      if(!j$('[id$=rtqnc]:checked').val())
+                      jQuery('[data-rt="Quantitative"]').hide();
+                 }
+                  
+                  j$('[id$=tnc]').prop('checked', false);
+                  j$('[id$=ttc]').prop('checked', false);
+            //      j$('[id$=tbc]').prop('checked', true);
+                  
+                  
+               }
+         }
+         
+        }
+        
+        function HideT(istrue,idname){
+        
+        
+        
+         if(idname == 'New'){
+          jQuery('[data-ten ="New"]').show();
+          jQuery('[data-ten ="Tenured"]').hide();
+           
+          if(!j$('[id$=allrtc]:checked').val()){
+              if(!j$('[id$=rtqac]:checked').val())
+                  jQuery('[data-rt="Qualitative"]').hide();
+              
+              if(!j$('[id$=rtqnc]:checked').val())
+                  jQuery('[data-rt="Quantitative"]').hide();
+          }   
+          j$('[id$=tnc]').prop('checked', true);
+          j$('[id$=ttc]').prop('checked', false);
+          j$('[id$=alltc]').prop('checked', false);
+        }else{
+          jQuery('[data-ten ="New"]').hide();
+          jQuery('[data-ten ="Tenured"]').show();
+          
+          if(!j$('[id$=allrtc]:checked').val()){
+            if(!j$('[id$=rtqac]:checked').val())
+              jQuery('[data-rt="Qualitative"]').hide();
+          
+            if(!j$('[id$=rtqnc]:checked').val())
+             jQuery('[data-rt="Quantitative"]').hide();
+          }    
+          j$('[id$=tnc]').prop('checked', false);
+          j$('[id$=ttc]').prop('checked', true);
+          j$('[id$=alltc]').prop('checked', false);
+        }
+        }
+    </script>
+    
+</apex:page>

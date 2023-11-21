@@ -1,0 +1,4 @@
+<apex:page docType="html-5.0" sidebar="false" controller="FunnelCertificationRatingCustom" extensions="FunnelInstallation">
+     
+   
+</apex:page>

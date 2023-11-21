@@ -1,0 +1,18 @@
+<template>
+    <lightning-layout multiple-rows>
+      <template for:each={actionPlans} for:item="actionPlan">
+					<lightning-layout-item
+            size="3"
+						padding="around-small"										 
+			key={actionPlan.Id}
+          >
+							<lightning-card title={actionPlan.FunnelMetrics__Employee_Name__c} icon-name="standard:ai_accelerator_card" style="display: block;" class="slds-card_boundary">
+								<lightning-button label="TEST" slot="actions"></lightning-button>
+								<p class="slds-var-p-horizontal_small">Name: {actionPlan.Name}</p>
+								<p class="slds-var-p-horizontal_small">Due Date: {actionPlan.FunnelMetrics__Due_Date__c}</p>
+								<p class="slds-var-p-horizontal_small">Status: {actionPlan.FunnelMetrics__Status__c}</p>
+							</lightning-card>
+					</lightning-layout-item>
+      </template>
+    </lightning-layout>
+</template>

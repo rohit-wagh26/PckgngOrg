@@ -1,0 +1,12 @@
+<template>
+	<lightning-layout>
+		<lightning-layout-item padding="around-small" size="12">
+			<lightning-datatable
+					key-field="Id"
+					data={filteredSalesRepProfiles}
+					columns={columns}
+					hide-checkbox-column>
+			</lightning-datatable>
+		</lightning-layout-item>
+	</lightning-layout>
+</template>

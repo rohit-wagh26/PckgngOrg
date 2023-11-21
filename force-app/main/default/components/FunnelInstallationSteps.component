@@ -1,0 +1,104 @@
+<apex:component controller="FunnelInstallationStepsController">
+    <style>
+     
+        @font-face {
+         font-family: sldsFont;
+             src: url({!URLFOR($Resource.SldsCss,'SldsResources/fonts/SalesforceSans-Light.ttf')});
+         }  
+        
+        .outer{background: #f5f5f9;}
+        .header{display: flex; flex-direction: column;}
+        .logo{background: #fff; width: 100%; display: flex; justify-content: center; padding: 10px 0;}
+        .logo img{width: 250px;}
+        .stepper{display: flex; width: 100%; background: #00b2ee; padding: 20px 0; justify-content: center;}
+        .stepper .step {font-family: sldsFont !important; font-size: 16px; font-weight: bold; text-align: center; color: #5f666f; cursor: default; margin: 0 3px; padding: 14px 10px 12px 30px; min-width: 7%; float: left; position: relative; background-color: #f5f5f9; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; transition: background-color 0.2s ease;}
+        .stepper .step:after,
+        .stepper .step:before {content: " "; position: absolute; top: 0; right: -17px; width: 0; height: 0; border-top: 25px solid transparent; border-bottom: 25px solid transparent; border-left: 17px solid #f5f5f9; z-index: 2; transition: border-color 0.2s ease; }
+        .stepper .step:before {right: auto; left: 0; border-left: 17px solid #00b2ee; z-index: 0;}
+        .stepper .step:first-child:before {border: none;}
+        .stepper .step:first-child {border-top-left-radius: 4px; border-bottom-left-radius: 4px;}
+        .stepper .step span {position: relative;}
+        /*.stepper .step span:before {opacity: 0; content: "✔"; position: absolute; top: -2px; left: -20px;}*/
+        .stepper .step.done {color: #fff; background-color: #66cc33;}
+        .stepper .step.done i{font-size: 20px;}
+        .stepper .step.done:after {border-left: 17px solid #66cc33;}
+        .stepper .step.done span:before {opacity: 1; -webkit-transition: opacity 0.3s ease 0.5s; -moz-transition: opacity 0.3s ease 0.5s; -ms-transition: opacity 0.3s ease 0.5s; transition: opacity 0.3s ease 0.5s;}
+        .stepper .step.current {color: #fff; background-color: #ff9900;}
+        .stepper .step.current:after {border-left: 17px solid #ff9900;}
+      /*  .content-section{padding: 40px;}
+        .content-section-inner{background: #fff;}
+        .content-heading{background: #7e8793; display: flex; justify-content: center; padding: 16px;}
+        .content-heading h2{font-family: sldsFont !important; font-size: 24px; font-weight: bold; color: #fff;}
+        .content-body{padding: 40px;}
+        .content-body .content-steps{margin: 25px 0;}
+        .content-body .content-body-inner{padding-bottom: 100px; padding-left: 20px;}
+        .content-body h4{font-family: sldsFont !important; font-size: 18px; font-weight: bold; color: #5f666f;}
+        .content-steps p{font-family: sldsFont !important; font-size: 18px; color: #5f666f; margin: 0; display: flex;}
+        .content-steps p .count{font-size: 18px; color: #ff9900; font-weight: bold; margin: 0 10px 0 0;}
+        .content-steps input[type=date]{border: none; border-bottom: 2px solid #7e8793; font-size: 18px; color: #5f666f; font-family: sldsFont !important;}
+        .content-steps input[type=text]{border: none; border-bottom: 2px solid #7e8793; width: 60px; min-width: auto; font-size: 18px; color: #5f666f; font-family: sldsFont !important;}
+        .content-steps input:focus-visible{outline: none;}
+        .content-button{display: flex; justify-content: center;}
+        .content-button button{background: #ff9900; border-radius: 30px; border: none; color: #fff; font-size: 20px; padding: 14px 40px; margin: 0 10px; cursor: pointer; font-family: sldsFont !important;}
+        .content-button button.back{background: #7e8793;}
+        .content-steps input[type=checkbox] {display:none;}
+        .content-steps input[type=checkbox] + label{background: #999; height: 16px; width: 16px; display:inline-block; padding: 0 0 0 0px;}
+        .content-steps input[type=checkbox]:checked + label{background: #0080FF; height: 16px; width: 16px; display:inline-block; padding: 0 0 0 0px;}*/
+        
+        
+     
+    </style>
+    <!--Navigation-->
+    <apex:stylesheet value="{!URLFOR($Resource.FunnelScriptFolder,'Design/css/v5.0.8-fontawesome.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.FunnelScriptFolder,'Design/css/v5.0.8-solid.css')}"/>
+    <div class="header">
+            <div class="logo"><apex:image url="{!URLFOR($Resource.FunnelMetricsHomeLogo)}"/></div>
+            <div class="stepper">
+                <div class="step {! If((CONTAINS($CurrentPage.URL,'/apex/FunnelInstallationIntro')),'current',IF(Controllerstage >= 0,'done',''))}">
+                    <span style="display:{!IF((CONTAINS($CurrentPage.URL,'/apex/FunnelInstallationIntro')),'',IF(Controllerstage >= 0,'none',''))} ">Intro</span>
+                    <span style="display:{!IF((CONTAINS($CurrentPage.URL,'/apex/FunnelInstallationIntro')),'none',IF(Controllerstage >= 0,'','none'))}"><i class="fa fa-check-circle" aria-hidden="true"></i></span>
+                </div>
+                <div class="step {! If((CONTAINS($CurrentPage.URL,'/apex/FunnelInstallationStep1')),'current',IF(Controllerstage >= 1,'done',''))} ">
+                    <span style="display:{!IF((CONTAINS($CurrentPage.URL,'/apex/FunnelInstallationStep1')),'',IF(Controllerstage >= 1,'none',''))} ">Step 1</span>
+                    <span style="display:{!IF((CONTAINS($CurrentPage.URL,'/apex/FunnelInstallationStep1')),'none',IF(Controllerstage >= 1,'','none'))}"><i class="fa fa-check-circle" aria-hidden="true"></i></span>
+                </div>
+                <div class="step {! If((CONTAINS($CurrentPage.URL,'/apex/FunnelInstallationStep2')),'current',IF(Controllerstage >= 2,'done',''))} ">
+                    <span style="display:{!IF((CONTAINS($CurrentPage.URL,'/apex/FunnelInstallationStep2')),'',IF(Controllerstage >= 2,'none',''))} ">Step 2</span>
+                    <span style="display:{!IF((CONTAINS($CurrentPage.URL,'/apex/FunnelInstallationStep2')),'none',IF(Controllerstage >= 2,'','none'))}"><i class="fa fa-check-circle" aria-hidden="true"></i></span>
+                </div>
+                <div class="step {! If((CONTAINS($CurrentPage.URL,'/apex/FunnelInstallationStep3')),'current',IF(Controllerstage >= 3,'done',''))} ">
+                    <span style="display:{!IF((CONTAINS($CurrentPage.URL,'/apex/FunnelInstallationStep3')),'',IF(Controllerstage >= 3,'none',''))} ">Step 3</span>
+                    <span style="display:{!IF((CONTAINS($CurrentPage.URL,'/apex/FunnelInstallationStep3')),'none',IF(Controllerstage >= 3,'','none'))}"><i class="fa fa-check-circle" aria-hidden="true"></i></span>
+                </div>
+                 
+                <div class="step {! If((CONTAINS($CurrentPage.URL,'/apex/FunnelInstallationStep4')),'current',IF(Controllerstage >= 4,'done',''))} ">
+                    <span style="display:{!IF((CONTAINS($CurrentPage.URL,'/apex/FunnelInstallationStep4')),'',IF(Controllerstage >= 4,'none',''))} ">Step 4</span>
+                    <span style="display:{!IF((CONTAINS($CurrentPage.URL,'/apex/FunnelInstallationStep4')),'none',IF(Controllerstage >= 4,'','none'))}"><i class="fa fa-check-circle" aria-hidden="true"></i></span>
+                </div>
+                
+                <div class="step {! If((CONTAINS($CurrentPage.URL,'/apex/FunnelInstallationStep5')),'current',IF(Controllerstage >= 5,'done',''))} ">
+                    <span style="display:{!IF((CONTAINS($CurrentPage.URL,'/apex/FunnelInstallationStep5')),'',IF(Controllerstage >= 5,'none',''))} ">Step 5</span>
+                    <span style="display:{!IF((CONTAINS($CurrentPage.URL,'/apex/FunnelInstallationStep5')),'none',IF(Controllerstage >= 5,'','none'))}"><i class="fa fa-check-circle" aria-hidden="true"></i></span>
+                </div>
+                <div class="step {! If((CONTAINS($CurrentPage.URL,'/apex/FunnelInstallationStep6')),'current',IF(Controllerstage >= 6,'done',''))} ">
+                    <span style="display:{!IF((CONTAINS($CurrentPage.URL,'/apex/FunnelInstallationStep6')),'',IF(Controllerstage >= 6,'none',''))} ">Step 6</span>
+                    <span style="display:{!IF((CONTAINS($CurrentPage.URL,'/apex/FunnelInstallationStep6')),'none',IF(Controllerstage >= 6,'','none'))}"><i class="fa fa-check-circle" aria-hidden="true"></i></span>
+                </div>
+                <div class="step {! If((CONTAINS($CurrentPage.URL,'/apex/FunnelInstallationStep7')),'current',IF(Controllerstage >= 7,'done',''))} ">
+                    <span style="display:{!IF((CONTAINS($CurrentPage.URL,'/apex/FunnelInstallationStep7')),'',IF(Controllerstage >= 7,'none',''))} ">Step 7</span>
+                    <span style="display:{!IF((CONTAINS($CurrentPage.URL,'/apex/FunnelInstallationStep7')),'none',IF(Controllerstage >= 7,'','none'))}"><i class="fa fa-check-circle" aria-hidden="true"></i></span>
+                </div>
+                <div class="step {! If((CONTAINS($CurrentPage.URL,'/apex/FunnelInstallationStep8')),'current',IF(Controllerstage >= 8,'done',''))} ">
+                    <span style="display:{!IF((CONTAINS($CurrentPage.URL,'/apex/FunnelInstallationStep8')),'',IF(Controllerstage >= 8,'none',''))} ">Step 8</span>
+                    <span style="display:{!IF((CONTAINS($CurrentPage.URL,'/apex/FunnelInstallationStep8')),'none',IF(Controllerstage >= 8,'','none'))}"><i class="fa fa-check-circle" aria-hidden="true"></i></span>
+                </div>
+                <div class="step {! If((CONTAINS($CurrentPage.URL,'/apex/FunnelInstallationStep9')),'current',IF(Controllerstage >= 9,'done',''))} ">
+                    <span style="display:{!IF((CONTAINS($CurrentPage.URL,'/apex/FunnelInstallationStep9')),'',IF(Controllerstage >= 9,'none',''))} ">Finish</span>
+                    <span style="display:{!IF((CONTAINS($CurrentPage.URL,'/apex/FunnelInstallationStep9')),'none',IF(Controllerstage >= 9,'','none'))}"><i class="fa fa-check-circle" aria-hidden="true"></i></span>
+                </div>
+                <!--<div class="step">
+                    <span>Finish</span>
+                </div>-->
+            </div>
+        </div>
+</apex:component>

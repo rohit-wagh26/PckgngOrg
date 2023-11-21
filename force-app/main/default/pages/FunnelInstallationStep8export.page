@@ -1,0 +1,26 @@
+<apex:page sidebar="false"  controller="FunnelInstallationStep8Controller" contentType="application/vnd.ms-csv#SalesRepsQuota.xls" cache="true">
+  
+   
+<table border="1">
+    <tr>
+        <td>ID</td>
+        <td>Name</td>
+        <td>User Name</td>
+        <td>Year</td>
+        <td>Annual Quota</td>
+        
+    </tr>
+    <apex:repeat value="{!srpQuotaList}" var="s">
+         <tr>
+            <td>{!s.id}</td> 
+            <td>{!s.Sales_Rep_Profile__r.name}</td>
+            <td>{!s.Sales_Rep_Profile__r.User_Record_Name__r.Username}</td>
+            <td>{!s.Year__c}</td>
+            <td>{!s.Annual_Quota_Amount__c }</td>
+            
+            
+             
+        </tr>
+    </apex:repeat> 
+</table>
+</apex:page>
