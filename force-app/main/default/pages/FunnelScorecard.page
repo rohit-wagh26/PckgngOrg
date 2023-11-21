@@ -1,0 +1,7 @@
+<apex:page sidebar="false" controller="FunnelScorecard" showHeader="true" standardStylesheets="true" docType="html-5.0" extensions="FunnelInstallation">
+<html  >
+ 
+    
+ 
+    </html>
+</apex:page>

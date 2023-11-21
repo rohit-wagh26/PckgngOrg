@@ -1,0 +1,86 @@
+<apex:page docType="html-5.0" sidebar="false"  controller="FunnelInstallationIntroController" action="{!naveToSavedPage}">
+    <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/jquery-1.12.4.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/jquery-ui.js')}"/>
+    <style>
+        body { font-size: 75%; }
+        .noSidebarCell, .sidebarCell .fixed { padding: 10px; font-family: sldsFont; }
+        .bPageHeader .phHeader td.left{display: block;}
+        @font-face {
+         font-family: sldsFont;
+             src: url({!URLFOR($Resource.SldsCss,'SldsResources/fonts/SalesforceSans-Light.ttf')});
+         }  
+        
+        .outer{background: #f5f5f9;}
+        .header{display: flex; flex-direction: column;}
+        .logo{background: #fff; width: 100%; display: flex; justify-content: center; padding: 10px 0;}
+        .logo img{width: 250px;}
+        .stepper{display: flex; width: 100%; background: #00b2ee; padding: 20px 0; justify-content: center;}
+        .stepper .step {font-family: sldsFont !important; font-size: 16px; font-weight: bold; text-align: center; color: #5f666f; cursor: default; margin: 0 3px; padding: 14px 10px 15px 30px; min-width: 5%; float: left; position: relative; background-color: #f5f5f9; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; transition: background-color 0.2s ease;}
+        .stepper .step:after,
+        .stepper .step:before {content: " "; position: absolute; top: 0; right: -17px; width: 0; height: 0; border-top: 25px solid transparent; border-bottom: 25px solid transparent; border-left: 17px solid #f5f5f9; z-index: 2; transition: border-color 0.2s ease; }
+        .stepper .step:before {right: auto; left: 0; border-left: 17px solid #00b2ee; z-index: 0;}
+        .stepper .step:first-child:before {border: none;}
+        .stepper .step:first-child {border-top-left-radius: 4px; border-bottom-left-radius: 4px;}
+        .stepper .step span {position: relative;}
+        /*.stepper .step span:before {opacity: 0; content: "✔"; position: absolute; top: -2px; left: -20px;}*/
+        .stepper .step.done {color: #fff; background-color: #66cc33;}
+        .stepper .step.done i{font-size: 20px;}
+        .stepper .step.done:after {border-left: 17px solid #66cc33;}
+        .stepper .step.done span:before {opacity: 1; -webkit-transition: opacity 0.3s ease 0.5s; -moz-transition: opacity 0.3s ease 0.5s; -ms-transition: opacity 0.3s ease 0.5s; transition: opacity 0.3s ease 0.5s;}
+        .stepper .step.current {color: #fff; background-color: #ff9900;}
+        .stepper .step.current:after {border-left: 17px solid #ff9900;}
+        .content-section{padding: 40px;}
+        .content-section-inner{background: #fff;}
+        .content-heading{background: #7e8793; display: flex; justify-content: center; padding: 16px;}
+        .content-heading h2{font-family: sldsFont !important; font-size: 24px; font-weight: bold; color: #fff;}
+        .content-body{padding: 40px;}
+        .content-section .intro-block{display: flex; flex-direction: column; width: 680px; margin: 0 auto; text-align: center; padding: 50px 0 100px 0;}
+        .content-section .intro-block h4{font-family: sldsFont !important; font-size: 21px; font-weight: bold; color: #5f666f; margin-bottom: 20px;}
+        .content-section .intro-block p{font-family: sldsFont !important; font-size: 18px; color: #5f666f;}
+        .content-button{display: flex; justify-content: center;}
+        .content-button button{font-weight: bold;background: #ff9900; border-radius: 30px; border: none; color: #fff; font-size: 20px; padding: 14px 40px; margin: 0 10px; cursor: pointer; font-family: sldsFont !important;}
+        .content-button button.back{font-weight: bold;background: #7e8793;}
+        
+        .content-button a{font-weight: bold;text-decoration: none !important;background: #ff9900; border-radius: 30px; border: none; color: #fff !important; font-size: 20px; padding: 14px 40px; margin: 0 10px; cursor: pointer; font-family: sldsFont !important;}
+        .content-button a.back{font-weight: bold;background: #7e8793;text-decoration: none !important;}
+     
+    </style>
+    <!--Navigation -->
+     
+    
+    <apex:stylesheet value="{!URLFOR($Resource.FunnelScriptFolder,'Design/css/v5.0.8-fontawesome.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.FunnelScriptFolder,'Design/css/v5.0.8-solid.css')}"/>
+     
+    <apex:form > 
+    <html  lang="en">
+    <apex:stylesheet value="{!URLFOR($Resource.SldsCss,'SldsResources/styles/salesforce-lightning-design-system.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.SldsCss,'SldsResources/styles/salesforce-lightning-design-system.min')}"/>
+    <div class="outer">
+        <c:FunnelInstallationSteps /> 
+        <div class="content-section">
+            <div class="content-section-inner">
+                <div class="content-heading">
+                    <h2>Introduction</h2>
+                </div>
+                <div class="content-body">
+                    <div class="intro-block">
+                        <h4>Welcome to your Funnelocity App! We're going to walk you through the process of getting your data set up.</h4>
+                        <p>We'll detail the steps here and this may require uploading information or directly inputting picklists. We'll direct you on exactly what to update. You may save your work and come back at a later time if you need to gather information.</p>
+                    </div>
+                    <div class="content-button">
+                        <apex:commandLink action="{!navigateToStep1}" >Begin <i class="fa fa-chevron-right" aria-hidden="true"></i> </apex:commandLink>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </html>
+    </apex:form>
+    <script>
+    window.onload = function() {
+        jQuery('input[type=text]').blur();
+        
+    };
+</script>
+ 
+</apex:page>

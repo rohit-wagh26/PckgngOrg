@@ -1,0 +1,1261 @@
+<apex:page sidebar="false" controller="SalesScorecardController" showHeader="true" standardStylesheets="true" docType="html-5.0" extensions="FunnelInstallation">
+<html  lang="en">
+ 
+    
+    <apex:stylesheet value="{!URLFOR($Resource.SldsCss,'SldsResources/styles/salesforce-lightning-design-system.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.SldsCss,'SldsResources/styles/salesforce-lightning-design-system.min')}"/>
+    
+    <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/jquery-1.11.3.min.js')}"/>
+    
+    
+     
+    
+    <!--style>
+        /* Add this attribute to the element that needs a tooltip */
+        [data-tooltip] {
+          position: relative;
+          z-index: 2;
+          cursor: pointer;
+        }
+        
+        /* Hide the tooltip content by default */
+        [data-tooltip]:before,
+        [data-tooltip]:after {
+          visibility: hidden;
+          -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+          filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=0);
+          opacity: 0;
+          pointer-events: none;
+        }
+        
+        /* Position tooltip above the element */
+        [data-tooltip]:before {
+          position: absolute;
+          bottom: 100%;
+          left: 32%;
+          margin-bottom: 5px;
+          margin-left: -75px;
+          padding: 7px;
+          width: 200px; 
+          -webkit-border-radius: 0;
+          -moz-border-radius: 0;
+          border-radius: 5px;
+          background-color: #66cc33;
+          /*background-color: hsla(0, 0%, 20%, 0.9);*/
+          color: #fff;
+          content: attr(data-tooltip);
+          text-align: center;
+          font-size: 14px;
+          line-height: 18px;
+          border: 2px solid #66cc33;
+        }
+        
+        /* Triangle hack to make tooltip look like a speech bubble */
+        [data-tooltip]:after {
+          position: absolute;
+          bottom: 100%;
+          left: 50%;
+          margin-left: -5px;
+          width: 0;
+          border-top: 5px solid #66cc33;
+          /*border-top: 5px solid hsla(0, 0%, 20%, 0.9);*/
+          border-right: 5px solid transparent;
+          border-left: 5px solid transparent;
+          content: " ";
+          font-size: 0;
+          line-height: 0;
+        }
+        
+        /* Show tooltip content on hover */
+        [data-tooltip]:hover:before,
+        [data-tooltip]:hover:after {
+          visibility: visible;
+          -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+          filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=100);
+          opacity: 1;
+        }
+    </style--!>
+    <!--Navigation
+      -->
+    
+    <apex:stylesheet value="{!URLFOR($Resource.FunnelScriptFolder,'Design/css/v5.0.8-fontawesome.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.FunnelScriptFolder,'Design/css/v5.0.8-solid.css')}"/>
+    
+    <style>
+        body { font-size: 75%; }
+          
+        .myapp{min-width: 500px; font-family: sldsFont !important;background-color: #fff; }
+        .noSidebarCell, .sidebarCell .fixed { padding: 10px; font-family: sldsFont; }
+        
+         @font-face {
+         font-family: sldsFont;
+             src: url({!URLFOR($Resource.SldsCss,'SldsResources/fonts/SalesforceSans-Light.ttf')});
+         }
+         
+        // *{font-family: sldsFont;}
+         .bPageHeader .phHeader td.left{display: block;}
+        .navigation{display: table; width: 100%; text-align: center;}
+    
+        .navigation{display: table; width: 100%;}
+        .navigation ul{margin: 0; padding: 0;}
+        .navigation ul li{display: inline-block; padding: 0 8px; border-left: 2px solid #7e8793; line-height: 17px;; margin-left: 0;}
+        .navigation ul li a{color: #7e8793; font-size: 17px; font-weight: bold;}
+        .navigation ul li a:hover{color: #66cc33; text-decoration: none;}
+        .navigation ul li a:focus{outline: none; text-decoration: none;}
+        .navigation ul li {color: #7e8793; font-size: 17px; font-weight: bold;}
+        .navigation ul li:hover{color: #66cc33; text-decoration: none;}
+        .navigation ul li.selected a{color: #66cc33;}
+        .navigation ul li.home{border: none; padding-left: 0; margin-bottom: 10px;}
+        .navigation ul li.home a{color: #00b2ee;}
+        .navigation ul li.help{border-left: 2px solid #7e8793; padding-left: 5px; margin-left: 5px; margin-bottom: 10px;}
+        .navigation ul li.help a{color: #00b2ee;}
+        .navigation ul li:last-child{padding-right: 0;}
+        
+        .navigation ul li.scorenav a{background: url({!$Resource.CertificationNavigationIcon}) no-repeat; padding: 0 0 0 25px; background-position: 0 0; height: 19px; width: 20px;}
+        .navigation ul li.scorenav a:hover {background-position: 0 -23px;}
+        
+        .navigation ul li.funnelanalyticsnav > a{background: url({!$Resource.AnalyticsNavigationIcon}) no-repeat; padding: 0 0 0 25px; background-position: 0 5px; height: 19px; width: 20px; color: #7e8793;}
+        .navigation ul li.funnelanalyticsnav > a:hover{background-position: 0 -17px; color: #66cc33;}
+        
+        .navigation ul li.checklisticon{border-right: 2px solid #7e8793; color: #00b2ee; border-left: 0; margin-right: 5px; cursor: pointer;}
+
+        .navigation ul li.checklisticon a{color: #00b2ee;}
+        
+        .help{font-weight: bold; cursor: pointer;}
+        .help i{color: #66cc33;}
+        
+        .navigation ul li.reportnav{position: relative; display: inline-block;cursor: pointer;}
+        .navigation ul li.reportnav ul.subnav{position: absolute; z-index: 1; width: 240px; background: #fff; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); display: none;}
+        .navigation ul li.reportnav ul.subnav li{display: block; text-align: left; border: none; padding: 0;}
+        .navigation ul li.reportnav ul.subnav li a {color: #7e8793; padding: 10px; display: block; width: 100%;}
+        .navigation ul li.reportnav ul.subnav li a:hover{background: #66cc33; color: #fff;}
+        .navigation ul li.reportnav:hover ul.subnav {display: block;}
+        
+        .navigation ul li.reportnav ul.subnavlast{right:0; position: absolute; z-index: 1; width: 240px; background: #fff; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); display: none;}
+        .navigation ul li.reportnav ul.subnavlast li{display: block; text-align: left; border: none; padding: 0;}
+        .navigation ul li.reportnav ul.subnavlast li a {color: #7e8793; padding: 10px; display: block; width: 100%;}
+        .navigation ul li.reportnav ul.subnavlast li a:hover{background: #66cc33; color: #fff;}
+        .navigation ul li.reportnav:hover ul.subnavlast{display: block;}
+        button a:hover{text-decoration: none;}
+        button a:focus{text-decoration: none; outline: none;}
+        select{background: url('{!URLFOR($Resource.Selectarrow )}') no-repeat right -20px center #fff !important; -moz-appearance: none; -webkit-appearance: none;}
+       .slds-select[disabled], .slds-select.slds-is-disabled {background-color: #ecebea !important;border-color: #c9c7c5;cursor: not-allowed;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;}
+       
+            .highcharts-figure,
+.highcharts-data-table table {
+  min-width: 310px;
+  max-width: 800px;
+  margin: 1em auto;
+}
+
+#container {
+  height: 450px;
+  width: 700px;
+}
+        
+#container3 {
+  height: 400px;
+  width: 700px;
+}
+#container1 {
+    min-height: 400px;
+    max-height: 700px;
+    min-width: 320px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.highcharts-tooltip h3 {
+  margin: 0.3em 0;
+}
+
+.highcharts-data-table table {
+  font-family: Verdana, sans-serif;
+  border-collapse: collapse;
+  border: 1px solid #ebebeb;
+  margin: 10px auto;
+  text-align: center;
+  width: 100%;
+  max-width: 500px;
+}
+
+.highcharts-data-table caption {
+  padding: 1em 0;
+  font-size: 1.2em;
+  color: #555;
+}
+
+.highcharts-data-table th {
+  font-weight: 600;
+  padding: 0.5em;
+}
+
+.highcharts-data-table td,
+.highcharts-data-table th,
+.highcharts-data-table caption {
+  padding: 0.5em;
+}
+
+.highcharts-data-table thead tr,
+.highcharts-data-table tr:nth-child(even) {
+  background: #f8f8f8;
+}
+
+.highcharts-data-table tr:hover {
+  background: #f1f7ff;
+}
+.slds-scope hr {margin: 5px 0;}
+    </style>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/highcharts-more.js"></script>
+
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <apex:form id="formcal">
+    
+        <div class="slds-scope">
+            <div class="myapp">
+             	<c:Help_popup helpContent="{!help}"/>
+                <!--Navigation-->
+                <div class="slds-grid slds-wrap slds-form-element slds-p-around_small">
+                    <div class="slds-size_1-of-1">
+                        <div class="navigation">
+                            <ul>
+                                <li class="checklisticon" >
+                                    <apex:outputPanel rendered="{!(admin && wizardComp && (!checkListComp))}">
+                                        <apex:commandLink action="{!navigateToChecklistPage}"><i class="fa fa-check-circle" aria-hidden="true"></i></apex:commandLink>
+                                    </apex:outputPanel>
+                                </li>
+                                <li class="home"><apex:commandLink action="{!navigateToHomePage}"><i class="fas fa-home"></i></apex:commandLink></li>
+                                <li class="scorenav"><apex:commandLink action="{!navigateToCertification}"> FUNNELOCITY SCORING</apex:commandLink></li> 
+                                <li><apex:commandLink action="{!navigateToDashboard}"><span><i class="fas fa-tachometer-alt"></i></span> PERFORMANCE DASHBOARD</apex:commandLink></li>
+                                 
+                                <li class=" reportnav"> <i class="fas fa-chart-bar"></i> REPORTING 
+                                    <ul class="subnav">
+                                        <!--li><apex:commandLink action="{!navigateToCertificateReports}">Funnelocity Reports</apex:commandLink></li-->
+                                        <li><apex:commandLink action="{!navigateToReportsPage}">Sales Management Reports</apex:commandLink></li>
+                                        <li><apex:commandLink action="{!navigateToAnnualizationDashboard}">Tenured and New Hire Performance Dashboard</apex:commandLink></li>
+                                        <li><apex:commandLink action="{!navigateToTrndngRep}">Trending By Rep Dashboard</apex:commandLink></li>
+                                        <li><apex:commandLink action="{!navigateToTrendingBySkill}">Trending By Metric/Skill Dashboard</apex:commandLink></li>
+                                    </ul>
+                                </li>
+                                
+                                 <li class="reportnav funnelanalyticsnav " >   <a> FUNNELOCITY ANALYTICS </a>  
+                                    <ul class="subnav">
+                                        <li><a>Funnelocity Analytics Dashboard</a></li>
+                                        <!--li><apex:commandLink action="{!navigateToFunnelAnalyticQualitative}">Funnelocity Qualitative Scoring</apex:commandLink></li-->
+                                        <li><apex:commandLink action="{!navigateToSalesPipeline}">Funnelocity Sales Pipeline</apex:commandLink></li>
+                                    </ul>
+                               </li>                                                               
+                                <li style="display:none"><apex:commandLink ><i class="fas fa-star"></i> TERRITORY PLAN</apex:commandLink></li>
+                                <apex:outputPanel rendered="{!displayMetricCalculator}">
+                                    <li><apex:commandLink action="{!navigateToCalculator}"><i class="fas fa-calculator"></i> METRICS CALCULATOR</apex:commandLink></li>
+                                </apex:outputPanel>
+                                <apex:outputPanel rendered="{!appSetup = ''}">
+                                    <li class=" reportnav"> <i class="fas fa-chart-bar"></i> ADMIN 
+                                        <ul class="subnavlast">
+                                            <li><apex:commandLink action="{!navigateToFunnelAddEditSRP}" rendered="{!adminUser}">Sales Rep Profiles and Hierarchy</apex:commandLink></li>
+                                            <li><apex:commandLink action="{!navigateToAppSetup}" rendered="{!adminUser}">Metrics and Skills</apex:commandLink></li>
+                                            <li><apex:commandLink action="{!navigateToGoals}">Goal Management</apex:commandLink></li>
+                                            <li><apex:commandLink action="{!navigateToFunnelSetup}" rendered="{!adminUser}">Custom Updates</apex:commandLink></li>                                        
+                                        </ul>
+                                    </li>
+                                </apex:outputPanel>
+                                <!--Added for Help Menu - Rohit-->
+                                <li class="help">
+                                    <apex:commandLink target="_blank" action="{!navigateToHelpMenu}"><i class="fas fa-question-circle" style="color: #00b2ee"></i></apex:commandLink>
+                                </li>
+                            </ul> 
+                        </div>
+                    </div>
+                </div> 
+                <!--Navigation-->
+               
+                <apex:actionFunction id="breadCrumClick"  name="breadCrumClick" action="{!breadCrumClick}" rerender="roleList,levels,levelList,repList,jsPanel"  oncomplete="validateSave()">
+                            <!--apex:actionSupport event="onchange" action="{!ExecuteChart}" oncomplete="PopulateChartFilter()" /-->
+                        <apex:param value="" name="crumValue" assignTo="{!crumValue}" />
+                        <apex:param value="" name="levelValue" assignTo="{!levelValue}" />
+                    <!--/apex:actionRegion-->
+                </apex:actionFunction>
+                <apex:outputPanel id="ref">
+                    <div class="slds-grid slds-wrap slds-form-element" style="background: #f5f5f9;">
+                        <div class="slds-p-around_small" style="color: #333333; font-size: 16px; position: absolute; right: 0; top: 0;" >
+                            <span class="help" onclick="popup('pop')" style="float: left; line-height: 18px;">Help <i style="font-size: 18px; margin: 0 0 0 5px; float: right;" class="fa fa-question-circle" aria-hidden="true"></i></span>
+                        </div>
+                        <div class="slds-col">
+                            <script type="text/javascript">
+                                
+                                function addCrumb(obj,levelValue){
+                                     
+                                    option = $(obj).find('option:selected').text();
+                                    console.log('option :: '+option);
+                                    console.log('crumb :: '+crumb);
+                                    console.log('repVal :: '+repVal);
+                                    if(option != '--Select--' && option != 'All'){
+                                        if(crumb == ''){
+                                            crumb = option;                                                            
+                                        }else if((repVal =='Rep' || repVal == 'Filter By Representative') && !repupdate ){
+                                            crumb = crumb + '&nbsp> ' +option;
+                                            repupdate = true;
+                                        }else if((repVal =='Rep' || repVal == 'Filter By Representative') && repupdate ){
+                                             
+                                            crumb = crumb.slice(0, crumb.lastIndexOf('>')) +'> ' + option;
+                                            
+                                        }else { 
+                                            crumb = crumb + '&nbsp>&nbsp '+`   <a onclick="breadCrumClick1('${option}','${levelValue}')">`+ option+ '</a>' ;
+                                            
+                                        }
+                                        }else if(option == 'All'){
+                                        crumb = crumb.slice(0, crumb.lastIndexOf('>'));
+                                    }
+                                    $(".crumbClass").html(crumb);
+                                    console.log('crumb :: '+crumb);
+                                }
+                                
+                                function repva(rv){
+                                    repVal = rv;
+                                     
+                                }
+                                
+                                function breadCrumClick1(v,l){
+                                    repupdate = false;
+                                    breadCrumClick(v,l);
+                                    crumb = crumb.slice(0, crumb.lastIndexOf(v+'</a>'))+v+'</a>';
+                                    $(".crumbClass").html(crumb);
+                                 
+                               }
+                                
+                              
+                                                                                               
+                            </script>
+                            <apex:outputPanel id="crumbText">
+                                <script type="text/javascript">
+                                    function reloadCrumb(){
+                                        crumb = '{!defaultBreadCrumb}';
+                                        $(".crumbClass").html(crumb);
+                                        repupdate = false;
+                                    }
+                                var levelfour = '{!defaultBreadCrumb}';
+                                console.log('level 4 :: '+ levelfour);
+                                </script>
+                                <apex:outputText rendered="{!NOT(ISNULL(fw.SelectedLevelOne))}" styleClass="crumbClass slds-p-around_small slds-grid" style="color: #333333; font-size: 18px; font-weight: 300;">                                
+                                </apex:outputText>
+                            </apex:outputPanel>
+                            <apex:outputPanel id="filtersPanel">
+                                <apex:actionStatus id="filterStatus">                                
+                                    <apex:facet name="stop">
+                                        <apex:outputPanel >
+                                            <div class="slds-grid slds-wrap">                                
+                                                <div class="slds-large-size_8-of-8 slds-small-size_1-of-1">
+                                                    
+                                                    <div class="slds-grid"> 
+                                                        <apex:outputPanel id="levels" styleclass="slds-col slds-size_1-of-3"> 
+                                                            <label class="slds-form-element__label slds-text-heading_medium slds-p-left_small" style="font-size: 21px; font-weight: bold; color: #7e8793;" for="select-01" id="selcol">{!fw.labelOne}</label>                              
+                                                            <div class="slds-form-element__control slds-p-around_small" style="margin: -10px 0 0 0;">
+                                                                <div style="position: relative;">
+                                                                    <!--  <apex:actionRegion > -->
+                                                                        <apex:selectList size="1" disabled="{!IF(NOT(fw.isRep),false,true)}" value="{!fw.SelectedLevelOne}" styleClass="slds-select slds-text-heading_medium slds-p-around_x-small" id="select-01" style="color: #7e8793; font-size: 21px; border-radius: 0; height: auto; padding: 6px 30px 6px 8px;">
+                                                                            <apex:actionSupport status="filterStatus" event="onchange" onComplete="reloadCrumb();validateSave();" action="{!levelOneAction}"/>
+                                                                            <apex:selectoptions value="{!fw.levelOne}"> 
+                                                                            </apex:selectoptions>                                                
+                                                                        </apex:selectList>
+                                                                    <!--  </apex:actionRegion > -->
+                                                                </div>
+                                                            </div>
+                                                            <apex:outputText style="color:red; display:none;margin: 0px 0px 0px 75px; font-size: 15px;" value="Please select a value" id="validlevel"></apex:outputText>
+                                                        </apex:outputPanel> 
+                                                        <apex:outputPanel id="levelList" styleclass="slds-col slds-size_1-of-3">
+                                                            <label class="slds-form-element__label slds-text-heading_medium slds-p-left_small" style="font-size: 21px; font-weight: bold; color: #7e8793;" for="select-02">{!fw.labelTwo}{!IF(fw.labelTwo =='Rep','  Name','')}</label><apex:outputPanel id="repol"><apex:image url="{!URLFOR($Resource.Overlay,'Overlay/overlay.png')}" style="margin: -10px 0 0 0;" rendered="{!IF(AND(RepOverlay,!RoleOverlay) ,true,false)}"/></apex:outputPanel>
+                                                            <div class="slds-form-element__control slds-p-around_small" style="margin: -10px 0 0 0;">
+                                                                <div style="position: relative;">
+                                                                    <apex:actionRegion >
+                                                                        <apex:selectList disabled="{!IF(AND(NOT(ISNULL(fw.SelectedLevelOne)),NOT(fw.SelectedLevelOne='--Select--'),NOT(ISBLANK(fw.SelectedLevelOne)),NOT(fw.disableLevelTwo),NOT(fw.isRep)),false,true)}" size="1" value="{!fw.SelectedLevelTwo}" styleClass="slds-select slds-text-heading_medium slds-p-around_x-small" id="select-02" style="color: #7e8793; font-size: 21px; border-radius: 0; height: auto; padding: 6px 30px 6px 8px;">
+                                                                            <apex:actionSupport status="filterStatus" event="onchange" onComplete="reloadCrumb();validateSave();" action="{!levelTwoAction}" />
+                                                                            <apex:selectoptions value="{!fw.levelTwo}"> 
+                                                                            </apex:selectoptions>                                                        
+                                                                        </apex:selectList> 
+                                                                    </apex:actionRegion>
+                                                                </div>
+                                                            </div>
+                                                            <apex:outputText style="color:red; display:none;margin: 0px 0px 0px 75px; font-size: 15px;" value="Please select a value" id="validname"></apex:outputText>
+                                                        </apex:outputPanel>
+                                                        
+                                                        <apex:outputPanel id="roleList" styleclass="slds-col slds-size_1-of-3">
+                                                            <label class="slds-form-element__label slds-text-heading_medium slds-p-left_small" style="font-size: 21px; font-weight: bold; color: #7e8793;" for="select-03">{!fw.labelThree}</label><apex:outputPanel id="roleOl"><apex:image url="{!URLFOR($Resource.Overlay,'Overlay/overlay.png')}" style="margin: -10px 0 0 0;" rendered="{!IF(RoleOverlay ,true,false)}"/></apex:outputPanel>
+                                                            
+                                                            <div class="slds-form-element__control slds-p-around_small" style="margin: -10px 0 0 0;">
+                                                                <div style="position: relative;">
+                                                                <apex:actionRegion >
+                                                                    <apex:selectList disabled="{!IF(AND(NOT(ISNULL(fw.SelectedLevelOne)),NOT(ISNULL(fw.SelectedLevelTwo)),NOT(ISBLANK(fw.SelectedLevelOne)),NOT(ISBLANK(fw.SelectedLevelTwo)),NOT(fw.disableLevelThree),NOT(fw.isRep)),false,true)}" size="1" value="{!fw.SelectedLevelThree}" styleClass="slds-select slds-text-heading_medium slds-p-around_x-small" id="select-03" style="color: #7e8793; font-size: 21px; border-radius: 0; height: auto; padding: 6px 30px 6px 8px;">
+                                                                        <apex:actionSupport status="filterStatus" event="onchange" action="{!levelOneAction}" oncomplete="validateSave();" onbeforedomupdate="repva('{!fw.labelThree}')"/>
+                                                                        <apex:selectoptions value="{!fw.levelThree}"> 
+                                                                        </apex:selectoptions>                                                        
+                                                                    </apex:selectList>
+                                                                </apex:actionRegion>  
+                                                                </div>
+                                                            </div>
+                                                            <apex:outputText style="color:red; display:none;margin: 0px 0px 0px 75px; font-size: 15px;" value="Please select a value" id="validmgr"></apex:outputText>
+                                                        </apex:outputPanel>  
+                                                        <!--apex:outputPanel id="repList" styleclass="slds-col slds-size_1-of-4">
+                                                            <label class="slds-form-element__label slds-text-heading_medium slds-p-left_small" style="font-size: 21px; font-weight: bold; color: #7e8793;" for="select-04">{!fw.labelFour}</label>
+                                                            <div class="slds-form-element__control slds-p-around_small" style="margin: -10px 0 0 0;">
+                                                                <div style="position: relative;">
+                                                                    <apex:actionRegion >
+                                                                        <apex:selectList disabled="{!IF(AND(NOT(ISNULL(fw.SelectedLevelOne)),NOT(fw.SelectedLevelOne='--Select--'),NOT(ISBLANK(fw.SelectedLevelOne)),NOT(fw.isRep)),false,true)}" size="1" value="{!fw.SelectedLevelFour}" styleClass="slds-select slds-text-heading_medium slds-p-around_x-small" id="select-04" style="color: #7e8793; font-size: 21px; border-radius: 0; height: auto; padding: 6px 30px 6px 8px;">
+                                                                            <apex:actionSupport status="filterStatus" event="onchange" action="{!levelOneAction}" onComplete="addCrumb(this,'{!fw.labelOne}');validateSave();"  onbeforedomupdate="repva('{!fw.labelFour}')"/>
+                                                                            <apex:selectoptions value="{!fw.levelFour}"> 
+                                                                            </apex:selectoptions>                                                        
+                                                                        </apex:selectList> 
+                                                                    </apex:actionRegion>
+                                                                </div>
+                                                            </div>
+                                                            <apex:outputText style="color:red; display:none;margin: 0px 0px 0px 75px; font-size: 15px;" value="Please select a value" id="validrep"></apex:outputText>
+
+                                                        </apex:outputPanel-->
+                                                    </div>
+                                                </div>
+                                                
+                                                 <div class="slds-large-size_8-of-8 slds-small-size_1-of-1">
+                                                <div class="slds-col slds-size_2-of-3">
+                                                    
+                                                  </div>
+                                                    <div class="slds-grid slds-grid_reverse" style="align-items: center;"> 
+                                                        
+                                                        <apex:outputPanel id="MetricOrSkill" styleclass="slds-col slds-size_1-of-6">
+                                                            <label class="slds-form-element__label slds-text-heading_medium slds-p-left_small" style="font-size: 21px; font-weight: bold; color: #7e8793;">Select Metric or Skill</label>
+                                                            <div class="slds-form-element__control slds-p-around_small" style="margin: -10px 0 0 0;">
+                                                                <div style="position: relative;">
+                                                                    <apex:actionRegion >
+                                                                    <apex:selectList value="{!sMetricOrSkill}" multiselect="false" size="1" styleClass="slds-select slds-text-heading_medium slds-p-around_x-small" style="color: #7e8793; font-size: 21px; border-radius: 0; height: auto; padding: 6px 25px 6px 8px;" >
+                                                                        <apex:selectOptions value="{!lstMetricOrSkill}"/>
+                                                                    <apex:actionSupport event="onchange" action="{!ExecuteChart}" oncomplete="PopulateChartFilter()" /> 
+                                                                    </apex:selectList>   
+                                                                    </apex:actionRegion>
+                                                                </div>
+                                                                
+                                                            </div>
+                                                        </apex:outputPanel>
+                                                        <apex:outputPanel id="performancePeriod" styleclass="slds-col slds-size_1-of-6">
+                                                            <label class="slds-form-element__label slds-text-heading_medium slds-p-left_small" style="font-size: 21px; font-weight: bold; color: #7e8793;">Period</label>
+                                                            <div class="slds-form-element__control slds-p-around_small" style="margin: -10px 0 0 0;">
+                                                                <div style="position: relative;">
+                                                                    <apex:actionRegion >
+                                                                        <apex:selectList value="{!perfPeriodValues}" multiselect="false" size="1"  styleClass="slds-select slds-text-heading_medium slds-p-around_x-small" style="color: #7e8793; font-size: 21px; border-radius: 0; height: auto; padding: 6px 30px 6px 8px;">
+                                                                            <apex:selectOptions value="{!performancePeriod}" />
+                                                                            <apex:actionSupport event="onchange" action="{!PopulateMetricOrSkill}" oncomplete="PopulateChartFilter()" />
+                                                                        </apex:selectList>
+                                                                    </apex:actionRegion>
+                                                                </div>
+                                                            </div>
+                                                        </apex:outputPanel>
+                                                       
+                                                        <apex:outputPanel id="newFiltersList" styleclass="slds-col slds-size_1-of-6">
+                                                             
+                                                            <label class="slds-form-element__label slds-text-heading_medium slds-p-left_small" style="font-size: 21px; font-weight: bold; color: #7e8793;">Select Type</label>
+                                                            <div class="slds-form-element__control slds-p-around_small" style="margin: -10px 0 0 0;">
+                                                                <div style="position: relative;">
+                                                                    <apex:actionRegion >
+                                                                    <apex:selectList value="{!selectedType}" multiselect="false" size="1"  styleClass="slds-select slds-text-heading_medium slds-p-around_x-small" style="color: #7e8793; font-size: 21px; border-radius: 0; height: auto; padding: 6px 30px 6px 8px;">
+                                                                        <apex:selectOption itemValue="Metrix" itemLabel="Metric"/>
+                                                                        <apex:selectOption itemValue="Skill" itemLabel="Skill"/>
+                                                                        <apex:actionSupport event="onchange" action="{!PopulateMetricOrSkill}" oncomplete="PopulateChartFilter()"/>
+                                                                    </apex:selectList> 
+                                                                    </apex:actionRegion>
+                                                                </div>
+                                                            </div>
+                                                        </apex:outputPanel> 
+                                                        <apex:outputPanel id="MetricOrSkill1" styleclass="slds-col slds-size_3-of-6">
+                                                            <label class="slds-form-element__label slds-text-heading_medium slds-p-left_small" style="font-size: 24px; font-weight: bold; color: #000000;">Employee Performance Analytics</label>
+                                                        </apex:outputPanel>
+                                                     </div>
+                                                </div>
+                                                
+                                                
+                                             
+                                            </div>
+                                            
+                                        </apex:outputPanel>
+                                    </apex:facet>
+                                                                                                
+                                    <apex:facet name="start">
+                                        <apex:outputPanel >
+                                            <div class="slds-grid slds-wrap">                                
+                                                <div class="slds-large-size_8-of-8 slds-small-size_1-of-1">
+                                                    <div class="slds-grid">                                                 
+                                                        <apex:outputPanel styleclass="slds-col slds-size_1-of-3"> 
+                                                            <label class="slds-form-element__label slds-text-heading_medium slds-p-left_small" style="font-size: 21px; font-weight: bold; color: #7e8793;" for="select-01">Select Level</label>                              
+                                                            <div class="slds-form-element__control slds-p-around_small" style="margin: -10px 0 0 0;">
+                                                                <div style="position: relative;">
+                                                                    <apex:selectList size="1" disabled="true" styleClass="slds-select slds-text-heading_medium slds-p-around_x-small" style="color: #7e8793; font-size: 21px; border-radius: 0; height: auto; padding: 6px 30px 6px 8px;">
+                                                                        <apex:selectoption itemValue="Level" itemLabel="Level"> 
+                                                                        </apex:selectoption>                                               
+                                                                    </apex:selectList> 
+                                                                </div>
+                                                            </div>
+                                                        </apex:outputPanel> 
+                                                        <apex:outputPanel styleclass="slds-col slds-size_1-of-3"> 
+                                                            <label class="slds-form-element__label slds-text-heading_medium slds-p-left_small" style="font-size: 21px; font-weight: bold; color: #7e8793;" for="select-01">Select Level</label>                              
+                                                            <div class="slds-form-element__control slds-p-around_small" style="margin: -10px 0 0 0;">
+                                                                <div style="position: relative;">
+                                                                    <apex:selectList size="1" disabled="true" styleClass="slds-select slds-text-heading_medium slds-p-around_x-small" style="color: #7e8793; font-size: 21px; border-radius: 0; height: auto; padding: 6px 30px 6px 8px;">
+                                                                        <apex:selectoption itemValue="Level" itemLabel="Level"> 
+                                                                        </apex:selectoption>                                               
+                                                                    </apex:selectList>   
+                                                                </div>
+                                                            </div>
+                                                        </apex:outputPanel>
+                                                        
+                                                        <apex:outputPanel styleclass="slds-col slds-size_1-of-3"> 
+                                                            <label class="slds-form-element__label slds-text-heading_medium slds-p-left_small" style="font-size: 21px; font-weight: bold; color: #7e8793;" for="select-01">Select Role</label>                              
+                                                            <div class="slds-form-element__control slds-p-around_small" style="margin: -10px 0 0 0;">
+                                                                <div style="position: relative;">
+                                                                    <apex:selectList size="1" disabled="true" styleClass="slds-select slds-text-heading_medium slds-p-around_x-small" style="color: #7e8793; font-size: 21px; border-radius: 0; height: auto; padding: 6px 30px 6px 8px;">
+                                                                        <apex:selectoption itemValue="Role" itemLabel="Role"> 
+                                                                        </apex:selectoption>                                               
+                                                                    </apex:selectList>     
+                                                                </div>
+                                                            </div>
+                                                        </apex:outputPanel> 
+                                                    </div>
+                                                </div>
+                                                <div class="slds-large-size_8-of-8 slds-small-size_1-of-1">
+                                                    <div class="slds-grid">
+                                                        <apex:outputPanel styleclass="slds-col slds-size_1-of-3"> 
+                                                            <label class="slds-form-element__label slds-text-heading_medium slds-p-left_small" style="font-size: 21px; font-weight: bold; color: #7e8793;" for="select-04">Select Level</label>                              
+                                                            <div class="slds-form-element__control slds-p-around_small" style="margin: -10px 0 0 0;">
+                                                                <div style="position: relative;">
+                                                                    <apex:selectList size="1" disabled="true" styleClass="slds-select slds-text-heading_medium slds-p-around_x-small" style="color: #7e8793; font-size: 21px; border-radius: 0; height: auto; padding: 6px 30px 6px 8px;">
+                                                                        <apex:selectoption itemValue="Level" itemLabel="Level"> 
+                                                                        </apex:selectoption>                                               
+                                                                    </apex:selectList> 
+                                                                </div>
+                                                            </div>
+                                                        </apex:outputPanel>
+                                                    </div>
+                                                </div>                                                                                                    
+                                            </div>
+                                        </apex:outputPanel>
+                                    </apex:facet>                                                                                                
+                                    
+                                </apex:actionStatus>
+                            </apex:outputPanel>
+                            
+                        </div>
+                    </div>
+                </apex:outputPanel>
+            </div>
+        </div>
+    </apex:form>
+     <script>
+        var repVal ;
+        var repupdate = false;
+        var crumb = '{!defaultBreadCrumb}'; 
+        
+        jQuery('input[type=text]').blur();
+        $(".crumbClass").html(crumb);                                    
+        
+    </script>
+     
+    <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/jquery-1.11.3.min.js')}"/>
+    <script type="text/javascript">
+        
+    var vcnt = {!averagevalue1};
+    console.log('vcnt :: '+vcnt);
+        function validateSave(){
+            
+            var inp1 = $('[id$=select-01]').val();
+            var inp2 = $('[id$=select-02]').val();
+            var inp3 = $('[id$=select-03]').val();
+            
+            var validSave = 'true';
+            
+            console.log(inp1 );
+            console.log(inp2 );
+            console.log(inp3 );
+            if(inp1 == '--Select--'){
+                $('[id$=validlevel]').css("display","block");
+                validSave = 'false';
+            }
+            if(inp2 == '--Select--'){
+                $('[id$=validname]').css("display","block");
+                validSave = 'false';
+            }
+            if(inp3 == '--Select--'){
+                $('[id$=validmgr]').css("display","block");
+                validSave = 'false';
+            }
+           
+            console.log(validSave);
+            if(validSave == 'true'){
+                console.log(validSave); 
+                $('[id$=validlevel]').css("display","none");
+                $('[id$=validname]').css("display","none");
+                $('[id$=validmgr]').css("display","none");
+                
+                PopulateChartFilter();
+            }
+        }
+    </script>
+    <apex:outputPanel id="zzyy">
+    <div class="slds-grid" style="background: #F5F5F9;">
+            <div class="slds-col" style="background: #fff; margin: 16px; padding: 16px 6px;">
+        <label class="slds-form-element__label slds-text-heading_medium slds-p-left_small" style="font-size: 18px; font-weight: bold; color: #000000;">Employee Performance </label><br/>
+        <label class="slds-form-element__label slds-text-heading_medium slds-p-left_small" style="font-size: 13px; color: #7e8793;">Assess how your employees performance for a metric or skill impacts overall quota performance </label>  
+ 
+        
+                    <style type="text/css">
+                        div.mybox {
+                            width: 150px;
+                            height:45px;
+                            padding: 8px;
+                            color: black;
+                            margin: 0;
+                            font-family: sldsFont;
+                        }
+                        div.mybox span {
+                        }
+                    </style>
+        
+        <div class="slds-scope" style="margin-top: 24px;">
+        <div class="slds-grid">
+            <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                <label class="slds-form-element__label slds-text-heading_medium" style="font-size: 16px; color: black; margin-bottom: 10px; font-family: sldsFont;"><b>{!chartTitle} Quota Rating (Average): {!ROUND(averagevalue2, 2)}</b>/10</label>
+              <div class="slds-grid slds-size_1-of-1 slds-medium-size_1-of-1 slds-large-size_1-of-1">
+                         <div class="mybox" style="background-color: #66CC33">
+                             <b><span style="font-size: 13px;">{!vdata2Percentage10}</span>
+                                     % <span style="font-size: 10px;font-color: black;">({!vdata2Count10})</span><br/>
+                                 <span style="font-size: 12px;font-color: black;">10 - Outstanding</span><br/></b>
+                         </div>
+                         <div class="mybox" style="background-color: #00B2EE; flex-grow: 1; flex-basis: 0; min-width: 0;">
+                             <b><span style="font-size: 13px;"><b>{!vdata2Percentage8}</b></span>
+                                     % <span style="font-size: 10px;">({!vdata2Count8})</span><br/>
+                                     <span style="font-size: 12px;">8 - Strong</span><br/></b>
+                         </div>
+                         <div class="mybox" style="background-color: #FECE1A; flex-grow: 1; flex-basis: 0; min-width: 0;">
+                             <b><span style="font-size: 13px;"><b>{!vdata2Percentage5}</b></span>
+                             % <span style="font-size: 10px;">({!vdata2Count5})</span><br/>
+                             <span style="font-size: 12px;">5 - Average</span><br/> </b>
+                         </div>
+                         <div class="mybox" style="background-color: #FF9900; flex-grow: 1; flex-basis: 0; min-width: 0;">
+                             <b><span style="font-size: 13px;"><b>{!vdata2Percentage2}</b></span>
+                             % <span style="font-size: 10px;">({!vdata2Count2})</span><br/>
+                             <span style="font-size: 12px;">2 - Marginal</span><br/></b>
+                         </div>
+                         <div class="mybox" style="background-color: #EF412F; flex-grow: 1; flex-basis: 0; min-width: 0;">
+                             <b><span style="font-size: 13px;"><b>{!vdata2Percentage0}</b></span>
+                             % <span style="font-size: 10px;">({!vdata2Count0})</span><br/>
+                             <span style="font-size: 12px;">0 - Needs Improvement</span><br/></b>
+                         </div>
+                </div>
+                 <!--div id="container22" style="min-width: 400px; height: 200px; margin: 0 auto"></div-->
+                <div id="container1" style="border: 1px solid #D0D3DD; border-radius: 4px; padding: 16px; width: 100%; margin-top: 32px 0 0 0; margin: 32px 0 0 0; max-width: 100%; max-height: 450px; height: 450px;"></div>
+                
+                <!--/figure-->
+            </div>
+            <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                <!--figure class="highcharts-figure"-->
+                <!--div id="container11" style="min-width: 310px; height: 200px; margin: 0 auto"></div-->
+                <!--<div id="container1" style="min-width: 400px; max-width: 800px; height: 450px; margin: 0 auto"></div>-->
+                <div id="container" style="border: 1px solid #D0D3DD; border-radius: 4px; margin-top: 16px 0 0 0; padding: 16px; width: 100%; margin: 110px 0 0 0; max-width: 100%; max-height: 450px; height: 450px;"></div>
+            </div>
+        </div>
+    </div>
+    </div>
+    </div>
+</apex:outputPanel>
+    <apex:outputPanel id="panel2">
+        <div class="slds-grid" style="background: #F5F5F9;">
+            <div class="slds-col" style="background: #fff; margin: 0 16px 16px 16px; padding: 16px 6px;">
+        <label class="slds-form-element__label slds-text-heading_medium slds-p-left_small" style="font-size: 18px; font-weight: bold; color: #000000;">Group/Team Comparative Performance </label><br/>
+        <label class="slds-form-element__label slds-text-heading_medium slds-p-left_small" style="font-size: 13px; color: #7e8793;">Assess your employee's skills and metrics ratings and how they compare to other groups</label>
+ <div class="slds-scope" style="margin-top: 24px;">
+
+        <div class="slds-grid" style="align-items: flex-end;">
+            <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+             <figure class="highcharts-figure">
+                <label class="slds-form-element__label slds-text-heading_medium" style="font-size: 16px; color: black; margin-bottom: 10px; font-family: sldsFont;"><b>{!chartTitle} {!selectedTypevalue} Rating (Average): {!ROUND(averagevalue1, 2)}</b>/10</label>
+                 <div class="slds-grid slds-size_1-of-1 slds-medium-size_1-of-1 slds-large-size_1-of-1">
+                     <div class="mybox" style="background-color: #66CC33; flex-grow: 1; flex-basis: 0; min-width: 0;">
+                         <b><span style="font-size: 13px;"><b>{!vdata1Percentage10}</b></span>
+                         % <span style="font-size: 10px;font-color: black;">({!vdata1Count10})</span><br/>
+                         <span style="font-size: 12px;font-color: black;">10 - {!ratingScale10}</span><br/></b>
+                     </div>
+                     <div class="mybox" style="background-color: #00B2EE; flex-grow: 1; flex-basis: 0; min-width: 0;">
+                         <b><span style="font-size: 13px;"><b>{!vdata1Percentage8}</b></span>
+                         % <span style="font-size: 10px;">({!vdata1Count8})</span><br/>
+                         <span style="font-size: 12px;">8 - {!ratingScale8}</span><br/></b>
+                     </div>
+                     <div class="mybox" style="background-color: #FECE1A; flex-grow: 1; flex-basis: 0; min-width: 0;">
+                         <b><span style="font-size: 13px;"><b>{!vdata1Percentage5}</b></span>
+                         % <span style="font-size: 10px;">({!vdata1Count5})</span><br/>
+                         <span style="font-size: 12px;">5 - {!ratingScale5}</span><br/> </b>
+                     </div>
+                     <div class="mybox" style="background-color: #FF9900; flex-grow: 1; flex-basis: 0; min-width: 0;">
+                        <b> <span style="font-size: 13px;"><b>{!vdata1Percentage2}</b></span>
+                         % <span style="font-size: 10px;">({!vdata1Count2})</span><br/>
+                         <span style="font-size: 12px;">2 - {!ratingScale2}</span><br/></b>
+                     </div>
+                     <div class="mybox" style="background-color: #EF412F; flex-grow: 1; flex-basis: 0; min-width: 0;">
+                         <b><span style="font-size: 13px;"><b>{!vdata1Percentage0}</b></span>
+                         % <span style="font-size: 10px;">({!vdata1Count0})</span><br/>
+                         <span style="font-size: 12px;">0 - {!ratingScale0}</span><br/></b>
+                     </div>
+                 </div>
+            <!--div id="StackChartSlid" style="min-width: 400px; height: 200px; margin: 0 auto"></div-->
+            <div id="EmpvsQuataRating" style="border: 1px solid #D0D3DD; border-radius: 4px; padding: 16px; width: 100%; margin-top: 32px; height: 450px;"></div>
+        </figure>
+            </div>
+            <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+            <!--<div id="EmpvsQuataRating" style="min-width: 400px; max-width: 800px; height: 400px; margin: 0 auto"></div>-->
+            <div id="StackChart" style="border: 1px solid #D0D3DD; border-radius: 4px; padding: 16px; width: 100%; margin-top: 16px; height: 450px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</apex:outputPanel>
+    <apex:outputPanel id="jsPanel">
+<script>
+function PopulateChartFilter() {
+        var bdataYTD = [];
+        var bdataYTD1 = [];
+        var bdataYTD2 = [];
+        var bdataYTD3 = [];
+        var bdataYTD4 = [];
+        var bdataYTD5 = [];
+        var bdataYTD6 = [];
+        var bdataYTD7 = [];
+        var bdataYTD8 = [];
+        var bdataYTD9 = [];
+        var bdataYTD10 = [];
+        var bdataYTD11 = [];
+        var bdataYTD12 = [];
+        var bdataYTD13 = [];
+        var bdataYTD14 = [];
+        var bdataYTD90 = [];
+        var vdata2Percentage0 = [];
+        var vdata2Percentage2 = [];
+        var vdata2Percentage5 = [];
+        var vdata2Percentage8 = [];
+        var vdata2Percentage10 = [];
+        var vdata4Percentage10 = [];
+        var vdata4Percentage8 = [];
+        var vdata4Percentage5 = [];
+        var vdata4Percentage2 = [];
+        var vdata4Percentage0 = [];
+        var vdata1Percentage0 = [];
+        var vdata1Percentage2 = [];
+        var vdata1Percentage5 = [];
+        var vdata1Percentage8 = [];
+        var vdata1Percentage10 = [];
+        var sumvalue;
+        var averagevalue;
+    <apex:repeat var="v" value="{!lstdata1}">
+        console.log('{!v}');
+            bdataYTD.push({ x: Math.round({!v.data12 }), y: Math.round({!v.data13 }), z:  Math.round({!v.data14 }),name: '{!v.Name}',  QS:'{!v.name}',srpName: '{!v.srpName}', color: '#cdd4e3', fillColor: '#cdd4e3'});     
+            if(Math.round({!v.data13 }) == 0){
+                if(vdata1Percentage0.length === 0) {
+                  vdata1Percentage0.push({!v.percentage});
+                }
+            } else if(Math.round({!v.data13 }) == 2){
+                if(vdata1Percentage2.length === 0) {
+                  vdata1Percentage2.push({!v.percentage});
+                }
+            } else if(Math.round({!v.data13 }) == 5){
+                if(vdata1Percentage5.length === 0) {
+                  vdata1Percentage5.push({!v.percentage});
+                }
+            } else if(Math.round({!v.data13 }) == 8){
+                if(vdata1Percentage8.length === 0) {
+                  vdata1Percentage8.push({!v.percentage});
+                }
+            }  else if(Math.round({!v.data13 }) == 10){
+                if(vdata1Percentage10.length === 0) {
+                  vdata1Percentage10.push({!v.percentage});
+                }
+            }
+        </apex:repeat>
+        
+        <apex:repeat var="v" value="{!lstdata2}">
+            //bdataYTD3.push('{!v.salesrep}');
+            if(Math.round({!v.data13 }) == 0){
+                if(vdata2Percentage0.length === 0) {
+                  vdata2Percentage0.push({!v.percentage});
+                }
+            } else if(Math.round({!v.data13 }) == 2){
+                if(vdata2Percentage2.length === 0) {
+                  vdata2Percentage2.push({!v.percentage});
+                }
+            } else if(Math.round({!v.data13 }) == 5){
+                if(vdata2Percentage5.length === 0) {
+                  vdata2Percentage5.push({!v.percentage});
+                }
+            } else if(Math.round({!v.data13 }) == 8){
+                if(vdata2Percentage8.length === 0) {
+                  vdata2Percentage8.push({!v.percentage});
+                }
+            }  else if(Math.round({!v.data13 }) == 10){
+                if(vdata2Percentage10.length === 0) {
+                  vdata2Percentage10.push({!v.percentage});
+                }
+            }
+        </apex:repeat>
+        
+        <apex:repeat var="v" value="{!lstdata2}">
+            bdataYTD3.push('{!v.salesrep}');
+            bdataYTD4.push({!v.data12 });
+            bdataYTD5.push({!v.data13 });
+            </apex:repeat>
+        
+        console.log('bdataYTD3 :: '+bdataYTD3);
+        console.log('bdataYTD4 :: '+bdataYTD4);
+        console.log('bdataYTD5 :: '+bdataYTD5);
+    //sumvalue = Math.round(vdata2Percentage10);
+    //averagevalue = sumvalue/10;
+    
+    sumvalue1 = Math.round(vdata1Percentage10);
+    averagevalue1 = sumvalue1/10;
+   
+    
+        <apex:repeat var="v" value="{!lstdata}">
+            bdataYTD2.push('{!v.Name}');
+            bdataYTD1.push({!v.data13});
+        </apex:repeat>
+        console.log('bdataYTD1 :: '+bdataYTD1);
+        <apex:repeat var="v" value="{!lstdata4}">
+            bdataYTD9.push('{!v.Name}');
+            if(Math.round({!v.ScoreType }) == 10){
+                bdataYTD10.push({!v.data13});
+                if(vdata4Percentage10.length === 0) {
+                  vdata4Percentage10.push({!v.Percentage});
+                }
+            }
+            else if(Math.round({!v.ScoreType }) == 8){
+                bdataYTD11.push({!v.data13});
+                if(vdata4Percentage8.length === 0) {
+                  vdata4Percentage8.push({!v.Percentage});
+                }
+            }
+            else if(Math.round({!v.ScoreType }) == 5){
+                bdataYTD12.push({!v.data13});
+                if(vdata4Percentage5.length === 0) {
+                  vdata4Percentage5.push({!v.Percentage});
+                }
+            }
+           else if(Math.round({!v.ScoreType }) == 2){
+                bdataYTD13.push({!v.data13});
+                if(vdata4Percentage2.length === 0) {
+                  vdata4Percentage2.push({!v.Percentage});
+                }
+            }
+            else if(Math.round({!v.ScoreType }) == 0){
+                bdataYTD14.push({!v.data13});
+                if(vdata4Percentage0.length === 0) {
+                  vdata4Percentage0.push({!v.Percentage});
+                }
+            }
+            bdataYTD90 = [...new Set(bdataYTD9)];
+        </apex:repeat>
+        console.log('bdataYTD :: ' + bdataYTD);
+         sumvalue2 = Math.round(vdata4Percentage10);
+    averagevalue2 = sumvalue2/10;
+    Highcharts.setOptions({
+   colors: ["#66CC33","#00B2EE","#FECE1A", "#FF9900","#EF412F" ]
+});
+    Highcharts.chart('container', {
+
+    chart: {
+        type: 'bubble',
+        plotBorderWidth: 1,
+        zoomType: 'xy',
+        events: {
+      load: function() {
+        const chart = this;
+
+        chart.series[0].points.forEach(point => {
+          if (point.x > 0 && point.y > 0) { // top right quarter
+            point.update({
+              color: '#cdd4e3'
+            });
+          } else if (point.x >= 0 && point.y < 0) { // bottom right quarter
+            point.update({
+              color: '#cdd4e3'
+            });
+          } else if (point.x < 0 && point.y < 0) { // bottom left quarter
+            point.update({
+              color: '#cdd4e3'
+            });
+          } else if (point.x < 0 && point.y >= 0) { // top left quarter
+            point.update({
+              color: '#cdd4e3'
+            });
+          }
+        });
+
+        const offset = 100;
+        chart.renderer.text('Target <br/>Performance', chart.chartWidth - offset, offset).add();
+        chart.renderer.text('Investigate<br/>other metrics', chart.chartWidth - offset, chart.chartHeight - offset).add();
+        chart.renderer.text('Improvement<br/>Required ', offset, chart.chartHeight - offset).add();
+        chart.renderer.text('Requires<br/>Training', offset, offset).add();
+      }
+    }
+    },
+
+    legend: {
+        enabled: false
+    },
+    credits: {
+    enabled: false
+    },
+    title: {
+        text: '{!chartTitle} {!Rolevalue}',
+        align:'left',
+        fontsize: '20px'
+     
+    },
+
+    subtitle: {
+        text: 'Performance Distribution - Quota Rating vs. {!selectedTypevalue} Rating',
+        align:'left',
+        style: {
+            color: '#000000',
+            fontWeight: 'bold',
+            fontsize: '200px'
+        }
+    },
+        tooltip: {
+             headerFormat: '',
+    useHTML: true,
+        style:{
+            fontSize:'13px'
+        },
+    //pointFormat: '<div>{point.custom}</div>',
+    pointFormatter: function() {
+    	const point = this;
+        return point.custom ? point.custom : point.x+','+point.y+'<br/>'+point.srpName;
+    }
+  },
+        
+
+    xAxis: {
+              min:-2,
+              max:12,
+            showFirstLabel: false,
+            showLastLabel: false,
+        gridLineWidth: 0,
+        title: {
+            text: '{!selectedTypevalue} Rating'
+        },
+        labels: {
+            format: '{value}'
+        },
+        plotLines: [{
+            color: 'black',
+            width: 1,
+            value: 5,
+        }],
+    },
+
+    yAxis: {
+                      min:-2,
+              max:12,
+        gridLineWidth: 0,
+            showFirstLabel: false,
+            showLastLabel: false,
+        title: {
+            text: 'Quota Rating'
+        },
+        labels: {
+            format: '{value}'
+        },
+        maxPadding: 0.2,
+        plotLines: [{
+            color: 'black',
+            width: 1,
+            value: 5
+        }],
+    },
+
+    plotOptions: {
+        series: {
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            },
+            
+        },
+        bubble: {
+            minSize: 20,
+            maxSize: 50
+        },
+    },
+
+    series: [{
+        data:bdataYTD,      
+        colorByPoint: true,
+    }]
+
+});
+Highcharts.chart('StackChart', {
+    chart: {
+        type: 'bar'
+    },
+    credits: {
+    enabled: false
+    },
+    title: {
+        text: '{!chartTitle} {!Rolevalue}',
+        align:'left'
+    },
+    subtitle: {
+        text:'{!selectedTypevalue} Rating Distribution by Group',
+        align:'left',
+        style: {
+            color: '#000000',
+            fontWeight: 'bold'}
+    },
+    xAxis: {
+        categories: bdataYTD90
+    },
+    yAxis: {
+        min: 0,
+        labels: {
+        enabled: false,
+    },
+            showLastLabel: false,
+        title: {
+            text: '% of Group\'s Employees by Rating Category'
+        }
+    },
+    legend: {
+        reversed: true
+    },
+    plotOptions: {
+        series: {
+            stacking: 'normal',
+            dataLabels: {
+                enabled: true,
+                    formatter: function(){
+                    return (this.y!=0)?this.y+"%":"";
+                    }
+
+            }
+        }
+    },
+    series: [{
+        name: '10 -{!ratingScale10}',
+        data: bdataYTD10
+    },{
+        name: '8 -{!ratingScale8}',
+        data: bdataYTD11
+    },{
+        name: '5 -{!ratingScale5}',
+        data: bdataYTD12
+    },{
+        name: '2 -{!ratingScale2}',
+        data: bdataYTD13
+    },{
+        name: '0 -{!ratingScale0}',
+        data: bdataYTD14
+    }]
+});
+                             
+  Highcharts.chart("EmpvsQuataRating", {
+  chart: {
+    type: "bar",
+    zoomType: "y",
+      scrollablePlotArea: {
+        minHeight: 600,
+        scrollPositionX: 1,
+      },
+  },
+    credits: {
+    enabled: false
+    },
+    title: {
+        text: '{!chartTitle} {!Rolevalue}',
+        align:'left'
+    },
+    subtitle: {
+        text: "Employees Ranked by {!selectedTypevalue} Rating",
+        align:'left',
+        style: {
+            color: '#000000',
+            fontWeight: 'bold'}
+            
+        
+    },
+  xAxis: {
+    categories: bdataYTD2,
+       
+    title: {
+      text: null
+    }
+  },
+  yAxis: { 
+    min: 0,
+    max: 12,
+      showLastLabel: false,
+    tickInterval: 2,
+    title: {
+      text: '{!selectedTypevalue} Rating'
+    },
+    labels: {
+      overflow: "justify",
+      format: "{value}"
+    }
+  },
+  plotOptions: {
+    bar: {
+      dataLabels: {
+        enabled: true,
+        format: "{y}"
+      },
+        zones: [{
+              value: 0,
+              color: '#EF412F'
+          },{
+              value: 3,
+              color: '#FF9900'
+          },{
+              value: 6,
+              color: '#FECE1A'
+          },{
+              value: 9,
+              color: '#00B2EE'
+          },{
+              value: 10,
+              color: '#66CC33'
+          }]
+    },
+  },
+  tooltip: {
+    valueSuffix: "{value}"
+  },
+  legend: {
+    enabled: false
+  },
+      series: [
+    {
+        dataSorting: {
+            enabled: false,
+        },
+      name: '{!selectedTypevalue} rating',
+      data: bdataYTD1
+    }
+  ]
+});
+  var mychart = Highcharts.chart("container1", {
+  chart: {
+    type: "bar",
+    zoomType: "y",
+    scrollablePlotArea: {
+            scrollPositionX: 1
+        }
+  },
+    credits: {
+    enabled: false
+    },
+    title: {
+        text: '{!chartTitle} {!Rolevalue}',
+        align:'left'
+    },
+    subtitle: {
+        text: "Employees Ranked by Quota Rating",
+         align:'left',
+        style: {
+            color: '#000000',
+            fontWeight: 'bold',
+        fontsize:"20px"}
+    },
+  xAxis: {
+    categories: bdataYTD3,
+    title: {
+      text: null
+    },
+  },
+  yAxis: { 
+    min: 0,
+    max: 12,
+      showLastLabel: false,
+    tickInterval: 2,
+    title: {
+      text: 'Quota vs {!selectedTypevalue} Rating'
+    },
+    labels: {
+      overflow: "justify",
+      format: "{value}"
+    }
+  },
+  plotOptions: {
+      
+        series: {
+            pointWidth: 20,
+        },
+    bar: {
+      dataLabels: {
+        enabled: true,
+        format: "{y}"
+      },
+        zones: [{
+              value: 0,
+              color: '#EF412F'
+          },{
+              value: 3,
+              color: '#FF9900'
+          },{
+              value: 6,
+              color: '#FECE1A'
+          },{
+              value: 9,
+              color: '#00B2EE'
+          },{
+              value: 10,
+              color: '#66CC33'
+          }]
+    },
+  },
+  tooltip: {
+    valueSuffix: "{value}"
+  },
+  legend: {
+      layout: 'horizintal',
+      align: 'right',
+      verticalAlign: 'top',
+      enabled: true
+  },
+  series: [
+    {
+        dataSorting: {
+            enabled: false,
+        },
+      name: 'Quota rating',
+      data: bdataYTD5,
+        showInLegend: false
+    },
+  ]
+});
+mychart.addSeries({ type: 'line', name: '{!selectedTypevalue}', lineWidth: 0,lineLength: 1,  
+data: bdataYTD4, stack : 0, pointPlacement: 'last', showInLegend: true,
+  minPointLength: 0, tickColor: '#FF0000',tickWidth: 3,
+marker: { symbol: 'url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAUCAYAAACqJ5zlAAAAFUlEQVQYV2P09J/7nwEJMI4KUBoeAEOoLCXxYoXZAAAAAElFTkSuQmCC)',
+      fillColor: '#F58F00' }, 
+states: { hover: { enabled: false }, }
+});
+      
+}
+$( window ).ready(function() {
+var visData4 = '{!isData4}';
+  if(visData4 == 'true') {
+    PopulateChartFilter();
+  }});
+</script>
+    </apex:outputPanel>
+
+    <apex:slds />  
+  
+    </html>
+
+</apex:page>

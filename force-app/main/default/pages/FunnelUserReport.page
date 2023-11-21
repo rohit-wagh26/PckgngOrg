@@ -1,0 +1,35 @@
+<apex:page controller="FunnelUserReportController" sidebar="false" >
+    <apex:form >
+  <!--  
+        <apex:pageBlock id="pblock" > 
+            <apex:commandButton action="{!displayResults}" value="Display Results" reRender="pblock" />
+            <br/><br/>
+            <apex:actionFunction name="navigateToRec" action="{!navigate}" reRender="">
+                <apex:param name="usrId" value="" assignTo="{!userIdVal}"/>
+            </apex:actionFunction>
+            <apex:outputPanel rendered="{!usersWithNoMgr != null || usersWithNoTitle != null}">
+                {!usersWithNoMgr.size}<apex:outputText value=" users do not have a manager selected: "/>            
+                <apex:pageBlockTable value="{!usersWithNoMgr}" var="v" id="resultsMgr">
+                    <apex:column rendered="{!u.UserPreferencesLightningExperiencePreferred}">
+                        <apex:outputLink target="_blank" value="/one/one.app#/alohaRedirect/{!v.id}?noredirect=1&isUserEntityOverride=1">{!v.name}</apex:outputLink>
+                    </apex:column>
+                    <apex:column rendered="{!!u.UserPreferencesLightningExperiencePreferred}">
+                        <apex:outputLink target="_blank" value="/{!v.id}?noredirect=1&isUserEntityOverride=1">{!v.name}</apex:outputLink>
+                    </apex:column>
+                </apex:pageBlockTable>
+                <br/>
+                {!usersWithNoTitle.size}<apex:outputText value=" users do not have a title selected: "/>            
+                <apex:pageBlockTable value="{!usersWithNoTitle}" var="v" id="resultsTitle">                    
+                    <apex:column rendered="{!u.UserPreferencesLightningExperiencePreferred}">
+                        <apex:outputLink target="_blank" value="/one/one.app#/alohaRedirect/{!v.id}?noredirect=1&isUserEntityOverride=1">{!v.name}</apex:outputLink>
+                    </apex:column>
+                    <apex:column rendered="{!!u.UserPreferencesLightningExperiencePreferred}">
+                        <apex:outputLink target="_blank" value="/{!v.id}?noredirect=1&isUserEntityOverride=1">{!v.name}</apex:outputLink>
+                    </apex:column>                    
+                </apex:pageBlockTable>
+            </apex:outputPanel>
+            <apex:outputPanel id="dummy"/>
+        </apex:pageBlock>     
+    -->    
+    </apex:form>
+</apex:page>

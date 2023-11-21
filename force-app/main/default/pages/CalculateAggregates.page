@@ -1,0 +1,12 @@
+<apex:page docType="html-5.0" controller="FunnelCertSnapController" showHeader="true" sidebar="true" lightningStylesheets="true">
+    <apex:form >
+        <div style="margin-left: 75px;margin-top: 64px;">          
+          <br/>
+          <br/>
+          <h1>Calculate certification aggregates for the selected date</h1>
+          <br/>
+          <apex:input type="date" value="{!histDateValue}"/>
+          <apex:commandButton action="{!calculateAggregates}" value="Calculate"/>
+      </div>
+    </apex:form>
+</apex:page>

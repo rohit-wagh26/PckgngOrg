@@ -1,0 +1,1934 @@
+<apex:page docType="html-5.0" sidebar="false" controller="FunnelCertificationDetail" extensions="FunnelInstallation">
+    <!--Navigation-->
+    <!--Navigation-->
+    <!--<apex:slds />-->
+    <!--Navigation-->
+    <!--Navigation-->
+     
+    <style>
+        /* Add this attribute to the element that needs a tooltip */
+        [data-tooltip] {
+        position: relative;
+        z-index: 2;
+        cursor: pointer;
+        }
+        /* Hide the tooltip content by default */
+        [data-tooltip]:before,
+        [data-tooltip]:after {
+        visibility: hidden;
+        -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+        filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=0);
+        opacity: 0;
+        pointer-events: none;
+        }
+        /* Position tooltip above the element */
+        [data-tooltip]:before {
+        position: absolute;
+        bottom: 100%;
+        left: 45%;
+        margin-bottom: 5px;
+        margin-left: -100px;
+        padding: 10px;
+        width: 200px; 
+        -webkit-border-radius: 0;
+        -moz-border-radius: 0;
+        border-radius: 5px;
+        background-color: #fff;
+        /*background-color: hsla(0, 0%, 20%, 0.9);*/
+        color: #333333;
+        content: attr(data-tooltip);
+        text-align: center;
+        font-size: 14px;
+        line-height: 18px;
+        border: 2px solid #ff9900;
+        white-space: normal;
+        }
+        /* Triangle hack to make tooltip look like a speech bubble */
+        [data-tooltip]:after {
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        margin-left: -5px;
+        width: 0;
+        border-top: 5px solid #ff9900;
+        /*border-top: 5px solid hsla(0, 0%, 20%, 0.9);*/
+        border-right: 5px solid transparent;
+        border-left: 5px solid transparent;
+        content: " ";
+        font-size: 0;
+        line-height: 0;
+        }
+        /* Show tooltip content on hover */
+        [data-tooltip]:hover:before,
+        [data-tooltip]:hover:after {
+        visibility: visible;
+        -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+        filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=100);
+        opacity: 1;
+        }
+        .scoring-table{border-top: none !important;}
+        .scoring-table th{font-size: 20px; color: #5f666f !important; font-family: sldsFont; font-weight: 700; background: none !important; border: none !important;}
+        .scoring-table td{font-size: 16px; color: #333333; font-family: sldsFont; font-weight: 400; padding: 10px 5px;}
+        .scoring-table td .circle{font-size: 16px; color: #fff; font-family: sldsFont; font-weight: 700; height: 28px; width: 28px; border-radius: 50%; float: right; text-align: center; padding: 2px 0; margin: 0 0 0 10px;}
+        .scoring-table td .circle.outstanding{background: #62cd21;}
+        .scoring-table td .circle.marginal{background: #ff9900;}
+        .scoring-table td .circle.strong{background: #00b0f0;}
+        .scoring-table td .circle.average{background: #ffce00;}
+        .scoring-table td .circle.needs-improvement{background: #f13f26;}
+        .select2-container{width: 100% !important;}
+        .select2-container--default .select2-selection--single{border-radius: 0 !important; padding: 9px 0 !important; height: auto !important; border: 1px solid #dddbda !important; background: url(/resource/1530538190000/Selectarrow) no-repeat right -20px center #fff !important;}
+        .select2-container--default .select2-selection--single .select2-selection__arrow{display: none !important;}
+        .select2-container--default .select2-selection--single .select2-selection__placeholder{color: #333333 !important; font-size: 18px !important;}
+        .select2-container--default .select2-selection--single .select2-selection__rendered{color: #333333 !important; font-size: 18px !important;}
+        .select2-results__option{color: #333333 !important; font-size: 18px !important; margin: 0 !important;}
+        .select2-search--dropdown .select2-search__field{padding: 8px 4px !important;}
+        .select2-container--default .select2-search--dropdown .select2-search__field{color: #333333 !important; font-size: 18px !important; border: 1px solid #dddbda !important;}
+        .select2-dropdown{border: 1px solid #dddbda !important; border-radius: 0 !important;}
+        select{background: url('{!URLFOR($Resource.Selectarrow )}') no-repeat right -20px center #fff !important; -moz-appearance: none; -webkit-appearance: none;}
+    </style>
+    <style>
+        /* Add this attribute to the element that needs a tooltip */
+        [data-tooltip] {
+        position: relative;
+        z-index: 2;
+        cursor: pointer;
+        }
+        /* Hide the tooltip content by default */
+        [data-tooltip]:before,
+        [data-tooltip]:after {
+        visibility: hidden;
+        -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+        filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=0);
+        opacity: 0;
+        pointer-events: none;
+        }
+        /* Position tooltip above the element */
+        .metrictable [data-tooltip]:before {width: 120px; }
+        [data-tooltip]:before {
+        position: absolute;
+        bottom: 100%;
+        left: 45%;
+        margin-bottom: 5px;
+        margin-left: -100px;
+        padding: 10px;
+        width: 180px; 
+        -webkit-border-radius: 0;
+        -moz-border-radius: 0;
+        border-radius: 5px;
+        background-color: #66cc33;
+        /*background-color: hsla(0, 0%, 20%, 0.9);*/
+        color: #fff;
+        content: attr(data-tooltip);
+        text-align: center;
+        font-size: 14px;
+        line-height: 18px;
+        border: 2px solid #66cc33;
+        }
+        /* Triangle hack to make tooltip look like a speech bubble */
+        [data-tooltip]:after {
+        position: absolute;
+        bottom: 100%;
+        left: 48%;
+        margin-left: -5px;
+        width: 0;
+        border-top: 5px solid #66cc33;
+        /*border-top: 5px solid hsla(0, 0%, 20%, 0.9);*/
+        border-right: 5px solid transparent;
+        border-left: 5px solid transparent;
+        content: " ";
+        font-size: 0;
+        line-height: 0;
+        }
+        /* Show tooltip content on hover */
+        [data-tooltip]:hover:before,
+        [data-tooltip]:hover:after {
+        visibility: visible;
+        -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+        filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=100);
+        opacity: 1;
+        }
+    </style>
+    <script>
+
+        function show(obj)
+        {
+            if(document.getElementById(obj).style.display == 'none')
+            {
+                document.getElementById(obj).style.display = 'block';
+                if(obj == "expand") {
+                  document.getElementById(obj).previousSibling.previousSibling.innerHTML = "<i style='font-size:20px' class='fas'>&#xf107;</i> Monthly";
+                }
+                else if(obj == "expand1") {
+                  document.getElementById(obj).previousSibling.previousSibling.innerHTML = "<i style='font-size:20px' class='fas'>&#xf107;</i> Quarterly";
+                }
+                else if(obj == "expand2") {
+                  document.getElementById(obj).previousSibling.previousSibling.innerHTML = "<i style='font-size:20px' class='fas'>&#xf107;</i> YTD";
+                }
+                else if(obj == "expand3") {
+                  document.getElementById(obj).previousSibling.previousSibling.innerHTML = "<i style='font-size:20px' class='fas'>&#xf107;</i> 12 Month Rolling";
+                }
+            }
+            else {
+                if(obj == "expand") {
+                  document.getElementById(obj).previousSibling.previousSibling.innerHTML = "<i style='font-size:20px' class='fas'>&#xf105;</i> Monthly";
+                }
+                else if(obj == "expand1") {
+                  document.getElementById(obj).previousSibling.previousSibling.innerHTML = "<i style='font-size:20px' class='fas'>&#xf105;</i> Quarterly";
+                }
+                else if(obj == "expand2") {
+                  document.getElementById(obj).previousSibling.previousSibling.innerHTML = "<i style='font-size:20px' class='fas'>&#xf105;</i> YTD";
+                }
+                else if(obj == "expand3") {
+                  document.getElementById(obj).previousSibling.previousSibling.innerHTML = "<i style='font-size:20px' class='fas'>&#xf105;</i> 12 Month Rolling";
+                }
+                document.getElementById(obj).style.display = 'none';
+            }
+                
+        }
+</script>
+    <apex:form >
+        <apex:actionRegion >
+            <html   lang="en">
+                <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/jquery-1.12.4.js')}"/>
+                <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/jquery-ui.js')}"/>
+                <apex:stylesheet value="{!URLFOR($Resource.FunnelScriptFolder,'Design/css/4.0.7.select2.min.css')}"/>    
+                <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/js/4.0.7.select2.min.js')}"/>
+                
+                
+                 <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/jquery.tablesorter.min.js')}"/>               
+      
+    <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/jquery.tablesorter.widgets.js')}"/>
+      <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/widget-staticRow.min.js')}"/>
+     
+    
+                <apex:stylesheet value="{!URLFOR($Resource.SldsCss,'SldsResources/styles/salesforce-lightning-design-system.css')}"/>
+                <apex:stylesheet value="{!URLFOR($Resource.SldsCss,'SldsResources/styles/salesforce-lightning-design-system.min')}"/>
+               
+                <apex:stylesheet value="{!URLFOR($Resource.FunnelScriptFolder,'Design/css/newall.css')}"/>
+            
+            <apex:stylesheet value="{!URLFOR($Resource.FunnelScriptFolder,'Design/css/3.3.7.bootstrap.min.css')}"/>
+            <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/js/3.3.7.bootstrap.min.js')}"/> 
+                <style>
+                    body { font-size: 75%; }
+                    html{font-size: 100% !important;}
+                    .noSidebarCell, .sidebarCell .fixed { padding: 10px; font-family: sldsFont; }
+                    @font-face {
+                    font-family: sldsFont;
+                    src: url({!URLFOR($Resource.SldsCss,'SldsResources/fonts/SalesforceSans-Light.ttf')});
+                    }
+                    .bPageHeader .phHeader td.left{display: block;}
+                    .navigation{display: table; width: 100%; text-align: center;}
+                    .navigation ul{margin: 0; padding: 0;}
+                    .navigation ul li{display: inline-block; padding: 0 8px; border-left: 1px solid #7e8793; line-height: 17px; margin-left: 0; font-weight: bold;}
+                    .navigation ul li a{color: #7e8793; font-size: 17px;}
+                    .navigation ul li a:hover{color: #66cc33; text-decoration: none;}
+                    .navigation ul li {color: #7e8793; font-size: 17px; font-weight: bold;}
+                    .navigation ul li:hover{color: #66cc33; text-decoration: none;}
+                    .navigation ul li.selected a{color: #66cc33;}
+                    .navigation ul li.home{border: none; padding-left: 0; padding-bottom: 10px;}
+                    .navigation ul li.home a{color: #00b2ee;}
+                    .navigation ul li:last-child{padding-right: 0;}
+                    .navigation ul li.scorenav a{background: url({!$Resource.CertificationNavigationIcon}) no-repeat; padding: 0 0 0 25px; background-position: 0 0; height: 19px; width: 20px;}
+                    .navigation ul li.scorenav a:hover {background-position: 0 -23px;}
+                    .navigation ul li.funnelanalyticsnav > a{background: url({!$Resource.AnalyticsNavigationIcon}) no-repeat; padding: 0 0 0 25px; background-position: 0 5px; height: 19px; width: 20px; color: #7e8793;}
+                    .navigation ul li.funnelanalyticsnav > a:hover{background-position: 0 -17px; color: #66cc33;}
+                    .navigation ul li.checklisticon{border-right: 2px solid #7e8793; color: #00b2ee; border-left: 0; margin-right: 5px; cursor: pointer;}
+                    .navigation ul li.checklisticon a{color: #00b2ee;}
+                    .myapp{min-width: 500px; font-family: sldsFont;background-color: #fff; } 
+                    .navigation ul li.reportnav{position: relative; display: inline-block; cursor: pointer;}
+                    .navigation ul li.reportnav ul.subnav{position: absolute; z-index: 1; width: 240px; background: #fff; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); display: none;}
+                    .navigation ul li.reportnav ul.subnav li{display: block; text-align: left; border: none; padding: 0;}
+                    .navigation ul li.reportnav ul.subnav li a {color: #7e8793; padding: 10px; display: block; width: 100%;}
+                    .navigation ul li.reportnav ul.subnav li a:hover{background: #66cc33; color: #fff;}
+                    .navigation ul li.reportnav:hover ul.subnav {display: block;}
+                    
+                    .navigation ul li.reportnav ul.subnavlast{right:0; position: absolute; z-index: 1; width: 240px; background: #fff; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); display: none;}
+                    .navigation ul li.reportnav ul.subnavlast li{display: block; text-align: left; border: none; padding: 0;}
+                    .navigation ul li.reportnav ul.subnavlast li a {color: #7e8793; padding: 10px; display: block; width: 100%;}
+                    .navigation ul li.reportnav ul.subnavlast li a:hover{background: #66cc33; color: #fff;}
+                    .navigation ul li.reportnav:hover ul.subnavlast{display: block;}
+                    
+                    .help{font-weight: bold; cursor: pointer;}
+                    .help i{color: #66cc33;}
+                    
+                    .popup{background-color: #ff9900 !important;color: #fff !important;padding: 7px 25px;margin-top: -7px;border-radius: 30px;font-size: 14px !important;text-decoration: none !important;display: inline-block;}
+                    .popup:hover, .popup:focus{outline: none; text-decoration: none; color: #fff;}
+                    
+                    button a:hover{text-decoration: none;}
+                    button a:focus{text-decoration: none; outline: none;}
+                </style>
+                <style>
+                    /*Start Delete modal CSS*/
+                    /*.modal-lg{width: 1100px;}*/
+                    .modal.in .modal-dialog {-webkit-transform: translate(0,0);-ms-transform: translate(0,0);-o-transform: translate(0,0);transform: translate(0,0);width: 90%;max-width: none;min-width: 40rem;display: flex;flex-direction: column;height: 100%;padding: 3rem 0;}
+                    .modal-content { border-radius: 0;padding: 20px;overflow: hidden;overflow-y: auto;}
+                    .modal-header{padding: 0;border: none;}
+                    .modal-header .close{position: absolute; right: 10px; margin: 0; top: 10px; opacity: 1; border: none;background: transparent; color: #7e8793; font-size: 44px; width: 25px; height: 20px; line-height: 18px;}
+                    .modal-header h4{background: #BFB178;}
+                    .modal-header h4 ul{padding: 0; margin: 0; display: table; width: 100%;}
+                    .modal-header h4 ul li{display: table-cell; font-size: 24px; color: #333333; width: 50%; padding: 10px; border: none; text-align: left; font-weight: bold;font-family: sldsfont;}
+                    .modal-body{padding: 0;}
+                    .modal-body .delete-content-block{padding: 10px;}
+                    .modal-body .delete-content-block label{font-size: 21px; color: #00b2ee;font-family: sldsfont;font-weight: normal;}
+                    .modal-body .delete-content-block p{margin: 0; font-size: 18px;  color: #777;}
+                    .modal-footer{border: none; padding: 20px 30px;}
+                    .modal-footer .btn-block{display: table; width: auto; margin: 0 auto;}
+                    .modal-footer a{background-color: #7e8793;color: #fff;padding: 9px 70px;border-radius: 30px;font-size: 24px;border: none;margin-left: 18px;}
+                    .modal-footer a:hover{color: #fff; text-decoration: none;}
+                    .modal-footer a.save{background: #ff9900;}
+                    .modal-footer a i{color: #fff;}
+                    /*End Delete modal CSS*/
+                    .dateblock input[type="date"]{font-weight: 300; border: 1px solid #dddbda; padding: 6px; width: 250px; color: #7e8793;}
+                    .dateblock  input[type="date"]:hover, .funnelsetup-block input[type="date"]:focus{outline: none;}
+                    .dateblock  .ortext{font-size: 16px; color: #7e8793; font-weight: normal; padding: 0 5px;}
+                    input[type="date"] {
+                    position: relative;
+                    }
+                    /* create a new arrow, because we are going to mess up the native one
+                    see "List of symbols" below if you want another, you could also try to add a font-awesome icon.. */
+                    input[type="date"]:after {
+                    font-family: "Font Awesome 5 Free";
+                    font-weight: 100; 
+                    content: "\f073";
+                    color: #ff9900;
+                    padding: 0 5px;
+                    }
+                    /* change color of symbol on hover */
+                    input[type="date"]:hover:after {
+                    color: #ff9900;
+                    }
+                    /* make the native arrow invisible and stretch it over the whole field so you can click anywhere in the input field to trigger the native datepicker*/
+                    input[type="date"]::-webkit-calendar-picker-indicator {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    width: auto;
+                    height: auto;
+                    color: transparent;
+                    background: transparent;
+                    }
+                    /* adjust increase/decrease button */
+                    input[type="date"]::-webkit-inner-spin-button {
+                    z-index: 1;
+                    }
+                    /* adjust clear button */
+                    input[type="date"]::-webkit-clear-button {
+                    z-index: 1;
+                    }
+                    .k-widget { padding: 0; border: none;font-family: arial; }
+                    #progress {
+                    padding: 0;
+                    list-style-type: none;
+                    font-family: sldsfont;
+                    font-size: 14px;
+                    font-weight: 700;
+                    clear: both;
+                    line-height: 1em;
+                    margin: 0 -1px;
+                    text-align: center;
+                    }
+                    #progress li {
+                    float: left;
+                    padding: 15px 30px 15px 40px;
+                    background: #efefef;
+                    color: #000;
+                    position: relative;
+                    width: 14.5%;
+                    margin: 0 1px;
+                    }
+                    #progress li:before {
+                    content: '';
+                    border-left: 22px solid #fff;
+                    border-top: 22px solid transparent;
+                    border-bottom: 22px solid transparent;
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    }
+                    #progress li:after {
+                    content: '';
+                    border-left: 22px solid #efefef;
+                    border-top: 22px solid transparent;
+                    border-bottom: 22px solid transparent;
+                    position: absolute;
+                    top: 0;
+                    left: 100%;
+                    z-index: 20;
+                    }
+                    #progress li.active {
+                    background: #00b2ee;
+                    color: #fff;
+                    }
+                    #progress li.active:after {
+                    border-left-color: #00b2ee;
+                    }
+                    #progress li.completed {
+                    background: #62cd21;
+                    color: #fff;
+                    }
+                    #progress li.completed:after {
+                    border-left-color: #62cd21;
+                    }
+                    .btnhover:hover{
+                    text-decoration: none;
+                    }
+                    .cls-1{
+                    height: 20px;
+                    float: right;
+                    }
+                    
+                </style>
+                <div class="slds-scope">
+                    <div class="myapp">
+                        <!--Navigation-->
+                        <div class="slds-grid slds-wrap slds-form-element slds-p-around_small">
+                            <div class="slds-size_1-of-1">
+                                <div class="navigation">
+                                    <ul>
+                                        <li class="checklisticon" >
+                                            <apex:outputPanel rendered="{!(admin && wizardComp && (!checkListComp))}">
+                                                <apex:commandLink action="{!navigateToChecklistPage}"><i class="fa fa-check-circle" aria-hidden="true"></i></apex:commandLink>
+                                            </apex:outputPanel>
+                                        </li>
+                                        <li class="home">
+                                            <apex:commandLink action="{!navigateToHomePage}"><i class="fas fa-home"></i></apex:commandLink>
+                                        </li>
+                                        <li class="scorenav">
+                                            <apex:commandLink action="{!navigateToCertification}"> FUNNELOCITY SCORING</apex:commandLink>
+                                        </li>
+                                        <li>
+                                            <apex:commandLink action="{!navigateToDashboard}"><span><i class="fas fa-tachometer-alt"></i></span> PERFORMANCE DASHBOARD</apex:commandLink>
+                                        </li>
+                                        <li class=" reportnav">
+                                            <i class="fas fa-chart-bar"></i> REPORTING 
+                                            <ul class="subnav">
+                                                <!--li>
+                                                    <apex:commandLink action="{!navigateToCertificateReports}">Funnelocity Reports</apex:commandLink>
+                                                </li-->
+                                                <li>
+                                                    <apex:commandLink action="{!navigateToReportsPage}">Sales Management Reports</apex:commandLink>
+                                                </li>
+                                                <li>
+                                                    <apex:commandLink action="{!navigateToAnnualizationDashboard}">Tenured and New Hire Performance Dashboard</apex:commandLink>
+                                                </li>
+                                        <li><apex:commandLink action="{!navigateToTrendingByRep}">Trending By Rep Dashboard</apex:commandLink></li>
+                                        <li><apex:commandLink action="{!navigateToTrendingBySkill}">Trending By Metric/Skill Dashboard</apex:commandLink></li>
+                                            </ul>
+                                        </li>
+                                        <li class="reportnav funnelanalyticsnav " >
+                                            <a> FUNNELOCITY ANALYTICS </a>  
+                                            <ul class="subnav">
+                                                <li><apex:commandLink action="{!navigateToFunnelAnalytic}">Funnelocity Analytics Dashboard</apex:commandLink></li>
+                                                <!--li><apex:commandLink action="{!navigateToFunnelAnalyticQualitative}">Funnelocity Qualitative Scoring</apex:commandLink></li-->
+                                                <li><apex:commandLink action="{!navigateToSalesPipeline}">Funnelocity Sales Pipeline</apex:commandLink></li>
+                                            </ul>
+                                        </li>
+                                        <li style="display:none">
+                                            <apex:commandLink ><i class="fas fa-star"></i> TERRITORY PLAN</apex:commandLink>
+                                        </li>
+                                        <apex:outputPanel rendered="{!displayMetricCalculator}">
+                                            <li><apex:commandLink action="{!navigateToCalculator}"><i class="fas fa-calculator"></i> METRICS CALCULATOR</apex:commandLink></li>
+                                        </apex:outputPanel>
+                                        <apex:outputPanel rendered="{!appSetup = ''}">
+                                            <li class=" reportnav">
+                                                <i class="fas fa-chart-bar"></i> ADMIN 
+                                                <ul class="subnavlast">
+                                                    <li>
+                                                        <apex:commandLink action="{!navigateToFunnelAddEditSRP}" rendered="{!adminUser}">Sales Rep Profiles and Hierarchy</apex:commandLink>
+                                                    </li>
+                                                    <li>
+                                                        <apex:commandLink action="{!navigateToAppSetup}" rendered="{!adminUser}">Metrics and Skills</apex:commandLink>
+                                                    </li>
+                                                    <li>
+                                                        <apex:commandLink action="{!navigateToGoals}">Goal Management</apex:commandLink>
+                                                    </li>
+                                                    <li>
+                                                        <apex:commandLink action="{!navigateToFunnelSetup}" rendered="{!adminUser}">Custom Updates</apex:commandLink>
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                        </apex:outputPanel>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <!--Navigation-->
+                        <div class="slds-grid slds-wrap slds-p-around_x-large" style="background: #00b2ee; color: #fff;">
+                            <div class="slds-large-size_8-of-8 slds-small-size--1-of-1 slds-p-top_medium">
+                                <div class="slds-grid slds-p-bottom_x-large">
+                                    <div>
+                                        <div class="slds-text-heading_large slds-p-right_small" style="font-size: 40px;">
+                                            <apex:image url="{!URLFOR($Resource.onboardIcon,'OnBoardImg/white40px.png')}" style="margin: 3px 5px 0 0;float: left;" rendered="{!IF(salesProfile[0].Rep_Staus__c== 'New',true,false)}"/>
+                                            {!salesProfile[0].name}
+                                        </div>
+                                    </div>
+                                    <div class="slds-border_left" style="border-width: 5px; border-color: #fff;">
+                                        <div class="slds-text-heading_large slds-p-left_small slds-p-top_small slds-p-bottom_small" style="font-size: 24px;">{!salesProfile[0].Role__c}</div>
+                                    </div>
+                                </div>
+                                <div class="slds-grid slds-wrap slds-p-bottom_x-large">
+                                    <div class="slds-col slds-border_left slds-p-left_small slds-large-size_1-of-5 slds-small-size_6-of-12" style="border-width: 5px; border-color: #fff; margin-bottom: 20px;">
+                                        <div class="slds-text-body_regular" style="font-size: 24px;">Role</div>
+                                        <div class="slds-text-heading_medium" style="font-size: 32px;">{!salesProfile[0].Role__c}</div>
+                                    </div>
+                                    <div class="slds-col slds-border_left slds-p-left_small slds-large-size_1-of-5 slds-small-size_6-of-12" style="border-width: 5px; border-color: #fff; margin-bottom: 20px;">
+                                        <div class="slds-text-body_regular" style="font-size: 24px;">Managed by</div>
+                                        <div class="slds-text-heading_medium" style="font-size: 32px;">{!salesProfile[0].Sales_Manager__r.name}</div>
+                                    </div>
+                                    <div class="slds-col slds-border_left slds-p-left_small slds-large-size_1-of-5 slds-small-size_6-of-12" style="border-width: 5px; border-color: #fff; margin-bottom: 20px;">
+                                        <div class="slds-text-body_regular" style="font-size: 24px;">Territory</div>
+                                        <div class="slds-text-heading_medium" style="font-size: 32px;">{!salesProfile[0].Territory__c}</div>
+                                    </div>
+                                    <div class="slds-col slds-border_left slds-p-left_small slds-large-size_1-of-5 slds-small-size_6-of-12" style="border-width: 5px; border-color: #fff; margin-bottom: 20px;">
+                                        <div class="slds-text-body_regular" style="font-size: 24px;">Tenure in Current Role</div>
+                                        <div class="slds-text-heading_medium" style="font-size: 32px;">{!salesProfile[0].Tenure_in_current_role__c}</div>
+                                    </div>
+                                    <div class="slds-col slds-border_left slds-p-left_small slds-large-size_1-of-5 slds-small-size_6-of-12" style="border-width: 5px; border-color: #fff; margin-bottom: 20px;">
+                                        <div class="slds-text-body_regular" style="font-size: 24px;">Hire date</div>
+                                        <div class="slds-text-heading_medium" style="font-size: 32px;">{!spDate}</div>
+                                    </div>
+                                </div>
+                                <!--div class="slds-grid slds-wrap slds-p-bottom_x-large">
+                                    <div class="slds-col slds-large-size_6-of-8 slds-small-size_8-of-8">
+                                        <div class="slds-grid">
+                                            <div class="slds-col slds-size_4-of-8 slds-p-around_large">
+                                                <div class="slds-grid slds-p-around_large" style="background: #fff; position: relative;">
+                                                    <div class="slds-col slds-text-body_regular slds-size_6-of-8 slds-align_absolute-center" style="color:#333333; font-size: 21px; line-height: 20px; justify-content: left;">Funnelocity Quantitative<br/>Score YTD</div>
+                                                    <div class="slds-col slds-text-heading_large slds-text-align_right slds-size_2-of-8" style="color:#00b2ee; font-size: 36px; text-align: right; padding-right: 25px;">{!ytdScore} </div>
+                                                    <span class="slds-icon_container slds-icon-utility-info" style="position: absolute; top: 6px; right: 6px;" data-tooltip="Funnelocity Quantitative Score YTD">
+                                                    <i aria-hidden="true" class="fa fa-info-circle" style="color:#ff9900; font-size: 26px;"></i>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="slds-col slds-size_4-of-8 slds-p-around_large">
+                                                <div class="slds-grid slds-p-around_large" style="background: #fff; position: relative;">
+                                                    <div class="slds-col slds-text-body_regular slds-size_6-of-8 slds-align_absolute-center" style="color:#333333; font-size: 21px; line-height: 20px; justify-content: left;">Last Month</div>
+                                                    <div class="slds-col slds-text-heading_large slds-text-align_right slds-size_2-of-8" style="color:#00b2ee; font-size: 36px; text-align: right; padding-right: 25px;">{!lastMonthScore}</div>
+                                                    <span class="slds-icon_container slds-icon-utility-info" style="position: absolute; top: 6px; right: 6px;" data-tooltip="Last Month">
+                                                    <i aria-hidden="true" class="fa fa-info-circle" style="color:#ff9900; font-size: 26px;"></i>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="slds-grid">
+                                            <div class="slds-col slds-size_4-of-8 slds-p-around_large">
+                                                <div class="slds-grid slds-p-around_large" style="background: #fff; position: relative;">
+                                                    <div class="slds-col slds-text-body_regular slds-size_6-of-8 slds-align_absolute-center" style="color:#333333; font-size: 21px; line-height: 20px; justify-content: left;">Last Quarter</div>
+                                                    <div class="slds-col slds-text-heading_large slds-text-align_right slds-size_2-of-8" style="color:#00b2ee; font-size: 36px; text-align: right; padding-right: 25px;">{!lastQuarterScore}</div>
+                                                    <span class="slds-icon_container slds-icon-utility-info" style="position: absolute; top: 6px; right: 6px;" data-tooltip="Last Quarter">
+                                                    <i aria-hidden="true" class="fa fa-info-circle" style="color:#ff9900; font-size: 26px;"></i>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="slds-col slds-size_4-of-8 slds-p-around_large">
+                                                <div class="slds-grid slds-p-around_large" style="background: #fff; position: relative;">
+                                                    <div class="slds-col slds-text-body_regular slds-size_6-of-8 slds-align_absolute-center" style="color:#333333; font-size: 21px; line-height: 20px; justify-content: left;">Prior Year Funnelocity<br/> Quantitative Score</div>
+                                                    <div class="slds-col slds-text-heading_large slds-text-align_right slds-size_2-of-8" style="color:#00b2ee; font-size: 36px; text-align: right; padding-right: 25px;">{!priorYearScore}</div>
+                                                    <span class="slds-icon_container slds-icon-utility-info" style="position: absolute; top: 6px; right: 6px;" data-tooltip="Prior Year Funnelocity Quantitative Score">
+                                                    <i aria-hidden="true" class="fa fa-info-circle" style="color:#ff9900; font-size: 26px;"></i>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="slds-col slds-large-size_2-of-8 slds-small-size_8-of-8 slds-text-align_center slds-p-top_x-large">
+                                        <div style="background: #fff; width: 240px; padding: 0; border-radius: 140px; height: 240px; display: table; margin: 0 auto;">
+                                            <div class="slds-text-heading_large" style="font-size: 66px; color: #ff9900; padding: 60px 0 0 0;">{!Fcscore} </div>
+                                            <div class="slds-text-heading_medium" style="color: #333333; font-size: 23px; font-weight: 300;">Funnelocity Quantitative Score</div>
+                                        </div>
+                                    </div>
+                                </div-->
+                                <div class="slds-p-center_xx-large" style="display: table; padding: 0 10px;margin: 0 auto;">
+                                    <apex:commandLink action="{!navigateToIndividualDashboard}" style="background-color: #ff9900; color: #fff; padding: 12px 50px; border-radius: 30px; font-size: 21px; font-weight: bold;text-decoration:none; display: inline-block;">
+                                        PERFORMANCE SNAPSHOT
+                                    </apex:commandLink>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-grid slds-wrap slds-p-around_xx-large" style="background: #f5f5f9; padding-top:0;">
+                            <div class="slds-grid slds-wrap slds-p-around_x-large slds-size_1-of-1" style="background: #fff; padding-bottom: 0;">
+                                <div style="display: block; width: auto; margin: 0 auto;">
+                                    <!--<apex:outputPanel >-->
+                                    <div class="slds-p-center_xx-large" style="display: inline-block; padding: 0 10px;">
+                                        <apex:commandLink rendered="{!updateNoti}" action="{!navigateToUpdateRatings}" style="background-color: #ff9900; color: #fff; padding: 12px 50px; border-radius: 30px; font-size: 21px; font-weight: bold;text-decoration:none; display: inline-block;">
+                                            UPDATE SKILLS                                
+                                        </apex:commandLink>
+                                    </div>
+                                    <!--
+                                        <apex:outputPanel rendered="{!isPendingStatusUpdate}">-->
+                                    <div class="slds-p-center_xx-large" style="display: inline-block; padding: 0 10px;">
+                                        <apex:commandLink rendered="{!isPendingStatusUpdate}" action="{!navigateToStatusUpdatePage}" style="background-color: #ff9900; color: #fff; padding: 12px 50px; border-radius: 30px; font-size: 21px; font-weight: bold;text-decoration:none; display: inline-block;">
+                                            COMPLETE ONBOARDING PHASE
+                                        </apex:commandLink>
+                                    </div>
+                                    <!--</apex:outputPanel>-->
+                                </div>
+                                <apex:outputText rendered="{!renderInfoMessage}" style="margin: 0 auto;    margin-top: 10px; display: table; width: 100%; text-align: center; color: red; font-size: 21px;" value="This rep has no ratings completed yet."/>
+                            </div>
+                            <div class="slds-grid slds-wrap slds-size_1-of-1" id="chechboxFilter" style="background: #fff;">
+                                <div class="slds-size_8-of-8">
+                                    <div class="slds-p-around_small">
+                                        <div class="slds-form-element" style="display: inline-block; margin: 0 25px 0 0;">
+                                            <div class="slds-form-element__control">
+                                                <label class="slds-checkbox" >
+                                                    <apex:inputCheckbox id="ActionPlanCheckbox" styleClass="slds-input1"   onclick="HideCat(this,'ActionPlanDiv');" />
+                                                    <span class="slds-checkbox_faux" style="border: 2px solid #00b2ee; border-radius: 3px;"></span>
+                                                    <span class="slds-form-element__label" style="font-size: 18px; color: #333333;">Action Plans</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="slds-form-element" style="display: inline-block; margin: 0 25px 0 0;">
+                                            <div class="slds-form-element__control">
+                                                <label class="slds-checkbox" >
+                                                    <apex:inputCheckbox id="QuantCheckbox" styleClass="slds-input1" onclick="HideCat(this,'Quantitative');" />
+                                                    <span class="slds-checkbox_faux" style="border: 2px solid #00b2ee; border-radius: 3px;"></span>
+                                                    <span class="slds-form-element__label" style="font-size: 18px; color: #333333;">Quantitative</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="slds-form-element" style="display: inline-block; margin: 0 25px 0 0;">
+                                            <div class="slds-form-element__control">
+                                                <label class="slds-checkbox" >
+                                                    <apex:inputCheckbox id="CmCheckbox" styleClass="slds-input1" onclick="HideCat(this,'CustomMetrics');" />
+                                                    <span class="slds-checkbox_faux" style="border: 2px solid #00b2ee; border-radius: 3px;"></span>
+                                                    <span class="slds-form-element__label" style="font-size: 18px; color: #333333;">Custom Metric</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="slds-form-element" style="display: inline-block; margin: 0 25px 0 0;">
+                                            <div class="slds-form-element__control">
+                                                <label class="slds-checkbox" >
+                                                    <apex:inputCheckbox id="QualCheckbox" styleClass="slds-input1"   onclick="HideCat(this,'Qualitative');" />
+                                                    <span class="slds-checkbox_faux" style="border: 2px solid #00b2ee; border-radius: 3px;"></span>
+                                                    <span class="slds-form-element__label" style="font-size: 18px; color: #333333;">Qualitative</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="slds-form-element" style="display: inline-block; margin: 0 25px 0 0;">
+                                            <div class="slds-form-element__control">
+                                                <label class="slds-checkbox" >
+                                                    <apex:inputCheckbox id="AllCheckbox" styleClass="slds-input" onclick="checkall('all');" />
+                                                    <span class="slds-checkbox_faux" style="border: 2px solid #00b2ee; border-radius: 3px;"></span>
+                                                    <span class="slds-form-element__label" style="font-size: 18px; color: #333333;">All</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div  id="ActionPlanDiv" Style="width: 100%">
+                                <apex:outputPanel id="ActionPlan" Style="width: 100% !important">
+                                    <div class="slds-grid slds-wrap slds-p-around_xx-large slds-size_1-of-1" style="background: #fff; " >
+                                        <div class="slds-grid slds-size_8-of-8 slds-wrap">
+                                            <div class="slds-col slds-p-around_medium slds-size_8-of-8">
+                                                <div class="slds-text-heading_large" style="color:#5f666f; font-size: 24px; font-weight: 700; font-family: sldsFont;">Action Plan
+                                                    <a class="btnhover" style="background-color: #ff9900; color: #fff; padding: 10px 20px; border-radius: 60px; font-size: 16px; margin-left: 7px" onclick="mod();" >    
+                                                    <span class="color:#fff;">ADD NEW</span>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="slds-col slds-p-around_medium slds-size_8-of-8">
+                                                <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered scoring-table tablesorter" id="table1" >
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="slds-text-align_left" scope="col" style="width: 10%;">
+                                                                <div class="slds-truncate" >Item #</div>
+                                                            </th>
+                                                            <th class="slds-text-align_center" scope="col" style="width: 10%;">
+                                                                <div class="slds-truncate" >Metric/Skill Name</div>
+                                                            </th>
+                                                            <th class="slds-text-align_left" scope="col" style="width: 50%;">
+                                                                <div class="slds-truncate" >Action Step</div>
+                                                            </th>
+                                                            <th class="slds-text-align_center" scope="col" style="width: 10%;">
+                                                                <div class="slds-truncate" >Due Date</div>
+                                                            </th>
+                                                            <th class="slds-text-align_center" scope="col" style="width: 10%;">
+                                                                <div class="slds-truncate" >Status</div>
+                                                            </th>
+                                                            <th class="slds-text-align_center" scope="col" style="width: 10%;">
+                                                                <div class="slds-truncate" >Edit</div>
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <apex:repeat value="{!apList}" var="ap">
+                                                            <tr>
+                                                                <td class="slds-text-align_center" style="width: 10%;">
+                                                                    <div class="slds-truncate">{!ap.Name}</div>
+                                                                </td>
+                                                                <td class="slds-text-align_left" style="width: 10%;">
+                                                                    <div class="slds-truncate">{!ap.Metric_Skill__r.Name}</div>
+                                                                </td>
+                                                                <td class="slds-text-align_left" style="width: 50%;">
+                                                                    <div style="display: flex; justify-content: space-between; align-items: center; white-space: normal; overflow-wrap: break-word;">{!ap.Action_Step__c}</div>
+                                                                </td>
+                                                                <td class="slds-text-align_center" style="width: 10%;">
+                                                                    <div class="slds-truncate">
+                                                                        <apex:outputField value="{!ap.Due_Date__c}" />
+                                                                    </div>
+                                                                </td>
+                                                                <td class="slds-text-align_center" style="width: 10%;">
+                                                                    <div class="slds-truncate">{!ap.Status__c}</div>
+                                                                </td>
+                                                                <td class="slds-text-align_center" style="width: 10%;">
+                                                                    <div class="slds-truncate">
+                                                                        <apex:commandLink action="{!displayAddEditActionPlan}" rerender="modalid" html-data-toggle="modal" html-data-target="#autoSaveConfirm" style="color: #ff9900; font-size: 18px;">
+                                                                            <i class="fas fa-pencil-alt"></i>       
+                                                                            <apex:param name="actionPlanId" assignTo="{!actionPlanId}" value="{!ap.Id}"/>
+                                                                        </apex:commandLink>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        </apex:repeat>
+                                                    </tbody>
+                                                </table>
+                                                <script type="text/javascript">
+                                                    $(document).ready(function(){
+                                                    
+                                                         $("#table1").tablesorter({
+                                                            
+                                                            // use save sort widget
+                                                            // widgets : ['saveSort'],
+                                                            emptyTo: 'bottom',
+                                                            headers : { 0: {  sorter: true},
+                                                                        1: { sorter: true},
+                                                                        2: { sorter: true},
+                                                                        3: { sorter: true},
+                                                                        4: {sorter: true}
+                                                                        
+                                                             }
+                                                             
+                                                        });
+                                                        });
+                                                        
+                                                         
+                                                    
+                                                </script>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </apex:outputPanel>
+                            </div>
+                            <div id="Quantitative" Style="width: 100%">
+                                <apex:repeat var="key" value="{!cerificationListQuantitative}" rendered="{!displayMetric}">
+                                    <div class="slds-grid slds-wrap slds-p-around_xx-large slds-size_1-of-1" style="background: #fff;font-family: Arial,Helvetica,sans-serif;" >
+                                        <div class="slds-grid slds-size_8-of-8 slds-wrap">
+                                            <div class="slds-col slds-p-around_medium slds-size_8-of-8">
+                                                <div class="slds-text-heading_large" style="color:#5f666f; font-size: 24px; font-weight: 700; font-family: sldsFont;">Individual {!key} Metric Scores
+                                                <span class="slds-icon_container slds-icon-utility-info" style="height: 16px;" data-html="true" data-tooltip="{!monthlyDate}  {!quarterlyDate  }"> 
+                                                    <i aria-hidden="true" class="fa fa-info-circle" style="color:#66cc33; font-size: 16px; " ></i>
+                                                </span>
+                                                </div>
+                                            </div>
+                                            <!----------------------- Changes done by Today----------------------------------->
+                                            <apex:outputPanel rendered="{!IF(key == 'Quantitative',true,false)}" style="width:100%;">
+                                              <div class="slds-col slds-p-around_medium slds-size_8-of-8" style="border: ridge;">
+                                                <div class="slds-col slds-p-around_medium slds-size_8-of-8" style="border-bottom: ridge;">
+                                                    <a href="javascript:;" onclick="show(this.nextSibling.nextSibling.id);" class="slds-text-heading_large" style="color:#5f666f; font-size: 18px; font-weight: 500; font-family: sldsFont;text-decoration: none;"><i style='font-size:20px' class='fas'>&#xf105;</i> Monthly</a>
+                                                    <div id="expand" class="slds-col slds-p-around_medium slds-size_8-of-8" style="display:none">
+                                                        <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered scoring-table">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th class="" scope="col" style="width: 55%;">
+                                                                        <div class="slds-truncate" > </div>
+                                                                    </th>
+                                                                    <th class="slds-text-align_center" scope="col" style="width: 10%;">
+                                                                        <div class="slds-truncate" >Goal</div>
+                                                                    </th>
+                                                                    <th class="slds-text-align_center" scope="col" style="width: 10%;">
+                                                                        <div class="slds-truncate" >Actual</div>
+                                                                    </th>
+                                                                    <th class="slds-text-align_right" scope="col" style="width: 25%;">
+                                                                        <div class="slds-truncate" >Rating</div>
+                                                                    </th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <apex:repeat var="value" value="{!cerificationListQuantitative[key]}" >
+                                                                    <apex:outputPanel rendered="{!IF(value.Certifcation_Rating__r.Group__c != 'Custom Metrics' && contains(value.Certifcation_Rating__r.Name, 'Monthly'),true,false)}">
+                                                                    <tr>
+                                                                        <td>
+                                                                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                                                                <div class="slds-col slds-text-heading_medium slds-size_11-of-12" style="color:#333333; font-size: 16px; font-weight: 400;">
+                                                                                    {!value.Certifcation_Rating__r.Name} 
+                                                                                </div>
+                                                                                <div class="slds-truncate">
+                                                                                    <apex:outputlink title="Click for metric/skill training" rendered="{!value.Certifcation_Rating__r.Training_Url__c != null}" value="{!value.Certifcation_Rating__r.Training_Url__c}"> 
+                                                                                        <svg id="Layer_2" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20.56 16"><defs><style>.cls-1{fill:#7e8793;stroke-width:0px;}</style></defs><g id="Layer_2-2"><path class="cls-1" d="m19.12,8.4c1.92-1.92,1.92-5.03,0-6.96-1.7-1.7-4.38-1.92-6.34-.52l-.05.04c-.49.35-.6,1.03-.25,1.52s1.03.6,1.52.25l.05-.04c1.09-.78,2.59-.66,3.53.29,1.07,1.07,1.07,2.81,0,3.88l-3.82,3.82c-1.07,1.07-2.81,1.07-3.88,0-.95-.95-1.07-2.44-.29-3.53l.04-.05c.35-.49.23-1.17-.25-1.52s-1.17-.23-1.52.25l-.04.05c-1.4,1.95-1.18,4.63.52,6.33,1.92,1.92,5.03,1.92,6.96,0l3.82-3.82ZM1.44,7.6c-1.92,1.92-1.92,5.03,0,6.96,1.7,1.7,4.38,1.92,6.34.52l.05-.04c.49-.35.6-1.03.25-1.52s-1.03-.6-1.52-.25l-.05.04c-1.09.78-2.59.66-3.53-.29-1.07-1.08-1.07-2.81,0-3.88l3.82-3.82c1.07-1.07,2.81-1.07,3.88,0,.95.95,1.07,2.44.29,3.53l-.04.05c-.35.49-.23,1.17.25,1.52s1.17.23,1.52-.25l.04-.05c1.4-1.96,1.18-4.64-.52-6.34-1.92-1.92-5.03-1.92-6.96,0l-3.82,3.82Z"/></g></svg>                                                                                 
+                                                                                    </apex:outputlink>
+                                                                                </div>
+                                                                                <span class="slds-icon_container slds-icon-utility-info" style="height: 16px;" data-tooltip="{!value.Certifcation_Rating__r.Description__c}"> 
+                                                                                <i aria-hidden="true" class="fa fa-info-circle" style="color:#66cc33; font-size: 16px; " ></i>
+                                                                                </span>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td class="slds-text-align_center">
+                                                                            <div class="slds-truncate">
+                                                                                <apex:outputPanel rendered="{!IF(value.Certifcation_Rating__r.Goal_field_name__c != null,true,false)}">
+                                                                                    <script type="text/javascript">   
+                                                                                        if('{!value.Certifcation_Rating__r.Rating_type__c}' == '%'){
+                                                                                           document.write(({!fieldValueMap[value.Certifcation_Rating__r.Field_Name__c]}).toFixed(2) + '%');
+                                                                                        }else if('{!value.Certifcation_Rating__r.Rating_type__c}' == '$'){
+                                                                                           document.write(({!fieldValueMap[value.Certifcation_Rating__r.Field_Name__c]}).toLocaleString("ja-JP", { style: "currency", currency: "USD", minimumFractionDigits: 0 ,maximumFractionDigits:0 }));
+                                                                                        }else{
+                                                                                           document.write(({!fieldValueMap[value.Certifcation_Rating__r.Field_Name__c]}).toLocaleString("ja-JP", {   minimumFractionDigits: 0 ,maximumFractionDigits:0 }));
+                                                                                        }
+                                                                                        
+                                                                                    </script>
+                                                                                </apex:outputPanel>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td class="slds-text-align_center">
+                                                                            <div class="slds-truncate">
+                                                                                <script type="text/javascript">   
+                                                                                    if('{!value.Certifcation_Rating__r.Rating_type__c}' == '%'){
+                                                                                       document.write(({!actualValueMap[value.Certifcation_Rating__r.Metric_Field_Name__c]}).toFixed(2) + '%');
+                                                                                    }else if('{!value.Certifcation_Rating__r.Rating_type__c}' == '$'){
+                                                                                       document.write(({!actualValueMap[value.Certifcation_Rating__r.Metric_Field_Name__c]}).toLocaleString("ja-JP", { style: "currency", currency: "USD", minimumFractionDigits: 0 ,maximumFractionDigits:0 }));
+                                                                                    }else{
+                                                                                       document.write(({!actualValueMap[value.Certifcation_Rating__r.Metric_Field_Name__c]}).toLocaleString("ja-JP", {   minimumFractionDigits: 0 ,maximumFractionDigits:0 }));
+                                                                                    }
+                                                                                    
+                                                                                </script>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td class="slds-text-align_right">
+                                                                            <apex:outputPanel rendered="{!value.Rating_Score__c = 10}">
+                                                                                <div class="slds-truncate">Outstanding<span class="circle outstanding">10</span></div>
+                                                                            </apex:outputPanel>
+                                                                            <apex:outputPanel rendered="{!value.Rating_Score__c = 8}">
+                                                                                <div class="slds-truncate">Strong <span class="circle strong">8</span></div>
+                                                                            </apex:outputPanel>
+                                                                            <apex:outputPanel rendered="{!value.Rating_Score__c = 5}">
+                                                                                <div class="slds-truncate">Average <span class="circle average">5</span></div>
+                                                                            </apex:outputPanel>
+                                                                            <apex:outputPanel rendered="{!value.Rating_Score__c = 2}">
+                                                                                <div class="slds-truncate">Marginal <span class="circle marginal">2</span></div>
+                                                                            </apex:outputPanel>
+                                                                            <apex:outputPanel rendered="{!value.Rating_Score__c = 0}">
+                                                                                <div class="slds-truncate">Needs Improvement <span class="circle needs-improvement">0</span></div>
+                                                                            </apex:outputPanel>
+                                                                        </td>
+                                                                    </tr>
+                                                                    </apex:outputPanel>
+                                                                </apex:repeat>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                                <br/>
+                                                <div class="slds-col slds-p-around_medium slds-size_8-of-8"  style="border-bottom: ridge;">
+                                                    <a href="javascript:;" onclick="show(this.nextSibling.nextSibling.id);" class="slds-text-heading_large" style="color:#5f666f; font-size: 18px; font-weight: 500; font-family: sldsFont;text-decoration: none;"><i style='font-size:20px' class='fas'>&#xf105;</i> Quarterly</a>
+                                                    <div id="expand1" class="slds-col slds-p-around_medium slds-size_8-of-8" style="display:none">
+                                                        <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered scoring-table">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th class="" scope="col" style="width: 55%;">
+                                                                        <div class="slds-truncate" > </div>
+                                                                    </th>
+                                                                    <th class="slds-text-align_center" scope="col" style="width: 10%;">
+                                                                        <div class="slds-truncate" >Goal</div>
+                                                                    </th>
+                                                                    <th class="slds-text-align_center" scope="col" style="width: 10%;">
+                                                                        <div class="slds-truncate" >Actual</div>
+                                                                    </th>
+                                                                    <th class="slds-text-align_right" scope="col" style="width: 25%;">
+                                                                        <div class="slds-truncate" >Rating</div>
+                                                                    </th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <apex:repeat var="value" value="{!cerificationListQuantitative[key]}" >
+                                                                    <apex:outputPanel rendered="{!IF(value.Certifcation_Rating__r.Group__c != 'Custom Metrics' && contains(value.Certifcation_Rating__r.Name, 'Quarterly'),true,false)}">
+                                                                    <tr>
+                                                                        <td>
+                                                                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                                                                <div class="slds-col slds-text-heading_medium slds-size_11-of-12" style="color:#333333; font-size: 16px; font-weight: 400;">
+                                                                                    {!value.Certifcation_Rating__r.Name} 
+                                                                                </div>
+                                                                                <div class="slds-truncate">
+                                                                                <apex:outputlink title="Click for metric/skill training" rendered="{!value.Certifcation_Rating__r.Training_Url__c != null}" value="{!value.Certifcation_Rating__r.Training_Url__c}"> 
+                                                                                <svg id="Layer_2" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20.56 16"><defs><style>.cls-1{fill:#7e8793;stroke-width:0px;}</style></defs><g id="Layer_2-2"><path class="cls-1" d="m19.12,8.4c1.92-1.92,1.92-5.03,0-6.96-1.7-1.7-4.38-1.92-6.34-.52l-.05.04c-.49.35-.6,1.03-.25,1.52s1.03.6,1.52.25l.05-.04c1.09-.78,2.59-.66,3.53.29,1.07,1.07,1.07,2.81,0,3.88l-3.82,3.82c-1.07,1.07-2.81,1.07-3.88,0-.95-.95-1.07-2.44-.29-3.53l.04-.05c.35-.49.23-1.17-.25-1.52s-1.17-.23-1.52.25l-.04.05c-1.4,1.95-1.18,4.63.52,6.33,1.92,1.92,5.03,1.92,6.96,0l3.82-3.82ZM1.44,7.6c-1.92,1.92-1.92,5.03,0,6.96,1.7,1.7,4.38,1.92,6.34.52l.05-.04c.49-.35.6-1.03.25-1.52s-1.03-.6-1.52-.25l-.05.04c-1.09.78-2.59.66-3.53-.29-1.07-1.08-1.07-2.81,0-3.88l3.82-3.82c1.07-1.07,2.81-1.07,3.88,0,.95.95,1.07,2.44.29,3.53l-.04.05c-.35.49-.23,1.17.25,1.52s1.17.23,1.52-.25l.04-.05c1.4-1.96,1.18-4.64-.52-6.34-1.92-1.92-5.03-1.92-6.96,0l-3.82,3.82Z"/></g></svg>                                                                                 
+                                                                        		</apex:outputlink>
+                                                                                </div>
+                                                                                <span class="slds-icon_container slds-icon-utility-info" style="height: 16px;" data-tooltip="{!value.Certifcation_Rating__r.Description__c}"> 
+                                                                                <i aria-hidden="true" class="fa fa-info-circle" style="color:#66cc33; font-size: 16px; " ></i>
+                                                                                </span>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td class="slds-text-align_center">
+                                                                            <div class="slds-truncate">
+                                                                                <apex:outputPanel rendered="{!IF(value.Certifcation_Rating__r.Goal_field_name__c != null,true,false)}">
+                                                                                    <script type="text/javascript">   
+                                                                                        if('{!value.Certifcation_Rating__r.Rating_type__c}' == '%'){
+                                                                                           document.write(({!fieldValueMap[value.Certifcation_Rating__r.Field_Name__c]}).toFixed(2) + '%');
+                                                                                        }else if('{!value.Certifcation_Rating__r.Rating_type__c}' == '$'){
+                                                                                           document.write(({!fieldValueMap[value.Certifcation_Rating__r.Field_Name__c]}).toLocaleString("ja-JP", { style: "currency", currency: "USD", minimumFractionDigits: 0 ,maximumFractionDigits:0 }));
+                                                                                        }else{
+                                                                                           document.write(({!fieldValueMap[value.Certifcation_Rating__r.Field_Name__c]}).toLocaleString("ja-JP", {   minimumFractionDigits: 0 ,maximumFractionDigits:0 }));
+                                                                                        }
+                                                                                        
+                                                                                    </script>
+                                                                                </apex:outputPanel>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td class="slds-text-align_center">
+                                                                            <div class="slds-truncate">
+                                                                                <script type="text/javascript">   
+                                                                                    if('{!value.Certifcation_Rating__r.Rating_type__c}' == '%'){
+                                                                                       document.write(({!actualValueMap[value.Certifcation_Rating__r.Metric_Field_Name__c]}).toFixed(2) + '%');
+                                                                                    }else if('{!value.Certifcation_Rating__r.Rating_type__c}' == '$'){
+                                                                                       document.write(({!actualValueMap[value.Certifcation_Rating__r.Metric_Field_Name__c]}).toLocaleString("ja-JP", { style: "currency", currency: "USD", minimumFractionDigits: 0 ,maximumFractionDigits:0 }));
+                                                                                    }else{
+                                                                                       document.write(({!actualValueMap[value.Certifcation_Rating__r.Metric_Field_Name__c]}).toLocaleString("ja-JP", {   minimumFractionDigits: 0 ,maximumFractionDigits:0 }));
+                                                                                    }
+                                                                                    
+                                                                                </script>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td class="slds-text-align_right">
+                                                                            <apex:outputPanel rendered="{!value.Rating_Score__c = 10}">
+                                                                                <div class="slds-truncate">Outstanding<span class="circle outstanding">10</span></div>
+                                                                            </apex:outputPanel>
+                                                                            <apex:outputPanel rendered="{!value.Rating_Score__c = 8}">
+                                                                                <div class="slds-truncate">Strong <span class="circle strong">8</span></div>
+                                                                            </apex:outputPanel>
+                                                                            <apex:outputPanel rendered="{!value.Rating_Score__c = 5}">
+                                                                                <div class="slds-truncate">Average <span class="circle average">5</span></div>
+                                                                            </apex:outputPanel>
+                                                                            <apex:outputPanel rendered="{!value.Rating_Score__c = 2}">
+                                                                                <div class="slds-truncate">Marginal <span class="circle marginal">2</span></div>
+                                                                            </apex:outputPanel>
+                                                                            <apex:outputPanel rendered="{!value.Rating_Score__c = 0}">
+                                                                                <div class="slds-truncate">Needs Improvement <span class="circle needs-improvement">0</span></div>
+                                                                            </apex:outputPanel>
+                                                                        </td>
+                                                                    </tr>
+                                                                    </apex:outputPanel>
+                                                                </apex:repeat>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                                <br/>
+                                                <div class="slds-col slds-p-around_medium slds-size_8-of-8"  style="border-bottom: ridge;">
+                                                    <a href="javascript:;" onclick="show(this.nextSibling.nextSibling.id);" class="slds-text-heading_large" style="color:#5f666f; font-size: 18px; font-weight: 500; font-family: sldsFont;text-decoration: none;"><i style='font-size:20px' class='fas'>&#xf105;</i> YTD</a>
+                                                    <div id="expand2" class="slds-col slds-p-around_medium slds-size_8-of-8" style="display:none">
+                                                        <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered scoring-table">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th class="" scope="col" style="width: 55%;">
+                                                                        <div class="slds-truncate" > </div>
+                                                                    </th>
+                                                                    <th class="slds-text-align_center" scope="col" style="width: 10%;">
+                                                                        <div class="slds-truncate" >Goal</div>
+                                                                    </th>
+                                                                    <th class="slds-text-align_center" scope="col" style="width: 10%;">
+                                                                        <div class="slds-truncate" >Actual</div>
+                                                                    </th>
+                                                                    <th class="slds-text-align_right" scope="col" style="width: 25%;">
+                                                                        <div class="slds-truncate" >Rating</div>
+                                                                    </th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <apex:repeat var="value" value="{!cerificationListQuantitative[key]}" >
+                                                                    <apex:outputPanel rendered="{!IF(value.Certifcation_Rating__r.Group__c != 'Custom Metrics' && contains(value.Certifcation_Rating__r.Name, 'YTD'),true,false)}">
+                                                                    <tr>
+                                                                        <td>
+                                                                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                                                                <div class="slds-col slds-text-heading_medium slds-size_11-of-12" style="color:#333333; font-size: 16px; font-weight: 400;">
+                                                                                    {!value.Certifcation_Rating__r.Name} 
+                                                                                </div>
+                                                                                <div class="slds-truncate">
+                                                                                <apex:outputlink title="Click for metric/skill training" rendered="{!value.Certifcation_Rating__r.Training_Url__c != null}" value="{!value.Certifcation_Rating__r.Training_Url__c}"> 
+                                                                                <svg id="Layer_2" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20.56 16"><defs><style>.cls-1{fill:#7e8793;stroke-width:0px;}</style></defs><g id="Layer_2-2"><path class="cls-1" d="m19.12,8.4c1.92-1.92,1.92-5.03,0-6.96-1.7-1.7-4.38-1.92-6.34-.52l-.05.04c-.49.35-.6,1.03-.25,1.52s1.03.6,1.52.25l.05-.04c1.09-.78,2.59-.66,3.53.29,1.07,1.07,1.07,2.81,0,3.88l-3.82,3.82c-1.07,1.07-2.81,1.07-3.88,0-.95-.95-1.07-2.44-.29-3.53l.04-.05c.35-.49.23-1.17-.25-1.52s-1.17-.23-1.52.25l-.04.05c-1.4,1.95-1.18,4.63.52,6.33,1.92,1.92,5.03,1.92,6.96,0l3.82-3.82ZM1.44,7.6c-1.92,1.92-1.92,5.03,0,6.96,1.7,1.7,4.38,1.92,6.34.52l.05-.04c.49-.35.6-1.03.25-1.52s-1.03-.6-1.52-.25l-.05.04c-1.09.78-2.59.66-3.53-.29-1.07-1.08-1.07-2.81,0-3.88l3.82-3.82c1.07-1.07,2.81-1.07,3.88,0,.95.95,1.07,2.44.29,3.53l-.04.05c-.35.49-.23,1.17.25,1.52s1.17.23,1.52-.25l.04-.05c1.4-1.96,1.18-4.64-.52-6.34-1.92-1.92-5.03-1.92-6.96,0l-3.82,3.82Z"/></g></svg>                                                                                 
+                                                                        		</apex:outputlink>
+                                                                                </div>
+                                                                                <span class="slds-icon_container slds-icon-utility-info" style="height: 16px;" data-tooltip="{!value.Certifcation_Rating__r.Description__c}"> 
+                                                                                <i aria-hidden="true" class="fa fa-info-circle" style="color:#66cc33; font-size: 16px; " ></i>
+                                                                                </span>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td class="slds-text-align_center">
+                                                                            <div class="slds-truncate">
+                                                                                <apex:outputPanel rendered="{!IF(value.Certifcation_Rating__r.Goal_field_name__c != null,true,false)}">
+                                                                                    <script type="text/javascript">   
+                                                                                        if('{!value.Certifcation_Rating__r.Rating_type__c}' == '%'){
+                                                                                           document.write(({!fieldValueMap[value.Certifcation_Rating__r.Field_Name__c]}).toFixed(2) + '%');
+                                                                                        }else if('{!value.Certifcation_Rating__r.Rating_type__c}' == '$'){
+                                                                                           document.write(({!fieldValueMap[value.Certifcation_Rating__r.Field_Name__c]}).toLocaleString("ja-JP", { style: "currency", currency: "USD", minimumFractionDigits: 0 ,maximumFractionDigits:0 }));
+                                                                                        }else{
+                                                                                           document.write(({!fieldValueMap[value.Certifcation_Rating__r.Field_Name__c]}).toLocaleString("ja-JP", {   minimumFractionDigits: 0 ,maximumFractionDigits:0 }));
+                                                                                        }
+                                                                                        
+                                                                                    </script>
+                                                                                </apex:outputPanel>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td class="slds-text-align_center">
+                                                                            <div class="slds-truncate">
+                                                                                <script type="text/javascript">   
+                                                                                    if('{!value.Certifcation_Rating__r.Rating_type__c}' == '%'){
+                                                                                       document.write(({!actualValueMap[value.Certifcation_Rating__r.Metric_Field_Name__c]}).toFixed(2) + '%');
+                                                                                    }else if('{!value.Certifcation_Rating__r.Rating_type__c}' == '$'){
+                                                                                       document.write(({!actualValueMap[value.Certifcation_Rating__r.Metric_Field_Name__c]}).toLocaleString("ja-JP", { style: "currency", currency: "USD", minimumFractionDigits: 0 ,maximumFractionDigits:0 }));
+                                                                                    }else{
+                                                                                       document.write(({!actualValueMap[value.Certifcation_Rating__r.Metric_Field_Name__c]}).toLocaleString("ja-JP", {   minimumFractionDigits: 0 ,maximumFractionDigits:0 }));
+                                                                                    }
+                                                                                    
+                                                                                </script>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td class="slds-text-align_right">
+                                                                            <apex:outputPanel rendered="{!value.Rating_Score__c = 10}">
+                                                                                <div class="slds-truncate">Outstanding<span class="circle outstanding">10</span></div>
+                                                                            </apex:outputPanel>
+                                                                            <apex:outputPanel rendered="{!value.Rating_Score__c = 8}">
+                                                                                <div class="slds-truncate">Strong <span class="circle strong">8</span></div>
+                                                                            </apex:outputPanel>
+                                                                            <apex:outputPanel rendered="{!value.Rating_Score__c = 5}">
+                                                                                <div class="slds-truncate">Average <span class="circle average">5</span></div>
+                                                                            </apex:outputPanel>
+                                                                            <apex:outputPanel rendered="{!value.Rating_Score__c = 2}">
+                                                                                <div class="slds-truncate">Marginal <span class="circle marginal">2</span></div>
+                                                                            </apex:outputPanel>
+                                                                            <apex:outputPanel rendered="{!value.Rating_Score__c = 0}">
+                                                                                <div class="slds-truncate">Needs Improvement <span class="circle needs-improvement">0</span></div>
+                                                                            </apex:outputPanel>
+                                                                        </td>
+                                                                    </tr>
+                                                                    </apex:outputPanel>
+                                                                </apex:repeat>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                                <br/>
+                                                <div class="slds-col slds-p-around_medium slds-size_8-of-8">
+                                                    <a href="javascript:;" onclick="show(this.nextSibling.nextSibling.id);" class="slds-text-heading_large" style="color:#5f666f; font-size: 18px; font-weight: 500; font-family: sldsFont;text-decoration: none;"><i style='font-size:20px' class='fas'>&#xf105;</i> 12 Month Rolling</a>
+                                                    <div id="expand3" class="slds-col slds-p-around_medium slds-size_8-of-8" style="display:none">
+                                                        <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered scoring-table">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th class="" scope="col" style="width: 55%;">
+                                                                        <div class="slds-truncate" > </div>
+                                                                    </th>
+                                                                    <th class="slds-text-align_center" scope="col" style="width: 10%;">
+                                                                        <div class="slds-truncate" >Goal</div>
+                                                                    </th>
+                                                                    <th class="slds-text-align_center" scope="col" style="width: 10%;">
+                                                                        <div class="slds-truncate" >Actual</div>
+                                                                    </th>
+                                                                    <th class="slds-text-align_right" scope="col" style="width: 25%;">
+                                                                        <div class="slds-truncate" >Rating</div>
+                                                                    </th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <apex:repeat var="value" value="{!cerificationListQuantitative[key]}" >
+                                                                    <apex:outputPanel rendered="{!IF(value.Certifcation_Rating__r.Group__c != 'Custom Metrics' && contains(value.Certifcation_Rating__r.Name, '12 Month Rolling'),true,false)}">
+                                                                    <tr>
+                                                                        <td>
+                                                                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                                                                <div class="slds-col slds-text-heading_medium slds-size_11-of-12" style="color:#333333; font-size: 16px; font-weight: 400;">
+                                                                                    {!value.Certifcation_Rating__r.Name} 
+                                                                                </div>
+                                                                                <div class="slds-truncate">
+                                                                                <apex:outputlink title="Click for metric/skill training" rendered="{!value.Certifcation_Rating__r.Training_Url__c != null}" value="{!value.Certifcation_Rating__r.Training_Url__c}" > 
+                                                                                <svg id="Layer_2" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20.56 16"><defs><style>.cls-1{fill:#7e8793;stroke-width:0px;}</style></defs><g id="Layer_2-2"><path class="cls-1" d="m19.12,8.4c1.92-1.92,1.92-5.03,0-6.96-1.7-1.7-4.38-1.92-6.34-.52l-.05.04c-.49.35-.6,1.03-.25,1.52s1.03.6,1.52.25l.05-.04c1.09-.78,2.59-.66,3.53.29,1.07,1.07,1.07,2.81,0,3.88l-3.82,3.82c-1.07,1.07-2.81,1.07-3.88,0-.95-.95-1.07-2.44-.29-3.53l.04-.05c.35-.49.23-1.17-.25-1.52s-1.17-.23-1.52.25l-.04.05c-1.4,1.95-1.18,4.63.52,6.33,1.92,1.92,5.03,1.92,6.96,0l3.82-3.82ZM1.44,7.6c-1.92,1.92-1.92,5.03,0,6.96,1.7,1.7,4.38,1.92,6.34.52l.05-.04c.49-.35.6-1.03.25-1.52s-1.03-.6-1.52-.25l-.05.04c-1.09.78-2.59.66-3.53-.29-1.07-1.08-1.07-2.81,0-3.88l3.82-3.82c1.07-1.07,2.81-1.07,3.88,0,.95.95,1.07,2.44.29,3.53l-.04.05c-.35.49-.23,1.17.25,1.52s1.17.23,1.52-.25l.04-.05c1.4-1.96,1.18-4.64-.52-6.34-1.92-1.92-5.03-1.92-6.96,0l-3.82,3.82Z"/></g></svg>                                                                                 
+                                                                        		</apex:outputlink>
+                                                                                </div>
+                                                                                <span class="slds-icon_container slds-icon-utility-info" style="height: 16px;" data-tooltip="{!value.Certifcation_Rating__r.Description__c}"> 
+                                                                                <i aria-hidden="true" class="fa fa-info-circle" style="color:#66cc33; font-size: 16px; " ></i>
+                                                                                </span>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td class="slds-text-align_center">
+                                                                            <div class="slds-truncate">
+                                                                                <apex:outputPanel rendered="{!IF(value.Certifcation_Rating__r.Goal_field_name__c != null,true,false)}">
+                                                                                    <script type="text/javascript">   
+                                                                                        if('{!value.Certifcation_Rating__r.Rating_type__c}' == '%'){
+                                                                                           document.write(({!fieldValueMap[value.Certifcation_Rating__r.Field_Name__c]}).toFixed(2) + '%');
+                                                                                        }else if('{!value.Certifcation_Rating__r.Rating_type__c}' == '$'){
+                                                                                           document.write(({!fieldValueMap[value.Certifcation_Rating__r.Field_Name__c]}).toLocaleString("ja-JP", { style: "currency", currency: "USD", minimumFractionDigits: 0 ,maximumFractionDigits:0 }));
+                                                                                        }else{
+                                                                                           document.write(({!fieldValueMap[value.Certifcation_Rating__r.Field_Name__c]}).toLocaleString("ja-JP", {   minimumFractionDigits: 0 ,maximumFractionDigits:0 }));
+                                                                                        }
+                                                                                        
+                                                                                    </script>
+                                                                                </apex:outputPanel>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td class="slds-text-align_center">
+                                                                            <div class="slds-truncate">
+                                                                                <script type="text/javascript">   
+                                                                                    if('{!value.Certifcation_Rating__r.Rating_type__c}' == '%'){
+                                                                                       document.write(({!actualValueMap[value.Certifcation_Rating__r.Metric_Field_Name__c]}).toFixed(2) + '%');
+                                                                                    }else if('{!value.Certifcation_Rating__r.Rating_type__c}' == '$'){
+                                                                                       document.write(({!actualValueMap[value.Certifcation_Rating__r.Metric_Field_Name__c]}).toLocaleString("ja-JP", { style: "currency", currency: "USD", minimumFractionDigits: 0 ,maximumFractionDigits:0 }));
+                                                                                    }else{
+                                                                                       document.write(({!actualValueMap[value.Certifcation_Rating__r.Metric_Field_Name__c]}).toLocaleString("ja-JP", {   minimumFractionDigits: 0 ,maximumFractionDigits:0 }));
+                                                                                    }
+                                                                                    
+                                                                                </script>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td class="slds-text-align_right">
+                                                                            <apex:outputPanel rendered="{!value.Rating_Score__c = 10}">
+                                                                                <div class="slds-truncate">Outstanding<span class="circle outstanding">10</span></div>
+                                                                            </apex:outputPanel>
+                                                                            <apex:outputPanel rendered="{!value.Rating_Score__c = 8}">
+                                                                                <div class="slds-truncate">Strong <span class="circle strong">8</span></div>
+                                                                            </apex:outputPanel>
+                                                                            <apex:outputPanel rendered="{!value.Rating_Score__c = 5}">
+                                                                                <div class="slds-truncate">Average <span class="circle average">5</span></div>
+                                                                            </apex:outputPanel>
+                                                                            <apex:outputPanel rendered="{!value.Rating_Score__c = 2}">
+                                                                                <div class="slds-truncate">Marginal <span class="circle marginal">2</span></div>
+                                                                            </apex:outputPanel>
+                                                                            <apex:outputPanel rendered="{!value.Rating_Score__c = 0}">
+                                                                                <div class="slds-truncate">Needs Improvement <span class="circle needs-improvement">0</span></div>
+                                                                            </apex:outputPanel>
+                                                                        </td>
+                                                                    </tr>
+                                                                    </apex:outputPanel>
+                                                                </apex:repeat>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                              </div>
+                                              
+        
+                                            </apex:outputPanel>
+                                            <apex:outputPanel rendered="{!IF(key != 'Quantitative',true,false)}" style="width:100%;">
+                                                <!------------------------ Till Here---------------------------------->
+                                            <div class="slds-col slds-p-around_medium slds-size_8-of-8">
+                                                <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered scoring-table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="" scope="col" style="width: 55%;">
+                                                                <div class="slds-truncate" > </div>
+                                                            </th>
+                                                            <th class="slds-text-align_center" scope="col" style="width: 10%;">
+                                                                <div class="slds-truncate" >Goal</div>
+                                                            </th>
+                                                            <th class="slds-text-align_center" scope="col" style="width: 10%;">
+                                                                <div class="slds-truncate" >Actual</div>
+                                                            </th>
+                                                            <th class="slds-text-align_right" scope="col" style="width: 25%;">
+                                                                <div class="slds-truncate" >Rating</div>
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <apex:repeat var="value" value="{!cerificationListQuantitative[key]}" >
+                                                            <apex:outputPanel rendered="{!IF(value.Certifcation_Rating__r.Group__c != 'Custom Metrics',true,false)}">
+                                                            <tr>
+                                                                <td>
+                                                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                                                        <div class="slds-col slds-text-heading_medium slds-size_11-of-12" style="color:#333333; font-size: 16px; font-weight: 400;">
+                                                                            {!value.Certifcation_Rating__r.Name} 
+                                                                        </div>
+                                                                        <div class="slds-truncate">
+                                                                            <apex:outputlink title="Click for metric/skill training" rendered="{!value.Certifcation_Rating__r.Training_Url__c != null}" value="{!value.Certifcation_Rating__r.Training_Url__c}" > 
+                                                                                <svg id="Layer_2" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20.56 16"><defs><style>.cls-1{fill:#7e8793;stroke-width:0px;}</style></defs><g id="Layer_2-2"><path class="cls-1" d="m19.12,8.4c1.92-1.92,1.92-5.03,0-6.96-1.7-1.7-4.38-1.92-6.34-.52l-.05.04c-.49.35-.6,1.03-.25,1.52s1.03.6,1.52.25l.05-.04c1.09-.78,2.59-.66,3.53.29,1.07,1.07,1.07,2.81,0,3.88l-3.82,3.82c-1.07,1.07-2.81,1.07-3.88,0-.95-.95-1.07-2.44-.29-3.53l.04-.05c.35-.49.23-1.17-.25-1.52s-1.17-.23-1.52.25l-.04.05c-1.4,1.95-1.18,4.63.52,6.33,1.92,1.92,5.03,1.92,6.96,0l3.82-3.82ZM1.44,7.6c-1.92,1.92-1.92,5.03,0,6.96,1.7,1.7,4.38,1.92,6.34.52l.05-.04c.49-.35.6-1.03.25-1.52s-1.03-.6-1.52-.25l-.05.04c-1.09.78-2.59.66-3.53-.29-1.07-1.08-1.07-2.81,0-3.88l3.82-3.82c1.07-1.07,2.81-1.07,3.88,0,.95.95,1.07,2.44.29,3.53l-.04.05c-.35.49-.23,1.17.25,1.52s1.17.23,1.52-.25l.04-.05c1.4-1.96,1.18-4.64-.52-6.34-1.92-1.92-5.03-1.92-6.96,0l-3.82,3.82Z"/></g></svg>                                                                                 
+                                                                            </apex:outputlink>
+                                                                        </div>
+                                                                        <span class="slds-icon_container slds-icon-utility-info" style="height: 16px;" data-tooltip="{!value.Certifcation_Rating__r.Description__c}"> 
+                                                                        <i aria-hidden="true" class="fa fa-info-circle" style="color:#66cc33; font-size: 16px; " ></i>
+                                                                        </span>
+                                                                    </div>
+                                                                </td>
+                                                                <td class="slds-text-align_center">
+                                                                    <div class="slds-truncate">
+                                                                        <apex:outputPanel rendered="{!IF(value.Certifcation_Rating__r.Goal_field_name__c != null,true,false)}">
+                                                                            <script type="text/javascript">   
+                                                                                if('{!value.Certifcation_Rating__r.Rating_type__c}' == '%'){
+                                                                                   document.write(({!fieldValueMap[value.Certifcation_Rating__r.Field_Name__c]}).toFixed(2) + '%');
+                                                                                }else if('{!value.Certifcation_Rating__r.Rating_type__c}' == '$'){
+                                                                                   document.write(({!fieldValueMap[value.Certifcation_Rating__r.Field_Name__c]}).toLocaleString("ja-JP", { style: "currency", currency: "USD", minimumFractionDigits: 0 ,maximumFractionDigits:0 }));
+                                                                                }else{
+                                                                                   document.write(({!fieldValueMap[value.Certifcation_Rating__r.Field_Name__c]}).toLocaleString("ja-JP", {   minimumFractionDigits: 0 ,maximumFractionDigits:0 }));
+                                                                                }
+                                                                                
+                                                                            </script>
+                                                                        </apex:outputPanel>
+                                                                    </div>
+                                                                </td>
+                                                                <td class="slds-text-align_center">
+                                                                    <div class="slds-truncate">
+                                                                        <script type="text/javascript">   
+                                                                            if('{!value.Certifcation_Rating__r.Rating_type__c}' == '%'){
+                                                                               document.write(({!actualValueMap[value.Certifcation_Rating__r.Metric_Field_Name__c]}).toFixed(2) + '%');
+                                                                            }else if('{!value.Certifcation_Rating__r.Rating_type__c}' == '$'){
+                                                                               document.write(({!actualValueMap[value.Certifcation_Rating__r.Metric_Field_Name__c]}).toLocaleString("ja-JP", { style: "currency", currency: "USD", minimumFractionDigits: 0 ,maximumFractionDigits:0 }));
+                                                                            }else{
+                                                                               document.write(({!actualValueMap[value.Certifcation_Rating__r.Metric_Field_Name__c]}).toLocaleString("ja-JP", {   minimumFractionDigits: 0 ,maximumFractionDigits:0 }));
+                                                                            }
+                                                                            
+                                                                        </script>
+                                                                    </div>
+                                                                </td>
+                                                                <td class="slds-text-align_right">
+                                                                    <apex:outputPanel rendered="{!value.Rating_Score__c = 10}">
+                                                                        <div class="slds-truncate">Outstanding<span class="circle outstanding">10</span></div>
+                                                                    </apex:outputPanel>
+                                                                    <apex:outputPanel rendered="{!value.Rating_Score__c = 8}">
+                                                                        <div class="slds-truncate">Strong <span class="circle strong">8</span></div>
+                                                                    </apex:outputPanel>
+                                                                    <apex:outputPanel rendered="{!value.Rating_Score__c = 5}">
+                                                                        <div class="slds-truncate">Average <span class="circle average">5</span></div>
+                                                                    </apex:outputPanel>
+                                                                    <apex:outputPanel rendered="{!value.Rating_Score__c = 2}">
+                                                                        <div class="slds-truncate">Marginal <span class="circle marginal">2</span></div>
+                                                                    </apex:outputPanel>
+                                                                    <apex:outputPanel rendered="{!value.Rating_Score__c = 0}">
+                                                                        <div class="slds-truncate">Needs Improvement <span class="circle needs-improvement">0</span></div>
+                                                                    </apex:outputPanel>
+                                                                </td>
+                                                            </tr>
+                                                            </apex:outputPanel>
+                                                        </apex:repeat>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            </apex:outputPanel>
+                                        </div>
+                                        <!--<div class="slds-grid slds-size_8-of-8">
+                                            <div class="slds-col slds-p-around_medium slds-size_7-of-8">
+                                                <span class="slds-text-heading_large slds-p-around_large" style="color:#333333; font-size: 24px; font-weight: 500;">Individual {!key} Metric Scores</span>
+                                                <span class="slds-icon_container slds-p-top_large" data-tooltip="Individual {!key} Metric Scores">
+                                                    <i aria-hidden="true" class="fa fa-info-circle" style="color:#ff9900; font-size: 26px;"></i>
+                                                </span>
+                                                <span class="slds-p-left_xx-large">
+                                                  
+                                                </span>
+                                            </div>
+                                            <div class="slds-col slds-p-around_medium slds-size_1-of-8">
+                                            </div>
+                                            </div>
+                                            <div class="slds-size_8-of-8 slds-p-top_large slds-m-top_large slds-border_top slds-m-bottom_x-large" style="border-width: 2px; border-color: #7e8793;">
+                                            <apex:repeat var="value" value="{!cerificationListQuantitative[key]}">
+                                            
+                                                <div class="slds-grid slds-p-around_medium" style="border-bottom: 1px solid #c1c1c1;">
+                                                    <div class="slds-col slds-text-heading_medium slds-size_6-of-8" style="color:#333333; font-size: 16px; font-weight: 400; border-right: 1px solid #c1c1c1;">{!value.Certifcation_Rating__r.Name}</div>
+                                                    <div class="slds-col slds-text-heading_medium slds-size_2-of-8" style="color:#333333; font-size: 16px; text-align: right; font-weight: 400;">{!IF(value.Rating_Score__c == 10,'Outstanding (10)',If(value.Rating_Score__c == 8,'Strong (8)',IF(value.Rating_Score__c == 5,'Average (5)',IF(value.Rating_Score__c == 2,'Marginal (2)','Needs Improvement (0)'))))} </div>
+                                                </div>
+                                                                                                                        
+                                            </apex:repeat>
+                                            </div>-->
+                                    </div>
+                                </apex:repeat>
+                            </div>
+                            <div id="CustomMetrics" Style="width: 100%">
+                                <apex:repeat var="key" value="{!cerificationListQuantitative}" rendered="{!displayMetric}">
+                                    <div class="slds-grid slds-wrap slds-p-around_xx-large slds-size_1-of-1" style="background: #fff;font-family: Arial,Helvetica,sans-serif;" >
+                                        <div class="slds-grid slds-size_8-of-8 slds-wrap">
+                                            <div class="slds-col slds-p-around_medium slds-size_8-of-8">
+                                                <div class="slds-text-heading_large" style="color:#5f666f; font-size: 24px; font-weight: 700; font-family: sldsFont;">Individual Custom  Metric Scores
+                                                <span class="slds-icon_container slds-icon-utility-info" style="height: 16px;" data-tooltip="{!monthlyDate} {!quarterlyDate  }"> 
+                                                    <i aria-hidden="true" class="fa fa-info-circle" style="color:#66cc33; font-size: 16px; " ></i>
+                                                </span>
+                                                </div>
+                                            </div>
+                                            <div class="slds-col slds-p-around_medium slds-size_8-of-8">
+                                                <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered scoring-table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="" scope="col" style="width: 55%;">
+                                                                <div class="slds-truncate" > </div>
+                                                            </th>
+                                                            <th class="slds-text-align_center" scope="col" style="width: 10%;">
+                                                                <div class="slds-truncate" >Goal</div>
+                                                            </th>
+                                                            <th class="slds-text-align_center" scope="col" style="width: 10%;">
+                                                                <div class="slds-truncate" >Actual</div>
+                                                            </th>
+                                                            <th class="slds-text-align_right" scope="col" style="width: 25%;">
+                                                                <div class="slds-truncate" >Rating</div>
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <apex:repeat var="value" value="{!cerificationListQuantitative[key]}" >
+                                                            <apex:outputPanel rendered="{!IF(AND(value.Certifcation_Rating__r.Group__c == 'Custom Metrics',value.Certifcation_Rating__r.Display_Custom_Metric__c),true,false)}">
+                                                            <tr>
+                                                                <td>
+                                                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                                                        <div class="slds-col slds-text-heading_medium slds-size_11-of-12" style="color:#333333; font-size: 16px; font-weight: 400;">
+                                                                            {!value.Certifcation_Rating__r.Name} 
+                                                                        </div>
+                                                                        <div class="slds-truncate">
+                                                                            <apex:outputlink title="Click for metric/skill training" rendered="{!value.Certifcation_Rating__r.Training_Url__c != null}" value="{!value.Certifcation_Rating__r.Training_Url__c}"> 
+                                                                                <svg id="Layer_2" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20.56 16"><defs><style>.cls-1{fill:#7e8793;stroke-width:0px;}</style></defs><g id="Layer_2-2"><path class="cls-1" d="m19.12,8.4c1.92-1.92,1.92-5.03,0-6.96-1.7-1.7-4.38-1.92-6.34-.52l-.05.04c-.49.35-.6,1.03-.25,1.52s1.03.6,1.52.25l.05-.04c1.09-.78,2.59-.66,3.53.29,1.07,1.07,1.07,2.81,0,3.88l-3.82,3.82c-1.07,1.07-2.81,1.07-3.88,0-.95-.95-1.07-2.44-.29-3.53l.04-.05c.35-.49.23-1.17-.25-1.52s-1.17-.23-1.52.25l-.04.05c-1.4,1.95-1.18,4.63.52,6.33,1.92,1.92,5.03,1.92,6.96,0l3.82-3.82ZM1.44,7.6c-1.92,1.92-1.92,5.03,0,6.96,1.7,1.7,4.38,1.92,6.34.52l.05-.04c.49-.35.6-1.03.25-1.52s-1.03-.6-1.52-.25l-.05.04c-1.09.78-2.59.66-3.53-.29-1.07-1.08-1.07-2.81,0-3.88l3.82-3.82c1.07-1.07,2.81-1.07,3.88,0,.95.95,1.07,2.44.29,3.53l-.04.05c-.35.49-.23,1.17.25,1.52s1.17.23,1.52-.25l.04-.05c1.4-1.96,1.18-4.64-.52-6.34-1.92-1.92-5.03-1.92-6.96,0l-3.82,3.82Z"/></g></svg>                                                                                 
+                                                                            </apex:outputlink>
+                                                                        </div>
+                                                                        <span class="slds-icon_container slds-icon-utility-info" style="height: 16px;" data-tooltip="{!value.Certifcation_Rating__r.Description__c}"> 
+                                                                        <i aria-hidden="true" class="fa fa-info-circle" style="color:#66cc33; font-size: 16px; " ></i>
+                                                                        </span>
+                                                                    </div>
+                                                                </td>
+                                                                <td class="slds-text-align_center">
+                                                                    <div class="slds-truncate">
+                                                                        <apex:outputPanel rendered="{!IF(value.Certifcation_Rating__r.Goal_field_name__c != null,true,false)}">
+                                                                            <script type="text/javascript">   
+                                                                                if('{!value.Certifcation_Rating__r.Rating_type__c}' == '%'){
+                                                                                   document.write(({!fieldValueMap [value.Certifcation_Rating__r.Field_Name__c]}).toFixed(2) + '%');
+                                                                                }else if('{!value.Certifcation_Rating__r.Rating_type__c}' == '$'){
+                                                                                   document.write(({!fieldValueMap [value.Certifcation_Rating__r.Field_Name__c]}).toLocaleString("ja-JP", { style: "currency", currency: "USD", minimumFractionDigits: 0 ,maximumFractionDigits:0 }));
+                                                                                }else{
+                                                                                   document.write(({!fieldValueMap [value.Certifcation_Rating__r.Field_Name__c]}).toLocaleString("ja-JP", {   minimumFractionDigits: 0 ,maximumFractionDigits:0 }));
+                                                                                }
+                                                                                
+                                                                            </script>
+                                                                        </apex:outputPanel>
+                                                                    </div>
+                                                                </td>
+                                                                <td class="slds-text-align_center">
+                                                                    <div class="slds-truncate">
+                                                                        <script type="text/javascript">   
+                                                                            if('{!value.Certifcation_Rating__r.Rating_type__c}' == '%'){
+                                                                               document.write(({!actualValueMap[value.Certifcation_Rating__r.Metric_Field_Name__c]}).toFixed(2) + '%');
+                                                                            }else if('{!value.Certifcation_Rating__r.Rating_type__c}' == '$'){
+                                                                               document.write(({!actualValueMap[value.Certifcation_Rating__r.Metric_Field_Name__c]}).toLocaleString("ja-JP", { style: "currency", currency: "USD", minimumFractionDigits: 0 ,maximumFractionDigits:0 }));
+                                                                            }else{
+                                                                               document.write(({!actualValueMap[value.Certifcation_Rating__r.Metric_Field_Name__c]}).toLocaleString("ja-JP", {   minimumFractionDigits: 0 ,maximumFractionDigits:0 }));
+                                                                            }
+                                                                            
+                                                                        </script>
+                                                                    </div>
+                                                                </td>
+                                                                <td class="slds-text-align_right">
+                                                                    <apex:outputPanel rendered="{!value.Rating_Score__c = 10}">
+                                                                        <div class="slds-truncate">Outstanding<span class="circle outstanding">10</span></div>
+                                                                    </apex:outputPanel>
+                                                                    <apex:outputPanel rendered="{!value.Rating_Score__c = 8}">
+                                                                        <div class="slds-truncate">Strong <span class="circle strong">8</span></div>
+                                                                    </apex:outputPanel>
+                                                                    <apex:outputPanel rendered="{!value.Rating_Score__c = 5}">
+                                                                        <div class="slds-truncate">Average <span class="circle average">5</span></div>
+                                                                    </apex:outputPanel>
+                                                                    <apex:outputPanel rendered="{!value.Rating_Score__c = 2}">
+                                                                        <div class="slds-truncate">Marginal <span class="circle marginal">2</span></div>
+                                                                    </apex:outputPanel>
+                                                                    <apex:outputPanel rendered="{!value.Rating_Score__c = 0}">
+                                                                        <div class="slds-truncate">Needs Improvement <span class="circle needs-improvement">0</span></div>
+                                                                    </apex:outputPanel>
+                                                                </td>
+                                                            </tr>
+                                                            </apex:outputPanel>
+                                                        </apex:repeat>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                         
+                                    </div>
+                                </apex:repeat>
+                            </div>
+                            <div id="Qualitative" Style="width: 100%">  
+                                <apex:repeat var="key" value="{!cerificationList}">
+                                    <div class="slds-grid slds-wrap slds-p-around_xx-large slds-size_1-of-1" style="background: #fff;font-family: Arial,Helvetica,sans-serif;" >
+                                        <div class="slds-grid slds-size_8-of-8 slds-wrap">
+                                            <div class="slds-col slds-p-around_medium slds-size_8-of-8">
+                                                <div class="slds-text-heading_large" style="color:#5f666f; font-size: 24px; font-weight: 700; font-family: sldsFont;">Individual {!key} Metric Scores
+                                                    <!--Added for U8027 Add links to evaluation guidelines ROHIT-->
+                                                    <span class="help" reRender="popup" name="popup" onclick="popup('pop')"  style="float; font-size: 16px; line-height: 16px; margin: 0 0 0 5px;">Help <i style="font-size: 16px;" class="fa fa-question-circle" aria-hidden="true"></i>
+                                                        <apex:param name="popClose" value="" assignTo="{!popClose}"/>  
+                                                    </span>
+                                                    <!--Added for U8027 Add links to evaluation guidelines ROHIT-->
+                                                </div>
+                                            </div>
+                                            <div class="slds-col slds-p-around_medium slds-size_8-of-8">
+                                                <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered scoring-table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="" scope="col" style="width: 75%;">
+                                                                <div class="slds-truncate"  > </div>
+                                                            </th>
+                                                            <th class="slds-text-align_right" scope="col" style="width: 25%;">
+                                                                <div class="slds-truncate"  >Rating</div>
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <apex:repeat var="value" value="{!cerificationList[key]}">
+                                                            <tr>
+                                                                <td>
+                                                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                                                        <div class="slds-col slds-text-heading_medium slds-size_8-of-12" style="color:#333333; font-size: 16px; font-weight: 400;">
+                                                                            {!value.Certifcation_Rating__r.Name} 
+                                                                        </div>
+                                                                        <div class="slds-truncate slds-size_1-of-12" style="display: flex; align-items: center;">
+                                                                            <apex:outputlink title="Click for metric/skill training" rendered="{!value.Certifcation_Rating__r.Training_Url__c != null}" value="{!value.Certifcation_Rating__r.Training_Url__c}"> 
+                                                                                <svg id="Layer_2" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20.56 16"><defs><style>.cls-1{fill:#7e8793;stroke-width:0px;}</style></defs><g id="Layer_2-2"><path class="cls-1" d="m19.12,8.4c1.92-1.92,1.92-5.03,0-6.96-1.7-1.7-4.38-1.92-6.34-.52l-.05.04c-.49.35-.6,1.03-.25,1.52s1.03.6,1.52.25l.05-.04c1.09-.78,2.59-.66,3.53.29,1.07,1.07,1.07,2.81,0,3.88l-3.82,3.82c-1.07,1.07-2.81,1.07-3.88,0-.95-.95-1.07-2.44-.29-3.53l.04-.05c.35-.49.23-1.17-.25-1.52s-1.17-.23-1.52.25l-.04.05c-1.4,1.95-1.18,4.63.52,6.33,1.92,1.92,5.03,1.92,6.96,0l3.82-3.82ZM1.44,7.6c-1.92,1.92-1.92,5.03,0,6.96,1.7,1.7,4.38,1.92,6.34.52l.05-.04c.49-.35.6-1.03.25-1.52s-1.03-.6-1.52-.25l-.05.04c-1.09.78-2.59.66-3.53-.29-1.07-1.08-1.07-2.81,0-3.88l3.82-3.82c1.07-1.07,2.81-1.07,3.88,0,.95.95,1.07,2.44.29,3.53l-.04.05c-.35.49-.23,1.17.25,1.52s1.17.23,1.52-.25l.04-.05c1.4-1.96,1.18-4.64-.52-6.34-1.92-1.92-5.03-1.92-6.96,0l-3.82,3.82Z"/></g></svg>                                                                                 
+                                                                            </apex:outputlink>
+                                                                        
+                                                                        
+                                                                        <span class="slds-icon_container slds-icon-utility-info" style="height: 16px;" data-tooltip="{!value.Certifcation_Rating__r.Description__c}"> 
+                                                                            <i aria-hidden="true" class="fa fa-info-circle" style="color:#66cc33; font-size: 16px; " ></i>
+                                                                        </span>    
+                                                                       </div>
+
+                                                                        <div style="display:{!IF(value.Comment__c != null && value.Comment__c !='','flex','none')}; padding: 5px 10px 0; white-space: normal;"><i style="margin-right: 5px; margin-top: 3px;" class="far fa-comment-dots"></i>{!value.Comment__c}</div>
+                                                                    </div>
+                                                                </td>
+                                                                <td class="slds-text-align_right">
+                                                                    <apex:outputPanel rendered="{!value.Rating_Score__c = 10}">
+                                                                        <div class="slds-truncate">Greatly exceeds expectations<span class="circle outstanding">10</span></div>
+                                                                    </apex:outputPanel>
+                                                                    <apex:outputPanel rendered="{!value.Rating_Score__c = 8}">
+                                                                        <div class="slds-truncate">Exceeds expectations <span class="circle strong">8</span></div>
+                                                                    </apex:outputPanel>
+                                                                    <apex:outputPanel rendered="{!value.Rating_Score__c = 5}">
+                                                                        <div class="slds-truncate">Meets expectations <span class="circle average">5</span></div>
+                                                                    </apex:outputPanel>
+                                                                    <apex:outputPanel rendered="{!value.Rating_Score__c = 2}">
+                                                                        <div class="slds-truncate">Below expectations <span class="circle marginal">2</span></div>
+                                                                    </apex:outputPanel>
+                                                                    <apex:outputPanel rendered="{!value.Rating_Score__c = 0}">
+                                                                        <div class="slds-truncate">Greatly below expectations <span class="circle needs-improvement">0</span></div>
+                                                                    </apex:outputPanel>
+                                                                </td>
+                                                            </tr>
+                                                        </apex:repeat>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <!--<div class="slds-grid slds-size_8-of-8">
+                                            <div class="slds-col slds-p-around_medium slds-size_7-of-8">
+                                                <span class="slds-text-heading_large slds-p-around_large" style="color:#333333; font-size: 24px; font-weight: 500;">Individual {!key} Metric Scores</span>
+                                                <span class="slds-icon_container slds-p-top_large" data-tooltip="Individual {!key} Metric Scores">
+                                                    <i aria-hidden="true" class="fa fa-info-circle" style="color:#ff9900; font-size: 26px;"></i>
+                                                </span>
+                                                <span class="slds-p-left_xx-large">
+                                                  
+                                                </span>
+                                            </div>
+                                            <div class="slds-col slds-p-around_medium slds-size_1-of-8">
+                                            </div>
+                                            </div>
+                                            <div class="slds-size_8-of-8 slds-p-top_large slds-m-top_large slds-border_top slds-m-bottom_x-large" style="border-width: 2px; border-color: #7e8793;">
+                                            <apex:repeat var="value" value="{!cerificationListQuantitative[key]}">
+                                            
+                                            <div class="slds-grid slds-p-around_medium" style="border-bottom: 1px solid #c1c1c1;">
+                                                <div class="slds-col slds-text-heading_medium slds-size_6-of-8" style="color:#333333; font-size: 16px; font-weight: 400; border-right: 1px solid #c1c1c1;">{!value.Certifcation_Rating__r.Name}</div>
+                                                <div class="slds-col slds-text-heading_medium slds-size_2-of-8" style="color:#333333; font-size: 16px; text-align: right; font-weight: 400;">{!IF(value.Rating_Score__c == 10,'Outstanding (10)',If(value.Rating_Score__c == 8,'Strong (8)',IF(value.Rating_Score__c == 5,'Average (5)',IF(value.Rating_Score__c == 2,'Marginal (2)','Needs Improvement (0)'))))} </div>
+                                            </div>
+                                                                                                            
+                                            </apex:repeat>
+                                            </div>-->
+                                    </div>
+                                </apex:repeat>
+                                <apex:actionFunction action="{!popup}" name="popup" reRender="popup">
+                                    <apex:param name="popClose" value="" assignTo="{!popClose}"/>
+                                </apex:actionFunction>
+                                <apex:outputPanel id="popup">
+                                    <apex:outputPanel rendered="{!displayPopup}">  
+                                        <div id="tab-default-1" class="slds-tabs_default__content slds-show" role="tabpanel" aria-labelledby="tab-default-1__item" style="padding: 0;">
+                                            <div class="slds-wrap slds-is-relative" style="background: #fff; font-family: Arial;">
+                                                <div class="slds-grid slds-is-absolute" style="position:fixed; top: 0; z-index: 999; right: 0; border: 2px solid #ff9900; border-radius: 5px; background: #fff; width: 480px; height: 60vh; box-shadow: 0 0 10px 0 rgba(0,0,0,0.3);">
+                                                    <div class="close" style="position: absolute; top: 10px; right: 20px; height: 20px; width: 20px; text-align: center; font-size: 14px; line-height: 14px; cursor: pointer;" onclick="popup('close')">
+                                                        <apex:image url="{!URLFOR($Resource.EvaluationIcon,'Evaluationicon/close.jpg')}" />
+                                                    </div>
+                                                    <div class="slds-p-around_medium" style="overflow: auto;">
+                                                        <apex:repeat value="{!guildlineList}" var="g">
+                                                            <h3 style="color:#00b2ef; font-size: 18px; font-weight: bold;" class="site-text-heading--medium slds-p-bottom_x-small {!IF(g.name =='Outstanding','','slds-p-top_medium')} slds-grid">{!g.name}</h3>
+                                                            <div style="color:#333; font-size: 16px; font-weight: normal;">
+                                                                <apex:outputField value="{!g.Description__c}" styleClass="slds-p-bottom_x-small" />
+                                                            </div>
+                                                        </apex:repeat>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div> 
+                                    </apex:outputPanel>                                                     
+                                </apex:outputPanel>
+                            </div >
+                            <!--   <apex:commandLink action="{!displayAddEditActionPlan}" rerender="modalid" html-data-toggle="modal" html-data-target="#autoSaveConfirm" >
+                                <i aria-hidden="true" class="fas fa-pencil-alt " style="color: #333333; font-size: 20px;"></i>       
+                                <apex:param name="actionPlanId" assignTo="{!actionPlanId}" value="a0L1H00000Mt0dK"/>
+                                </apex:commandLink> -->
+                        </div>
+                        <apex:actionFunction id="displayAddEditActionPlan" name="displayAddEditActionPlan" action="{!displayAddEditActionPlan}"   reRender="modalid"  oncomplete="clearselect2();"/>
+                        <apex:actionFunction id="hideAddEditActionPlan" name="hideAddEditActionPlan" action="{!hideAddEditActionPlan}"  reRender="modalid" />
+                        <apex:actionFunction id="save" name="save" action="{!saveRating}"  reRender="ActionPlan,modalid" oncomplete="hideAddEditActionPlan()"></apex:actionFunction>
+                    </div>
+                </div>
+                <!-- Modal content-->
+                <div class="modal fade " id="autoSaveConfirm" role="dialog">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" onclick="hideAddEditRating();">&times;</button>
+                                <h4 class="modal-title">
+                                    <ul>
+                                        <li style="text-align: center;">New Action Plan</li>
+                                    </ul>
+                                </h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="delete-content-block">
+                                    <apex:outputPanel id="modalid">
+                                        <div class="slds-grid slds-wrap">
+                                            <div class="slds-size_8-of-8 slds-p-around_small">
+                                                <ul id="progress">
+                                                    <li class="{!IF(actionPlanSelected.Status__c=='Started','active', IF(actionPlanSelected.Status__c=='In Progress' || actionPlanSelected.Status__c=='Completed' || actionPlanSelected.Status__c=='Delayed'||actionPlanSelected.Status__c=='Removed' ||actionPlanSelected.Status__c=='Incomplete','completed',''))}">Started</li>
+                                                    <li class="{!IF(actionPlanSelected.Status__c=='In Progress','active', IF(actionPlanSelected.Status__c=='Completed' || actionPlanSelected.Status__c=='Delayed'||actionPlanSelected.Status__c=='Removed' ||actionPlanSelected.Status__c=='Incomplete','completed',''))}">In Progress</li>
+                                                    <li class="{!IF(actionPlanSelected.Status__c=='Completed','active', IF(actionPlanSelected.Status__c=='Delayed'||actionPlanSelected.Status__c=='Removed' ||actionPlanSelected.Status__c=='Incomplete','completed',''))}">Completed</li>
+                                                    <li class="{!IF(actionPlanSelected.Status__c=='Delayed','active', IF(actionPlanSelected.Status__c=='Removed' ||actionPlanSelected.Status__c=='Incomplete','completed',''))}">Delayed</li>
+                                                    <li class="{!IF(actionPlanSelected.Status__c=='Incomplete','active', IF(actionPlanSelected.Status__c=='Removed','completed',''))}">Incomplete</li>
+                                                    <li class="{!IF(actionPlanSelected.Status__c=='Removed','active', '')}">Removed</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="slds-grid slds-wrap">
+                                            <div class="slds-size_8-of-8 slds-p-around_small" style="background: #efefef; border-radius: 5px; font-weight: 700; font-size: 18px;">
+                                                Action Step Summary
+                                            </div>
+                                            <div class="slds-size_8-of-8">
+                                                <div class="slds-p-around_small slds-grid">
+                                                    <div class="slds-form-element slds-size_1-of-2 slds-grid" style="align-items: center;">
+                                                        <label class="slds-form-element__label slds-p-around_small" for="select-01" style="color: #00b2ee; font-size: 16px; width: 30%;">Action Plan Name</label>
+                                                        <div class="slds-form-element__control slds-p-left_small slds-p-right_small" style="flex: 1;">
+                                                            <div class="">
+                                                                <span style="color: #333333; font-size: 18px; border-radius:0; display: flex;" styleClass="slds-select slds-p-around_x-small" id="select-01">
+                                                                {!IF(newActionPlan,'This field is calculated upon save',actionPlanSelected.Name)}                                                            
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="slds-form-element slds-size_1-of-2 slds-grid">
+                                                        <label class="slds-form-element__label slds-p-around_small" for="text-input-id-2" style="color: #00b2ee; font-size: 16px; width: 30%;"><sup style="color: red; font-size: 18px; font-weight: bold; line-height: 16px; top: -0.2em;">*</sup>Metric Skill
+                                                        <span class="slds-icon_container slds-icon-utility-info" style="height: 16px;" data-tooltip="Look up the Metric or Skill you would like to document for this Action Step."> 
+                                                        <i aria-hidden="true" class="fa fa-info-circle" style="color:#66cc33; font-size: 16px; " ></i>
+                                                        </span>
+                                                        </label>
+                                                        <div class="slds-form-element__control slds-p-left_small slds-p-right_small" style=" flex: 1;">
+                                                            <apex:selectList style="color: #333333; font-size: 18px; border-radius:0;" styleClass="slds-input slds-p-around_x-small " value="{!actionPlanSelected.Metric_Skill__c }" size="1" id="crname" multiselect="false"  >
+                                                                <apex:selectOptions value="{!CertRatings}"/>
+                                                                <apex:actionSupport event="onchange"   action="{!desUpdate}"  reRender="desc" />
+                                                            </apex:selectList>
+                                                            <apex:outputText style="color:red;display:none; margin: 0px 0px 0px 0px; font-size: 15px;" value="Complete this field." id="crValid"></apex:outputText>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="slds-grid">
+                                            <div class="slds-size_8-of-8">
+                                                <div class="slds-p-around_small slds-grid">
+                                                    <div class="slds-form-element slds-size_1-of-2 slds-grid" style="align-items: center;">
+                                                        <label class="slds-form-element__label slds-p-around_small" for="select-01" style="color: #00b2ee; font-size: 16px; width: 30%;">Sales Rep Profile</label>
+                                                        <div class="slds-form-element__control slds-p-left_small slds-p-right_small" style="flex: 1;">
+                                                            <div class="">
+                                                                <span style="color: #333333; font-size: 18px; border-radius:0; display: flex;" styleClass="slds-select slds-p-around_x-small" >
+                                                                {!salesProfile[0].name}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="slds-form-element slds-size_1-of-2 slds-grid" style="align-items: center;">
+                                                        <label class="slds-form-element__label slds-p-around_small" for="select-01" style="color: #00b2ee; font-size: 16px; width: 30%;">Description</label>
+                                                        <div class="slds-form-element__control slds-p-left_small slds-p-right_small" style="flex: 1;">
+                                                            <div class="">
+                                                                <span style="color: #333333; font-size: 18px; border-radius:0; display: flex;" styleClass="slds-select slds-p-around_x-small" >
+                                                                    <apex:outputText id="desc" value="{!des}"/>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="slds-grid">
+                                            <div class="slds-size_8-of-8">
+                                                <div class="slds-p-around_small slds-grid">
+                                                    <div class="slds-form-element slds-size_1-of-2 slds-grid" style="align-items: center;">
+                                                        <label class="slds-form-element__label slds-p-around_small" for="select-02" style="color: #00b2ee; font-size: 16px; width: 30%;">Manager Name</label>
+                                                        <div class="slds-form-element__control slds-p-left_small slds-p-right_small" style="flex: 1;">
+                                                            <div class="">
+                                                                <span style="color: #333333; font-size: 18px; border-radius:0; display: flex;" styleClass="slds-select slds-p-around_x-small" >
+                                                                {!salesProfile[0].Sales_Manager__r.name}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="slds-form-element slds-size_1-of-2 slds-grid" style="align-items: center;">
+                                                        <label class="slds-form-element__label slds-p-around_small" for="text-input-id-2" style="color: #00b2ee; font-size: 16px; width: 30%;">Period</label>
+                                                        <div class="slds-form-element__control slds-p-left_small slds-p-right_small" style="flex: 1;">
+                                                            <span style="color: #333333; font-size: 18px; border-radius:0; display: flex;" styleClass="slds-select slds-p-around_x-small" id="select-04">
+                                                            {!IF(newActionPlan,'This field is calculated upon save',actionPlanSelected.Period__c)}                                                            
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="slds-grid">
+                                            <div class="slds-size_8-of-8">
+                                                <div class="slds-p-around_small slds-grid">
+                                                    <div class="slds-form-element slds-size_1-of-2 slds-grid" style="align-items: center;">
+                                                        <label class="slds-form-element__label slds-p-around_small" for="select-02" style="color: #00b2ee; font-size: 16px; width: 30%;">Active</label>
+                                                        <div class="slds-form-element__control slds-p-left_small slds-p-right_small" style="flex: 1;">
+                                                            <div class="">
+                                                                <span style="color: #333333; font-size: 18px; border-radius:0; display: flex;" styleClass="slds-select slds-p-around_x-small" >
+                                                                    <label class="slds-checkbox" >
+                                                                        <apex:inputField styleClass="slds-input1"  value="{!actionPlanSelected.Active__c}"/>
+                                                                        <span class="slds-checkbox_faux" style="border: 2px solid #00b2ee; border-radius: 3px;"></span>
+                                                                    </label>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="slds-form-element slds-size_1-of-2 slds-grid">
+                                                        <label class="slds-form-element__label slds-p-around_small" for="text-input-id-2" style="color: #00b2ee; font-size: 16px; width: 30%;"><sup style="color: red; font-size: 18px; font-weight: bold; line-height: 16px; top: -0.2em;">*</sup>Status</label>
+                                                        <div class="slds-form-element__control slds-p-left_small slds-p-right_small" style="flex: 1;">
+                                                            <apex:inputField value="{!actionPlanSelected.Status__c}" style="color: #333333; font-size: 18px; border-radius:0; height: 48px; display: flex;" styleClass="slds-select slds-p-around_x-small RemoveNone" id="select-06"  />
+                                                            <apex:outputText style="color:red;display:none; margin: 0px 0px 0px 0px; font-size: 15px;" value="Complete this field." id="stValid"></apex:outputText>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="slds-grid slds-wrap">
+                                            <div class="slds-size_8-of-8 slds-p-around_small" style="background: #efefef; border-radius: 5px; font-weight: 700; font-size: 18px;">
+                                                Action Step Input
+                                            </div>
+                                            <div class="slds-size_8-of-8">
+                                                <div class="slds-grid slds-wrap">
+                                                    <div class="slds-form-element slds-size_1-of-1 slds-grid slds-p-around_small">
+                                                        <label class="slds-form-element__label slds-p-around_small" for="select-02" style="color: #00b2ee; font-size: 16px; width: 30%;"><sup style="color: red; font-size: 18px; font-weight: bold; line-height: 16px; top: -0.2em;">*</sup>Action Step
+                                                        <span class="slds-icon_container slds-icon-utility-info" style="height: 16px;" data-tooltip="Input a BRIEF description of the Action Step you want the employee to implement."> 
+                                                        <i aria-hidden="true" class="fa fa-info-circle" style="color:#66cc33; font-size: 16px; " ></i>
+                                                        </span>
+                                                        </label>
+                                                        <div class="slds-form-element__control slds-p-left_small slds-p-right_small" style="flex: 1;">
+                                                            <div class="">
+                                                                <apex:inputField value="{!actionPlanSelected.Action_Step__c}" style="color: #333333; font-size: 18px; border-radius:0; height: 48px;" styleClass="slds-select slds-p-around_x-small" id="select-07"  />
+                                                                <apex:outputText style="color:red;display:none; margin: 0px 0px 0px 0px; font-size: 15px;" value="Complete this field." id="apValid"></apex:outputText>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <!--<div class="slds-form-element slds-size_1-of-1 slds-grid slds-p-around_small">
+                                                        <label class="slds-form-element__label slds-p-around_small" for="select-02" style="color: #00b2ee; font-size: 16px; width: 30%;">Measurement Criteria
+                                                        <span class="slds-icon_container slds-icon-utility-info" style="height: 16px;" data-tooltip="Input any measurement changes you expect the employee to achieve as a result of successfully completing this Action Step. For example, Increase Qualified Opportunities Added per month by >5 Opportunities to at least 10/month."> 
+                                                        <i aria-hidden="true" class="fa fa-info-circle" style="color:#66cc33; font-size: 16px; " ></i>
+                                                        </span>
+                                                        </label>
+                                                        <div class="slds-form-element__control slds-p-left_small slds-p-right_small" style="flex: 1;">
+                                                            <div class="">
+                                                                <apex:inputField value="{!actionPlanSelected.Measurement_Criteria__c}" style="color: #333333; font-size: 18px; border-radius:0; height: 48px;resize: vertical;" styleClass="slds-select slds-p-around_x-small" id="select-09"  />
+                                                            </div>
+                                                        </div>
+                                                    </div> -->
+                                                    <div class="slds-form-element slds-size_1-of-1 slds-grid slds-p-around_small">
+                                                        <label class="slds-form-element__label slds-p-around_small" for="select-02" style="color: #00b2ee; font-size: 16px; width: 30%;">Expected Result
+                                                        <span class="slds-icon_container slds-icon-utility-info" style="height: 16px;" data-tooltip="Input any expected results you would like the employee to achieve as a result of successfully completing this Action Step. For example, increase Opportunities added per month by >5 Opportunities to at least 10/month."> 
+                                                        <i aria-hidden="true" class="fa fa-info-circle" style="color:#66cc33; font-size: 16px; " ></i>
+                                                        </span>
+                                                        </label>
+                                                        <div class="slds-form-element__control slds-p-left_small slds-p-right_small" style="flex: 1;">
+                                                            <div class="">
+                                                                <apex:inputField value="{!actionPlanSelected.Result__c}" style="color: #333333; font-size: 18px; border-radius:0; height: 48px;resize: vertical;" styleClass="slds-select slds-p-around_x-small" id="select-08"  />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="slds-form-element slds-size_1-of-1 slds-grid slds-p-around_small">
+                                                        <label class="slds-form-element__label slds-p-around_small" for="select-02" style="color: #00b2ee; font-size: 16px; width: 30%;">Due Date
+                                                        <span class="slds-icon_container slds-icon-utility-info" style="height: 16px;" data-tooltip="Input the expected date of completion for this Action Step."> 
+                                                        <i aria-hidden="true" class="fa fa-info-circle" style="color:#66cc33; font-size: 16px; " ></i>
+                                                        </span>
+                                                        </label>
+                                                        <div class="slds-form-element__control slds-p-left_small slds-p-right_small" style="flex: 1;">
+                                                            <div class="dateblock">
+                                                                <apex:input type="date"     value="{!DueDate}" style="color: #333333; font-size: 18px; border-radius:0; height: 48px; width: 100%;" styleClass="slds-select slds-p-around_x-small" id="select-10"  />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="slds-form-element slds-size_1-of-1 slds-grid slds-p-around_small">
+                                                        <label class="slds-form-element__label slds-p-around_small" for="select-02" style="color: #00b2ee; font-size: 16px; width: 30%;">Result Rating
+                                                        <span class="slds-icon_container slds-icon-utility-info" style="height: 16px;" data-tooltip="Use this field to monitor progress on an interim basis when you observe progress in accomplishing the Action Step."> 
+                                                        <i aria-hidden="true" class="fa fa-info-circle" style="color:#66cc33; font-size: 16px; " ></i>
+                                                        </span>
+                                                        </label>
+                                                        <div class="slds-form-element__control slds-p-left_small slds-p-right_small" style="flex: 1;">
+                                                            <div class="">
+                                                                <apex:inputField value="{!actionPlanSelected.Result_Rating__c}" style="color: #333333; font-size: 18px; border-radius:0; height: 48px;" styleClass="slds-select slds-p-around_x-small" id="select-11"  />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <apex:outputPanel rendered="{!IF($ObjectType.Action_Plan__c.fields.Custom_Field_1__c.Label =='Custom Field 1',false,true)}" style="width: 100%">
+                                                        <div class="slds-form-element slds-size_1-of-1 slds-grid slds-p-around_small">
+                                                            <label class="slds-form-element__label slds-p-around_small" for="select-02" style="color: #00b2ee; font-size: 16px; width: 30%;">{!$ObjectType.Action_Plan__c.fields.Custom_Field_1__c.Label}
+                                                            </label>
+                                                            <div class="slds-form-element__control slds-p-left_small slds-p-right_small" style="flex: 1;">
+                                                                <div class="">
+                                                                    <apex:inputTextarea html-maxlength="150" value="{!actionPlanSelected.Custom_Field_1__c}" style="color: #333333; font-size: 18px; border-radius:0; height: 48px;" styleClass="slds-select slds-p-around_x-small" id="select-14"  />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </apex:outputPanel>
+                                                    <apex:outputPanel rendered="{!IF($ObjectType.Action_Plan__c.fields.Custom_Field_2__c.Label =='Custom Field 2',false,true)}" style="width: 100%">
+                                                        <div class="slds-form-element slds-size_1-of-1 slds-grid slds-p-around_small">
+                                                            <label class="slds-form-element__label slds-p-around_small" for="select-02" style="color: #00b2ee; font-size: 16px; width: 30%;">{!$ObjectType.Action_Plan__c.fields.Custom_Field_2__c.Label}
+                                                            </label>
+                                                            <div class="slds-form-element__control slds-p-left_small slds-p-right_small" style="flex: 1;">
+                                                                <div class="">
+                                                                    <apex:inputTextarea html-maxlength="150" value="{!actionPlanSelected.Custom_Field_2__c}" style="color: #333333; font-size: 18px; border-radius:0; height: 48px;" styleClass="slds-select slds-p-around_x-small" id="select-15"  />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </apex:outputPanel>
+                                                    <apex:outputPanel rendered="{!IF($ObjectType.Action_Plan__c.fields.Custom_Field_3__c.Label =='Custom Field 3',false,true)}" style="width: 100%">
+                                                        <div class="slds-form-element slds-size_1-of-1 slds-grid slds-p-around_small">
+                                                            <label class="slds-form-element__label slds-p-around_small" for="select-02" style="color: #00b2ee; font-size: 16px; width: 30%;">{!$ObjectType.Action_Plan__c.fields.Custom_Field_3__c.Label}
+                                                            </label>
+                                                            <div class="slds-form-element__control slds-p-left_small slds-p-right_small" style="flex: 1;">
+                                                                <div class="">
+                                                                    <apex:inputTextarea html-maxlength="150" value="{!actionPlanSelected.Custom_Field_3__c}" style="color: #333333; font-size: 18px; border-radius:0; height: 48px;" styleClass="slds-select slds-p-around_x-small" id="select-16"  />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </apex:outputPanel>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="slds-grid slds-wrap">
+                                            <div class="slds-size_8-of-8 slds-p-around_small" style="background: #efefef; border-radius: 5px; font-weight: 700; font-size: 18px;">
+                                                Notes
+                                            </div>
+                                            <div class="slds-size_8-of-8">
+                                                <div class="slds-p-around_small slds-grid">
+                                                    <div class="slds-form-element slds-size_1-of-1 slds-grid">
+                                                        <label class="slds-form-element__label slds-p-around_small" for="select-02" style="color: #00b2ee; font-size: 16px; width: 30%;">Employee Notes
+                                                        <span class="slds-icon_container slds-icon-utility-info" style="height: 16px;" data-tooltip="This field permits the Employee to provide feedback on this Action Step."> 
+                                                        <i aria-hidden="true" class="fa fa-info-circle" style="color:#66cc33; font-size: 16px; " ></i>
+                                                        </span>
+                                                        </label>
+                                                        <div class="slds-form-element__control slds-p-left_small slds-p-right_small" style="flex: 1;">
+                                                            <div class="">
+                                                                <apex:inputTextArea richtext="false" value="{!actionPlanSelected.Employee_Response__c}" style="color: #333333; font-size: 18px; border-radius:0; height: 48px;resize: vertical;" styleClass="slds-select slds-p-around_x-small ckeditor" id="select-12"  />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="slds-size_8-of-8">
+                                                <div class="slds-p-around_small slds-grid">
+                                                    <div class="slds-form-element slds-size_1-of-1 slds-grid">
+                                                        <label class="slds-form-element__label slds-p-around_small" for="select-02" style="color: #00b2ee; font-size: 16px; width: 30%;">Manager Notes
+                                                        <span class="slds-icon_container slds-icon-utility-info" style="height: 16px;" data-tooltip="Enter any notes, comments or observations in this field."> 
+                                                        <i aria-hidden="true" class="fa fa-info-circle" style="color:#66cc33; font-size: 16px; " ></i>
+                                                        </span>
+                                                        </label>
+                                                        <div class="slds-form-element__control slds-p-left_small slds-p-right_small" style="flex: 1;">
+                                                            <div class="">
+                                                                <apex:inputTextArea richtext="false" value="{!actionPlanSelected.Notes__c}" style="color: #333333; font-size: 18px; border-radius:0; height: 48px;resize: vertical;" styleClass="slds-select slds-p-around_x-small" id="select-13"  />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--<div class="slds-grid slds-wrap">
+                                            <div class="slds-size_8-of-8 slds-p-around_small" style="background: #efefef; border-radius: 5px; font-weight: 700; font-size: 18px;">
+                                                Notes
+                                            </div>
+                                            
+                                        </div>-->
+                                        <script>
+                                            function clearselect2(){
+                                                if('{!newActionPlan}'){
+                                                    $("[id*='crname']").val('').trigger('change');
+                                                }
+                                            }
+                                            $(function() {
+                                                                           
+                                            $("[id*='crname']").select2({placeholder:'Select'});
+                                            //$("[id*='crname']").val('').trigger('change');
+                                            $('.modal option[value=""]').remove(); 
+                                            
+                                            
+                                            });
+                                            
+                                        </script> 
+                                    </apex:outputPanel>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <div class="btn-block">
+                                    <a data-dismiss="modal"  class="cancel"  > Close</a>
+                                    <!-- <apex:actionFunction id="save" name="save" action="{!saveRating}"  reRender="ratlist,mod" >
+                                        </apex:actionFunction>
+                                        <apex:actionFunction id="createupdate" name="createupdate" action="{!ratingName}"  reRender="mn" /> -->
+                                    <a style="background-color: #ff9900; color: #fff; padding: 9px 70px; border-radius: 30px; font-size: 24px; border: none;" onclick="saveRating();"> Save</a> 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Modal --  autosave -- end -->
+                <script type="text/javascript">
+                    function mod(){
+                        
+                       // $(" span[id*='validname']").css("display", "none");
+                       // $(" span[id*='Descriptionname']").css("display", "none");
+                        displayAddEditActionPlan();
+                        $('#autoSaveConfirm').modal('show'); 
+                        
+                        
+                    }
+                    
+                    $("#autoSaveConfirm").on("hidden.bs.modal", function () {
+                            hideAddEditActionPlan();
+                            $(" span[id*='Cfnamev']").css("display", "none");
+                    });
+                    
+                    
+                    function saveRating(){
+                                
+                        console.log('saveRating');
+                        var b = true;
+                       
+                         var inp3 = $(" [id*='select-07']").val();
+                         if( inp3 == null || jQuery.trim(inp3).length==0){
+                             $(" span[id*='apValid']").css("display", "block");
+                             b = false;
+                             $(" [id*='select-07']").focus();
+                         } else{
+                             $(" span[id*='apValid']").css("display", "none");
+                         }
+                         
+                         var inp4 = $(" [id*='select-06']").val();
+                          
+                         if( inp4 == 'None'){
+                             $(" span[id*='stValid']").css("display", "block");
+                             b = false;
+                             $(" [id*='select-06']").focus();
+                         } else{
+                             $(" span[id*='stValid']").css("display", "none");
+                         }
+                         
+                         var inp5 = $(" [id*='crname']").val();
+                           
+                         if( inp5 == null || jQuery.trim(inp5).length==0){
+                             $(" span[id*='crValid']").css("display", "block");
+                             b = false;
+                             $(" [id*='crname']").focus();
+                         } else{
+                             $(" span[id*='crValid']").css("display", "none");
+                         }
+                         
+                        
+                         
+                          if(b){
+                              
+                              save();
+                             $('#autoSaveConfirm').modal('hide'); 
+                          }
+                                     
+                    }
+                </script>
+                <script>
+                    function HideCat(istrue,idname)
+                    {
+                      
+                    
+                     
+                          var checkval = document.getElementById(idname);
+                          if(istrue.checked )
+                          {   
+                              var checkval = document.getElementById(idname).style.display='block';
+                              if(!!$('[id$=QuantCheckbox]:checked').val() && !!$('[id$=QualCheckbox]:checked').val() && !!$('[id$=ActionPlanCheckbox]:checked').val() ){
+                                        $('[id$=AllCheckbox]').prop('checked', true);
+                                }
+                               
+                          }
+                          else
+                          {
+                              var checkval = document.getElementById(idname).style.display='none';
+                              
+                                 $('[id$=AllCheckbox]').prop('checked', false);
+                              
+                              
+                          }
+                     
+                     
+                    }
+                    
+                    function checkall(idname){
+                    
+                       if(idname == "all"){
+                           if(!$('[id$=AllCheckbox]:checked').val()){
+                        
+                                document.getElementById("Quantitative").style.display='none';
+                                document.getElementById("Qualitative").style.display='none';
+                                document.getElementById("ActionPlanDiv").style.display='none';
+                                document.getElementById("CustomMetrics").style.display='none';
+                                 
+                                
+                                $('[id$=QuantCheckbox]').prop('checked', false);
+                                $('[id$=QualCheckbox]').prop('checked', false);
+                                $('[id$=ActionPlanCheckbox]').prop('checked', false);
+                                $('[id$=CmCheckbox]').prop('checked', false);
+                                
+                                
+                             
+                             }else if(!!$('[id$=AllCheckbox]:checked').val()){
+                                document.getElementById("Quantitative").style.display='block';
+                                document.getElementById("Qualitative").style.display='block';
+                                document.getElementById("ActionPlanDiv").style.display='block';
+                                document.getElementById("CustomMetrics").style.display='block';
+                                 
+                                 
+                                $('[id$=QuantCheckbox]').prop('checked', true);
+                                $('[id$=QualCheckbox]').prop('checked', true);
+                                $('[id$=ActionPlanCheckbox]').prop('checked', true); 
+                                $('[id$=CmCheckbox]').prop('checked', true); 
+                                 
+                             }
+                       } 
+                       
+                    }
+                </script>
+                <script>
+                    $(document).ready(function () {
+                       $('[id$=AllCheckbox]').click();
+                        $('[id$=QuantCheckbox]').prop('checked', true);
+                        $('[id$=QualCheckbox]').prop('checked', true);
+                        $('[id$=ActionPlanCheckbox]').prop('checked', true);
+                        $('[id$=CmCheckbox]').prop('checked', true);
+                         
+                        
+                      });
+                      
+                      $(document).ready(function(){
+                      
+                           $("#table1").tablesorter({
+                              
+                              // use save sort widget
+                              //widgets : ['saveSort'],
+                              emptyTo: 'bottom',
+                              headers : { 0: {  sorter: true},
+                                          1: { sorter: true},
+                                          2: { sorter: true},
+                                          3: { sorter: true},
+                                          4: {sorter: true}
+                                          
+                               }
+                               
+                          });
+                          });
+                        
+                </script> 
+            </html>
+        </apex:actionRegion>
+    </apex:form>
+</apex:page>

@@ -1,0 +1,3 @@
+<apex:page sidebar="false" controller="FunnelAnalyticController" lightningStylesheets="true">
+     
+</apex:page>

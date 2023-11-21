@@ -1,0 +1,9 @@
+<apex:page controller="FetchFiscalYearController" docType="html-5.0">
+    <apex:form >
+        <apex:pageMessages />
+        <apex:input type="date" value="{!strtDate}"/>
+        <br/>
+        <apex:commandButton action="{!updateSetting}" value="Update setting"/>
+
+    </apex:form>
+</apex:page>

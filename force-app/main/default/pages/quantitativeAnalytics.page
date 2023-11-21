@@ -1,0 +1,2 @@
+<apex:page sidebar="false" controller="qualitativeAnalysisController1" showHeader="true" standardStylesheets="true" docType="html-5.0">
+</apex:page>

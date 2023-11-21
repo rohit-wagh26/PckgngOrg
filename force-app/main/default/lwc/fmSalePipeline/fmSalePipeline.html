@@ -1,0 +1,23 @@
+<template>
+    <!-- <div class="slds-p-around_small slds-grid slds-grid--vertical-align-center slds-grid--align-center">
+        <canvas class="barChart" lwc:dom="manual"></canvas>
+        <div if:false={isChartJsInitialized} class="slds-col--padded slds-size--1-of-1">
+            <lightning-spinner alternative-text="Loading" size="medium" variant="base"></lightning-spinner>
+        </div>
+    </div> -->
+    <lightning-layout horizontal-align="end">
+        <lightning-layout-item size="3" flexibility="auto" padding="horizontal-small" class="slds-text-align_left">
+
+            <lightning-combobox class="custom-combobox" value={selectedFilter} options={filterOptions}
+                onchange={handleFilterChange}>
+            </lightning-combobox>
+        </lightning-layout-item>
+    </lightning-layout>
+    <lightning-card>
+        <div class="chart"></div>
+    </lightning-card>
+
+    <!-- <lightning-card title="Pipeline Aging by Stage">
+        <div class="agingHighchart"></div>
+    </lightning-card> -->
+</template>

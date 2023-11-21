@@ -1,0 +1,36 @@
+<template>
+    <lightning-layout>
+		<lightning-layout-item padding="around-small" if:true={showCompanyLevels}>
+			<div class="filters" if:true={companyLevels}>
+				<lightning-tree items={companyLevels} header="Company Levels" onselect={handleCompanyLevelSelection} selected-item={selectedLevel}></lightning-tree>
+			</div>
+		</lightning-layout-item>
+		<lightning-layout-item>
+			<lightning-layout vertical-align="center">
+				<lightning-layout-item padding="around-small" if:false={showCompanyLevels}>
+					<lightning-button label="View Company Hierarchy" title="View Company Hierarchy" onclick={showCompanyLevelsEvent} class="slds-m-left_x-small" icon-name="utility:jump_to_right"></lightning-button>
+				</lightning-layout-item>
+				<lightning-layout-item padding="around-small" if:true={showCompanyLevels}>
+					<lightning-button label="Hide Company Hierarchy" title="Hide Company Hierarchy" onclick={hideCompanyLevelsEvent} class="slds-m-left_x-small" icon-name="utility:jump_to_left"></lightning-button>
+				</lightning-layout-item>
+				<lightning-layout-item padding="around-small" class="slds-border_left slds-border_right">
+					<div class="breadCrumb" if:true={companyLevels}>
+						<lightning-breadcrumbs>
+							<template for:each={levelPath} for:item="crumb">
+								<lightning-breadcrumb key={crumb.name} label={crumb.label} name={crumb.name} onclick={handleCompanyLevelBreadcrumbSelection}></lightning-breadcrumb>
+							</template>
+						</lightning-breadcrumbs>
+					</div>
+				</lightning-layout-item>
+				<lightning-layout-item padding="around-small">
+					<div class="roles" if:true={roles}>
+						<lightning-combobox name="roles" label="Roles" value={selectedRole} variant="label-hidden" placeholder="Select Role" options={roles} onchange={handleRoleSelection}></lightning-combobox>
+					</div>
+				</lightning-layout-item>
+			</lightning-layout>
+			<div>
+				<slot></slot>
+			</div>
+		</lightning-layout-item>
+	</lightning-layout>
+</template>

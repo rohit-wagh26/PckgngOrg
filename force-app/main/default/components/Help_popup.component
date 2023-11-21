@@ -1,0 +1,28 @@
+<apex:component controller="FunnelInstallation">
+<apex:attribute name="helpContent" assignTo="{!help}" type="Help_page__c" description="H"/>
+    <apex:actionFunction action="{!popup}" name="popup" reRender="popup">
+        <apex:param name="popClose" value="" assignTo="{!popClose}"/>
+    </apex:actionFunction>
+    <apex:outputPanel id="popup">
+    <apex:outputPanel rendered="{!displayPopup}">  
+        <div id="tab-default-1" class="slds-tabs_default__content slds-show" role="tabpanel" aria-labelledby="tab-default-1__item" style="padding: 0;">
+           <div class="slds-wrap slds-is-relative" style="background: #fff; font-family: Arial;">
+              <div class="slds-grid slds-is-absolute" style="position:fixed; top: 0; z-index: 999; right: 0; border: 2px solid #ff9900; border-radius: 5px; background: #fff;height: 90vh; width: 50%;  box-shadow: 0 0 10px 0 rgba(0,0,0,0.3);">
+                 <div class="close" style="position: absolute; top: 10px; right: 20px; height: 20px; width: 20px; text-align: center; font-size: 14px; line-height: 14px; cursor: pointer;" onclick="popup('close')">
+                    <apex:image url="{!URLFOR($Resource.EvaluationIcon,'Evaluationicon/close.jpg')}" />
+                 </div>
+                 <div class="slds-p-around_medium" style="overflow: auto;">
+                     
+                       <!--<h3 style="color:#00b2ef; font-size: 18px; font-weight: bold;" class="site-text-heading--medium slds-p-bottom_x-small   slds-grid">Name</h3>-->
+                       <div style="color:#333; font-size: 16px; font-weight: normal;">
+                          <apex:outputField value="{!help.Help__c}" styleClass="slds-p-bottom_x-small" /> 
+                       </div>
+                    
+                 </div>
+              </div>
+           </div>
+        </div> 
+         
+        </apex:outputPanel>                                                     
+    </apex:outputPanel>
+</apex:component>

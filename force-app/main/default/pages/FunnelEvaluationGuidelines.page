@@ -1,0 +1,344 @@
+<apex:page docType="html-5.0" controller="FunnelEvaluationGuidelinesController" sidebar="false" extensions="FunnelInstallation">
+    <apex:form id="page">
+    <html   lang="en">
+    <apex:stylesheet value="{!URLFOR($Resource.SldsCss,'SldsResources/styles/salesforce-lightning-design-system.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.SldsCss,'SldsResources/styles/salesforce-lightning-design-system.min')}"/>
+    <!--Navigation-->
+    <apex:stylesheet value="{!URLFOR($Resource.FunnelScriptFolder,'Design/css/v5.0.8-fontawesome.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.FunnelScriptFolder,'Design/css/v5.0.8-solid.css')}"/>
+    <style>
+         body { font-size: 75%; }
+        .noSidebarCell, .sidebarCell .fixed { padding: 10px; font-family: sldsFont; }
+        
+         @font-face {
+         font-family: sldsFont;
+             src: url({!URLFOR($Resource.SldsCss,'SldsResources/fonts/SalesforceSans-Light.ttf')});
+         }
+         
+         
+         .bPageHeader .phHeader td.left{display: block;}
+        .navigation{display: table; width: 100%; text-align: center;}
+        
+        .navigation ul{margin: 0; padding: 0;}
+        .navigation ul li{display: inline-block; padding: 0 8px; border-left: 1px solid #7e8793; line-height: 17px; margin-left: 0;}
+        .navigation ul li a{color: #7e8793; font-size: 17px; font-weight: bold;}
+        .navigation ul li a:hover{color: #66cc33; text-decoration: none;}
+        .navigation ul li a:focus{outline: none; text-decoration: none;}
+        .navigation ul li {color: #7e8793; font-size: 17px; font-weight: bold;}
+        .navigation ul li:hover{color: #66cc33; text-decoration: none;}
+        .navigation ul li.selected a{color: #66cc33;}
+        .navigation ul li.home{border: none; padding-left: 0; padding-bottom: 10px;}
+        .navigation ul li.home a{color: #00b2ee;}
+        .navigation ul li.help{border-left: 2px solid #7e8793; padding-left: 5px; margin-left: 5px; margin-bottom: 10px;}
+        .navigation ul li.help a{color: #00b2ee;}
+        .navigation ul li:last-child{padding-right: 0;}
+        
+        .navigation ul li.scorenav a{background: url({!$Resource.CertificationNavigationIcon}) no-repeat; padding: 0 0 0 25px; background-position: 0 0; height: 19px; width: 20px;}
+        .navigation ul li.scorenav a:hover {background-position: 0 -23px;}
+        
+        .navigation ul li.funnelanalyticsnav > a{background: url({!$Resource.AnalyticsNavigationIcon}) no-repeat; padding: 0 0 0 25px; background-position: 0 5px; height: 19px; width: 20px; color: #7e8793;}
+        .navigation ul li.funnelanalyticsnav > a:hover{background-position: 0 -17px; color: #66cc33;}
+        
+        .navigation ul li.checklisticon{border-right: 2px solid #7e8793; color: #00b2ee; border-left: 0; margin-right: 5px; cursor: pointer;}
+
+        .navigation ul li.checklisticon a{color: #00b2ee;}
+        
+        .myapp{min-width: 500px; font-family: sldsFont;background-color: #fff; }
+        
+        .navigation ul li.reportnav{position: relative; display: inline-block;cursor: pointer;}
+        .navigation ul li.reportnav ul.subnav{position: absolute; z-index: 1; width: 240px; background: #fff; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); display: none;}
+        .navigation ul li.reportnav ul.subnav li{display: block; text-align: left; border: none; padding: 0;}
+        .navigation ul li.reportnav ul.subnav li a {color: #7e8793; padding: 10px; display: block; width: 100%;}
+        .navigation ul li.reportnav ul.subnav li a:hover{background: #66cc33; color: #fff;}
+        .navigation ul li.reportnav:hover ul.subnav {display: block;}
+        
+        .navigation ul li.reportnav ul.subnavlast{right:0; position: absolute; z-index: 1; width: 240px; background: #fff; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); display: none;}
+        .navigation ul li.reportnav ul.subnavlast li{display: block; text-align: left; border: none; padding: 0;}
+        .navigation ul li.reportnav ul.subnavlast li a {color: #7e8793; padding: 10px; display: block; width: 100%;}
+        .navigation ul li.reportnav ul.subnavlast li a:hover{background: #66cc33; color: #fff;}
+        .navigation ul li.reportnav:hover ul.subnavlast{display: block;}
+        
+        button a:hover{text-decoration: none;}
+        button a:focus{text-decoration: none; outline: none;}
+        select{background: url('{!URLFOR($Resource.Selectarrow )}') no-repeat right -20px center #fff !important; -moz-appearance: none; -webkit-appearance: none;}
+        .navigation ul li.reportnav.active{color: #66cc33;}
+    </style>
+    <!--Navigation--> 
+    
+    <div class="slds-scope">
+        <div class="myapp" style="background: #f5f5f9;">
+            <!--Navigation-->
+            <div class="slds-grid slds-wrap slds-form-element slds-p-around_small">
+                <div class="slds-size_1-of-1">
+                    <div class="navigation">
+                       <ul>
+                            <li class="checklisticon" >
+                                <apex:outputPanel rendered="{!(admin && wizardComp && (!checkListComp))}">
+                                    <apex:commandLink action="{!navigateToChecklistPage}"><i class="fa fa-check-circle" aria-hidden="true"></i></apex:commandLink>
+                                </apex:outputPanel>
+                            </li>
+                            <li class="home"><apex:commandLink action="{!navigateToHomePage}"><i class="fas fa-home"></i></apex:commandLink></li>
+                            <li class="scorenav"><apex:commandLink action="{!navigateToCertification}"> FUNNELOCITY SCORING</apex:commandLink></li>
+                            <li><apex:commandLink action="{!navigateToDashboard}"><span><i class="fas fa-tachometer-alt"></i></span> PERFORMANCE DASHBOARD</apex:commandLink></li>
+                             
+                            <li class=" reportnav"> <i class="fas fa-chart-bar"></i> REPORTING 
+                                <ul class="subnav">
+                                    <!--li><apex:commandLink action="{!navigateToCertificateReports}">Funnelocity Reports</apex:commandLink></li-->
+                                    <li><apex:commandLink action="{!navigateToReportsPage}">Sales Management Reports</apex:commandLink></li>
+                                    <li><apex:commandLink action="{!navigateToAnnualizationDashboard}">Tenured and New Hire Performance Dashboard</apex:commandLink></li>
+                                        <li><apex:commandLink action="{!navigateToTrendingByRep}">Trending By Rep Dashboard</apex:commandLink></li>
+                                        <li><apex:commandLink action="{!navigateToTrendingBySkill}">Trending By Metric/Skill Dashboard</apex:commandLink></li>
+                                </ul>
+                            </li>
+                             <li class="reportnav funnelanalyticsnav " >   <a> FUNNELOCITY ANALYTICS </a>  
+                                <ul class="subnav">
+                                    <li><apex:commandLink action="{!navigateToFunnelAnalytic}">Funnelocity Analytics Dashboard</apex:commandLink></li>
+                                    <!--li><apex:commandLink action="{!navigateToFunnelAnalyticQualitative}">Funnelocity Qualitative Scoring</apex:commandLink></li-->
+                                    <li><apex:commandLink action="{!navigateToSalesPipeline}">Funnelocity Sales Pipeline</apex:commandLink></li>
+                                 </ul>
+                            </li>                                                                       
+                            <li style="display:none"><apex:commandLink ><i class="fas fa-star"></i> TERRITORY PLAN</apex:commandLink></li>     
+                            <apex:outputPanel rendered="{!displayMetricCalculator}">
+                                    <li><apex:commandLink action="{!navigateToCalculator}"><i class="fas fa-calculator"></i> METRICS CALCULATOR</apex:commandLink></li>
+                                </apex:outputPanel>                       
+                            <apex:outputPanel rendered="{!appSetup = ''}">
+                                <li class=" reportnav active"> <i class="fas fa-chart-bar"></i> ADMIN 
+                                    <ul class="subnavlast">
+                                        <li><apex:commandLink action="{!navigateToFunnelAddEditSRP}" rendered="{!adminUser}">Sales Rep Profiles and Hierarchy</apex:commandLink></li>
+                                        <li><apex:commandLink action="{!navigateToAppSetup}" rendered="{!adminUser}">Metrics and Skills</apex:commandLink></li>
+                                        <li><apex:commandLink action="{!navigateToGoals}">Goal Management</apex:commandLink></li>
+                                        <li><apex:commandLink action="{!navigateToFunnelSetup}" rendered="{!adminUser}">Custom Updates</apex:commandLink></li>                                        
+                                    </ul>
+                                </li>
+                           </apex:outputPanel>
+                           <!--Added for Help Menu - Rohit-->
+                           <li class="help">
+                               <apex:commandLink target="_blank" action="{!navigateToHelpMenu}"><i class="fas fa-question-circle" style="color: #00b2ee"></i></apex:commandLink>
+                           </li>
+                        </ul>  
+                    </div>
+                </div>
+            </div> 
+            <!--Navigation-->
+            <div class="slds-wrap slds-p-around_medium">
+                <div class="slds-grid">
+                    <style>
+                        .slds-scope .slds-tabs--default__item.slds-active:after, .slds-scope .slds-tabs--default__item.slds-is-active:after, .slds-scope .slds-tabs_default__item.slds-active:after, .slds-scope .slds-tabs_default__item.slds-is-active:after{background: none;}
+                        .slds-scope .slds-tabs--default__item:hover:after, .slds-scope .slds-tabs_default__item:hover:after{background: none;}
+                        
+                        .slds-scope .slds-checkbox [type=checkbox]:checked+.slds-checkbox--faux:after, .slds-scope .slds-checkbox [type=checkbox]:checked+.slds-checkbox__label .slds-checkbox--faux:after, .slds-scope .slds-checkbox [type=checkbox]:checked+.slds-checkbox__label .slds-checkbox_faux:after, .slds-scope .slds-checkbox [type=checkbox]:checked+.slds-checkbox_faux:after, .slds-scope .slds-checkbox [type=checkbox]:checked~.slds-checkbox--faux:after, .slds-scope .slds-checkbox [type=checkbox]:checked~.slds-checkbox_faux:after{border-bottom: 2px solid #ff9900; border-left: 2px solid #ff9900;}
+                        a:hover{text-decoration: none !important;}
+                    </style>
+                    
+                    <apex:actionFunction id="ratings" name="ratings" action="{!navigateToRatings}"></apex:actionFunction>
+                    <apex:actionFunction id="assignRole" name="assignRole" action="{!navigateToAssignRole}"></apex:actionFunction>
+                    <apex:actionFunction id="categoryPage" name="categoryPage" action="{!navigateToCategories}"></apex:actionFunction>
+                    <apex:actionFunction id="custommetric" name="custommetric" action="{!navigateToCustomMetric}"></apex:actionFunction>
+                    <apex:actionFunction id="notificationPage" name="notificationPage" action="{!navigateToNotifications}"></apex:actionFunction>
+                    <apex:actionFunction id="setup" name="setup" action="{!navigateToFunnelSetup}"></apex:actionFunction>
+                    
+                    <apex:actionFunction id="goalmanagement" name="goalmanagement" action="{!navigateToFunnelReviewGoals}"></apex:actionFunction>
+                    <apex:actionFunction id="teamgoals" name="teamgoals" action="{!navigateToFunnelManagerUpdate}"></apex:actionFunction>
+                    
+                    <div class="slds-tabs_default">
+                        <div style="background: #f5f5f9; display: table; width: 100%; padding-bottom: 30px;">
+                         <!-- <ul class="slds-tabs_default__nav slds-m-top_x-large slds-m-bottom_large" role="tablist" style="background: #7e8793; height: 40px; border: none; margin-top: 0;">
+                                <li class="slds-tabs_default__item" title="CREATE AND EDIT METRICS/SKILLS" role="presentation" style="margin-left: 0; margin-right: 0;"><a class="slds-tabs_default__link" onclick="ratings()" role="tab" tabindex="0" aria-selected="true" aria-controls="tab-default-1" id="tab-default-1__item" style="color: #fff; font-size: 16px; padding: 0; display: block; font-weight: bold;">CREATE AND EDIT METRICS/SKILLS</a></li>
+                                <li class="slds-tabs_default__item" title="CUSTOM METRICS" role="presentation" style="margin-right: 0;"><a class="slds-tabs_default__link" onclick="custommetric()" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-2" id="tab-default-2__item" style="color: #fff; font-size: 16px; font-weight: bold;">CUSTOM METRICS</a></li>
+                                
+                                <li class="slds-tabs_default__item" title="ASSIGN SKILLS" role="presentation" style="margin-right: 0;"><a class="slds-tabs_default__link" onclick="assignRole()" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-2" id="tab-default-2__item" style="color: #fff; font-size: 16px; padding: 0; display: block; font-weight: bold;">ASSIGN MEASURES</a></li>
+                                <li class="slds-tabs_default__item" title="Evaluation Guidelines" role="presentation" style="margin-right: 0; background: #00b2ee; border-radius: 55px; margin-top: -10px;"><a class="slds-tabs_default__link" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-3" id="tab-default-3__item" style="color: #fff; font-size: 16px; padding: 10px 10px; display: block; font-weight: bold; overflow: visible; height: auto;">Evaluation Guidelines</a></li>
+                                <li class="slds-tabs_default__item" title="SETTINGS" role="presentation" style="margin-right: 0;"><a class="slds-tabs_default__link" onclick="notificationPage()" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-3" id="tab-default-3__item" style="color: #fff; font-size: 16px; font-weight: bold;">SETTINGS</a></li>
+                                <li class="slds-tabs_default__item" title="INSTALL" role="presentation" style="margin-right: 0;"><a class="slds-tabs_default__link" onclick="setup()" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-3" id="tab-default-3__item" style="color: #fff; font-size: 16px; font-weight: bold;">INSTALL</a></li>
+ 
+ 
+                            </ul>   -->
+                            
+                            <ul class="slds-tabs_default__nav slds-m-top_x-large slds-m-bottom_large" role="tablist" style="justify-content: center;background: #7e8793; height: 40px; border: none; margin-top: 0;">
+                           <!--     <li class="slds-tabs_default__item" title="CREATE AND EDIT RATINGS" role="presentation" style="margin-right: 45px;"><a class="slds-tabs_default__link" onclick="categoryPage()" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-3" id="tab-default-3__item" style="color: #fff; font-size: 18px; font-weight: bold;">ADD AND EDIT CATEGORIES</a></li> -->
+                                <apex:outputPanel rendered="{!adminPer}"><li class="slds-tabs_default__item" role="presentation" style="margin-left: 0; margin-right: 0;"><a class="slds-tabs_default__link" onclick="ratings()"  role="tab" tabindex="0" aria-selected="true" aria-controls="tab-default-1" id="tab-default-1__item" style="color: #fff; font-size: 16px; padding: 0; display: block; font-weight: bold; text-transform: none;">Create &#38; Edit Metrics/Skills</a></li></apex:outputPanel>
+                                <apex:outputPanel rendered="{!adminPer}"><li class="slds-tabs_default__item" role="presentation" style="margin-right: 0; margin-left: 0;"><a class="slds-tabs_default__link" onclick="custommetric()"  role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-2" id="tab-default-2__item" style="color: #fff; font-size: 16px; padding: 0; display: block; font-weight: bold; text-transform: none;">Custom Metrics</a></li></apex:outputPanel>
+                                
+                                <apex:outputPanel rendered="{!adminPer}"><li class="slds-tabs_default__item" role="presentation" style="margin-right: 0; margin-left: 0;"><a class="slds-tabs_default__link" onclick="assignRole()" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-2" id="tab-default-2__item" style="color: #fff; font-size: 16px; padding: 0; display: block; font-weight: bold; text-transform: none;">Assign Skills</a></li></apex:outputPanel>
+                                <apex:outputPanel rendered="{!adminPer}"><li class="slds-tabs_default__item" role="presentation" style="margin-right: 0; margin-left: 0; background: #00b2ee; border-radius: 55px; margin-top: -10px;"><a class="slds-tabs_default__link"   role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-3" id="tab-default-3__item" style="color: #fff; font-size: 16px; padding: 10px 10px; display: block; font-weight: bold; overflow: visible; height: auto; text-transform: none;">Evaluation Guidelines</a></li></apex:outputPanel>
+                                
+                                <!--<apex:outputPanel rendered="{!adminPer}"><li class="slds-tabs_default__item" role="presentation" style="margin-right: 0; margin-left: 0; "><a class="slds-tabs_default__link" onclick="goalmanagement()" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-2" id="tab-default-2__item"  style="color: #fff; font-size: 16px; font-weight: bold; text-transform: none;">Goal Management</a></li></apex:outputPanel>
+                                <apex:outputPanel rendered="{!adminPer}"><li class="slds-tabs_default__item" role="presentation" style="margin-right: 0; margin-left: 0;"><a class="slds-tabs_default__link" onclick="teamgoals()" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-3" id="tab-default-3__item" style="color: #fff; font-size: 16px; font-weight: bold; text-transform: none;">Team Goals</a></li></apex:outputPanel>
+                                
+                                <apex:outputPanel rendered="{!adminPer}"><li class="slds-tabs_default__item" role="presentation" style="margin-right: 0; margin-left: 0;"><a class="slds-tabs_default__link" onclick="setup()" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-3" id="tab-default-3__item" style="color: #fff; font-size: 16px; font-weight: bold; text-transform: none;">Installation</a></li></apex:outputPanel>-->
+                                <apex:outputPanel rendered="{!adminPer}"><li class="slds-tabs_default__item" role="presentation" style="margin-right: 0; margin-left: 0;" ><a class="slds-tabs_default__link" onclick="notificationPage()" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-3" id="tab-default-3__item" style="color: #fff; font-size: 16px; font-weight: bold; text-transform: none;">Settings</a></li></apex:outputPanel>
+                            </ul>
+                        </div>
+                        
+                         <apex:actionFunction action="{!onEdit}" name="edit" reRender="Eval">
+                            <apex:param name="edit" value="" assignTo="{!evalName}"/>
+                        </apex:actionFunction>
+                        <apex:actionFunction action="{!save}" name="save" reRender="Eval">
+                            <apex:param name="save" value="" assignTo="{!evalName}"/>
+                        </apex:actionFunction>
+                        <div id="tab-default-1" class="slds-tabs_default__content slds-show" role="tabpanel" aria-labelledby="tab-default-1__item" style="padding: 0;">
+                            <div class="slds-wrap slds-is-relative" style="background: #fff;">
+                                
+                                
+                                <!--<div class="slds-grid">
+                                    <div class="slds-size_8-of-8"> 
+                                         <apex:repeat value="{!insertEval}" var="e">
+                                                <apex:inputField value="{!e.Name}"/> 
+                                                <apex:inputField value="{!e.Description__c}"/><br/>
+                                        </apex:repeat>  
+                                    </div>
+                                 </div>-->
+                                 <apex:outputPanel id="Eval">
+                                     <div class="slds-grid">
+                                        <div class="slds-p-around_medium" style="width: 750px; margin: 0 auto;">
+                                            <apex:outputPanel rendered="{!!OutstandingEdit}">
+                                                <h3 style="color:#00b2ef; font-size: 16px; font-weight: bold;" class="site-text-heading--medium slds-p-bottom_x-small slds-p-top_medium slds-grid">{!Outstanding.Name}</h3>
+                                                <div style="display: flex;">
+                                                    <div style="width: 80%;color:#333333; font-size: 14px; font-weight: normal;">
+                                                         
+                                                        <apex:outputField value="{!Outstanding.Description__c}"  />  
+                                                    </div>
+                                                    <div style="width: 20%; padding-left: 20px;">
+                                                        <a style="color:#ff9900; font-size: 14px; font-weight: normal;" onclick="edit('Outstanding');"><apex:image url="{!URLFOR($Resource.EvaluationIcon,'Evaluationicon/edit.jpg')}" style="margin: 2px 5px 0 0;float: left;"/>Edit</a>
+                                                    </div>
+                                                </div>
+                                            </apex:outputPanel>
+                                            <apex:outputPanel rendered="{!OutstandingEdit}">
+                                                <h3 style="color:#00b2ef; font-size: 16px; font-weight: bold;" class="site-text-heading--medium slds-p-bottom_x-small slds-p-top_medium slds-grid">{!Outstanding.Name}</h3>
+                                                <div style="display: flex;">
+                                                    <div style="width: 80%;">
+                                                        <apex:inputField value="{!Outstanding.Description__c}"  style="width: 100%; padding: 10px; height: 150px; resize: none; color: #333333; font-size: 14px; font-weight: normal;" />  
+                                                    </div>
+                                                    <div style="width: 20%; display: flex; flex-direction: column; justify-content: space-between; padding-left: 20px;">
+                                                        <a style="color:#ff9900; font-size: 14px; font-weight: normal;"><apex:image url="{!URLFOR($Resource.EvaluationIcon,'Evaluationicon/edit.jpg')}" style="margin: 2px 5px 0 0;float: left;"/>Edit</a>
+                                                        <a style="background: #ff9900; font-size: 20px; color: #fff; border-radius: 50px; height: 36px; padding: 8px 10px; text-align: center; line-height: 20px; margin: 0 0 5px 0;" onclick="save('Outstanding');">SAVE</a>
+                                                    </div>
+                                                </div>
+                                            </apex:outputPanel>
+                                            <apex:outputPanel rendered="{!!StrongEdit}">
+                                                <h3 style="color:#00b2ef; font-size: 16px; font-weight: bold;" class="site-text-heading--medium slds-p-bottom_x-small slds-p-top_medium slds-grid">{!Strong.Name}</h3>
+                                                <div style="display: flex;">
+                                                    <div style="width: 80%;color:#333333; font-size: 14px; font-weight: normal;">
+                                                         
+                                                        <apex:outputField value="{!Strong.Description__c}"  />  
+                                                    </div>
+                                                    <div style="width: 20%; padding-left: 20px;">
+                                                        <a style="color:#ff9900; font-size: 14px; font-weight: normal;" onclick="edit('Strong');"><apex:image url="{!URLFOR($Resource.EvaluationIcon,'Evaluationicon/edit.jpg')}" style="margin: 2px 5px 0 0;float: left;"/>Edit</a>
+                                                    </div>
+                                                </div>
+                                            </apex:outputPanel>
+                                            <apex:outputPanel rendered="{!StrongEdit}">
+                                                <h3 style="color:#00b2ef; font-size: 16px; font-weight: bold;" class="site-text-heading--medium slds-p-bottom_x-small slds-p-top_medium slds-grid">{!Strong.Name}</h3>
+                                                <div style="display: flex;">
+                                                    <div style="width: 80%;">
+                                                        <apex:inputField value="{!Strong.Description__c}"  style="width: 100%; padding: 10px; height: 150px; resize: none; color: #333333; font-size: 14px; font-weight: normal;" />  
+                                                    </div>
+                                                    <div style="width: 20%; display: flex; flex-direction: column; justify-content: space-between; padding-left: 20px;">
+                                                        <a style="color:#ff9900; font-size: 14px; font-weight: normal;"><apex:image url="{!URLFOR($Resource.EvaluationIcon,'Evaluationicon/edit.jpg')}" style="margin: 2px 5px 0 0;float: left;"/>Edit</a>
+                                                        <a style="background: #ff9900; font-size: 20px; color: #fff; border-radius: 50px; height: 36px; padding: 8px 10px; text-align: center; line-height: 20px; margin: 0 0 5px 0;" onclick="save('Strong');">SAVE</a>
+                                                    </div>
+                                                </div>
+                                            </apex:outputPanel>
+                                            <apex:outputPanel rendered="{!!AverageEdit}">
+                                                <h3 style="color:#00b2ef; font-size: 16px; font-weight: bold;" class="site-text-heading--medium slds-p-bottom_x-small slds-p-top_medium slds-grid">{!Average.Name}</h3>
+                                                <div style="display: flex;">
+                                                    <div style="width: 80%;color:#333333; font-size: 14px; font-weight: normal;">
+                                                         
+                                                        <apex:outputField value="{!Average.Description__c}"  />  
+                                                    </div>
+                                                    <div style="width: 20%; padding-left: 20px;">
+                                                        <a style="color:#ff9900; font-size: 14px; font-weight: normal;" onclick="edit('Average');"><apex:image url="{!URLFOR($Resource.EvaluationIcon,'Evaluationicon/edit.jpg')}" style="margin: 2px 5px 0 0;float: left;"/>Edit</a>
+                                                    </div>
+                                                </div>
+                                            </apex:outputPanel>
+                                            <apex:outputPanel rendered="{!AverageEdit}">
+                                                <h3 style="color:#00b2ef; font-size: 16px; font-weight: bold;" class="site-text-heading--medium slds-p-bottom_x-small slds-p-top_medium slds-grid">{!Average.Name}</h3>
+                                                <div style="display: flex;">
+                                                    <div style="width: 80%;">
+                                                        <apex:inputField value="{!Average.Description__c}"  style="width: 100%; padding: 10px; height: 150px; resize: none; color: #333333; font-size: 14px; font-weight: normal;" />  
+                                                    </div>
+                                                    <div style="width: 20%; display: flex; flex-direction: column; justify-content: space-between; padding-left: 20px;">
+                                                        <a style="color:#ff9900; font-size: 14px; font-weight: normal;"><apex:image url="{!URLFOR($Resource.EvaluationIcon,'Evaluationicon/edit.jpg')}" style="margin: 2px 5px 0 0;float: left;"/>Edit</a>
+                                                        <a style="background: #ff9900; font-size: 20px; color: #fff; border-radius: 50px; height: 36px; padding: 8px 10px; text-align: center; line-height: 20px; margin: 0 0 5px 0;" onclick="save('Average');">SAVE</a>
+                                                    </div>
+                                                </div>
+                                            </apex:outputPanel>
+                                            <apex:outputPanel rendered="{!!MarginalEdit}">
+                                                <h3 style="color:#00b2ef; font-size: 16px; font-weight: bold;" class="site-text-heading--medium slds-p-bottom_x-small slds-p-top_medium slds-grid">{!Marginal.Name}</h3>
+                                                <div style="display: flex;">
+                                                    <div style="width: 80%;color:#333333; font-size: 14px; font-weight: normal;">
+                                                         
+                                                        <apex:outputField value="{!Marginal.Description__c}"  />  
+                                                    </div>
+                                                    <div style="width: 20%; padding-left: 20px;">
+                                                        <a style="color:#ff9900; font-size: 14px; font-weight: normal;" onclick="edit('Marginal');"><apex:image url="{!URLFOR($Resource.EvaluationIcon,'Evaluationicon/edit.jpg')}" style="margin: 2px 5px 0 0;float: left;"/>Edit</a>
+                                                    </div>
+                                                </div>
+                                            </apex:outputPanel>
+                                            <apex:outputPanel rendered="{!MarginalEdit}">
+                                                <h3 style="color:#00b2ef; font-size: 16px; font-weight: bold;" class="site-text-heading--medium slds-p-bottom_x-small slds-p-top_medium slds-grid">{!Marginal.Name}</h3>
+                                                <div style="display: flex;">
+                                                    <div style="width: 80%;">
+                                                        <apex:inputField value="{!Marginal.Description__c}"  style="width: 100%; padding: 10px; height: 150px; resize: none; color: #333333; font-size: 14px; font-weight: normal;" />  
+                                                    </div>
+                                                    <div style="width: 20%; display: flex; flex-direction: column; justify-content: space-between; padding-left: 20px;">
+                                                        <a style="color:#ff9900; font-size: 14px; font-weight: normal;"><apex:image url="{!URLFOR($Resource.EvaluationIcon,'Evaluationicon/edit.jpg')}" style="margin: 2px 5px 0 0;float: left;"/>Edit</a>
+                                                        <a style="background: #ff9900; font-size: 20px; color: #fff; border-radius: 50px; height: 36px; padding: 8px 10px; text-align: center; line-height: 20px; margin: 0 0 5px 0;" onclick="save('Marginal');">SAVE</a>
+                                                    </div>
+                                                </div>
+                                            </apex:outputPanel>
+                                            <apex:outputPanel rendered="{!!NeedsImprovementEdit}">
+                                                <h3 style="color:#00b2ef; font-size: 16px; font-weight: bold;" class="site-text-heading--medium slds-p-bottom_x-small slds-p-top_medium slds-grid">{!NeedsImprovement.Name}</h3>
+                                                <div style="display: flex;">
+                                                    <div style="width: 80%;color:#333333; font-size: 14px; font-weight: normal;">
+                                                         
+                                                        <apex:outputField value="{!NeedsImprovement.Description__c}"  />  
+                                                    </div>
+                                                    <div style="width: 20%; padding-left: 20px;">
+                                                        <a style="color:#ff9900; font-size: 14px; font-weight: normal;" onclick="edit('NeedsImprovement');"><apex:image url="{!URLFOR($Resource.EvaluationIcon,'Evaluationicon/edit.jpg')}" style="margin: 2px 5px 0 0;float: left;"/>Edit</a>
+                                                    </div>
+                                                </div>
+                                            </apex:outputPanel>
+                                            <apex:outputPanel rendered="{!NeedsImprovementEdit}">
+                                                <h3 style="color:#00b2ef; font-size: 16px; font-weight: bold;" class="site-text-heading--medium slds-p-bottom_x-small slds-p-top_medium slds-grid">{!NeedsImprovement.Name}</h3>
+                                                <div style="display: flex;">
+                                                    <div style="width: 80%;">
+                                                        <apex:inputField value="{!NeedsImprovement.Description__c}"  style="width: 100%; padding: 10px; height: 150px; resize: none; color: #333333; font-size: 14px; font-weight: normal;" />  
+                                                    </div>
+                                                    <div style="width: 20%; display: flex; flex-direction: column; justify-content: space-between; padding-left: 20px;">
+                                                        <a style="color:#ff9900; font-size: 14px; font-weight: normal;"><apex:image url="{!URLFOR($Resource.EvaluationIcon,'Evaluationicon/edit.jpg')}" style="margin: 2px 5px 0 0;float: left;"/>Edit</a>
+                                                        <a style="background: #ff9900; font-size: 20px; color: #fff; border-radius: 50px; height: 36px; padding: 8px 10px; text-align: center; line-height: 20px; margin: 0 0 5px 0;" onclick="save('NeedsImprovement');">SAVE</a>
+                                                    </div>
+                                                </div>
+                                            </apex:outputPanel>
+                                            
+                                        </div>
+                                    </div>  
+                                    
+                                     
+                                </apex:outputPanel>
+                            </div>
+                        </div>
+                        <div class="slds-grid">
+                            <div class="slds-size_8-of-8"> 
+                                <div class="slds-p-around_small" style="font-size: 18px; text-align: center; font-weight: bold;"> 
+                                </div>
+                            </div>
+                        </div>
+                        <div id="tab-default-2" class="slds-tabs_default__content slds-hide" role="tabpanel" aria-labelledby="tab-default-2__item">Item Two Content</div>
+                        <div id="tab-default-3" class="slds-tabs_default__content slds-hide" role="tabpanel" aria-labelledby="tab-default-3__item">Item Three Content</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    </html>
+    </apex:form>
+    <script>
+    window.onload = function() {
+        jQuery('input[type=text]').blur();
+        
+    };
+</script>
+</apex:page>

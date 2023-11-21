@@ -1,0 +1,486 @@
+<apex:page docType="html-5.0" sidebar="false"  controller="FunnelInstallationStep5bController">
+    <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/jquery-1.12.4.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/jquery-ui.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/jquery.ns-autogrow.min.js')}"/>
+    
+     
+    <apex:stylesheet value="{!URLFOR($Resource.FunnelScriptFolder,'Design/css/3.3.7.bootstrap.min.css')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/js/3.3.7.bootstrap.min.js')}"/>    
+        
+<style>
+        /*Start Delete modal CSS*/
+        /*.modal-lg{width: 1100px;}*/
+        #confirm .modal-dialog {width: 50%;}
+        .modal.in .modal-dialog {-webkit-transform: translate(0,0);-ms-transform: translate(0,0);-o-transform: translate(0,0);transform: translate(0,0); max-width: none;min-width: 40rem;display: flex;flex-direction: column;height: 100%;padding: 3rem 0;}
+        .modal-content { border-radius: 0;padding: 20px;overflow: hidden;overflow-y: auto;}
+        .modal-header{padding: 0;border: none;}
+        .modal-header .close{position: absolute; right: 10px; margin: 0; top: 10px; opacity: 1; border: none;background: transparent; color: #7e8793; font-size: 44px; width: 25px; height: 20px; line-height: 18px;}
+        .modal-header h4{background: #BFB178;}
+        .modal-header h4 ul{padding: 0; margin: 0; display: table; width: 100%;}
+        .modal-header h4 ul li{display: table-cell; font-size: 24px; color: #333333; width: 50%; padding: 10px; border: none; text-align: left; font-weight: bold;font-family: sldsfont;}
+        .modal-body{padding: 0;}
+        .modal-body .delete-content-block{padding: 0;}
+        .modal-body .delete-content-block label{font-size: 21px; color: #00b2ee;font-family: sldsfont;font-weight: normal;}
+        .modal-body .delete-content-block p{margin: 23px; font-size: 21px;  color: #777; text-align: center;}
+        .modal-footer{border: none; padding: 20px 30px;}
+        .modal-footer .btn-block{display: table; width: auto; margin: 0 auto;}
+        .modal-footer a{background-color: #7e8793;color: #fff;padding: 15px 60px;border-radius: 30px;font-size: 24px;border: none;margin-left: 0;}
+        .modal-footer a:hover{color: #fff; text-decoration: none;}
+        .modal-footer a.save{background: #ff9900;}
+        .modal-footer a i{color: #fff;}
+        /*End Delete modal CSS*/
+        .k-widget { padding: 0; border: none;font-family: arial; }
+    </style>
+    <style>
+        div.hideCurrDate span.dateInput span.dateFormat{
+           display:none;
+        }
+         
+        select { text-align: center;}
+    </style>   
+    
+    <style>
+        body { font-size: 75%; }
+        html{font-size: 100% !important;}
+        .noSidebarCell, .sidebarCell .fixed { padding: 10px; font-family: sldsFont; }
+        .bPageHeader .phHeader td.left{display: block;}
+        @font-face {
+         font-family: sldsFont;
+             src: url({!URLFOR($Resource.SldsCss,'SldsResources/fonts/SalesforceSans-Light.ttf')});
+         }  
+        
+        .outer{background: #f5f5f9;}
+        .header{display: flex; flex-direction: column;}
+        .logo{background: #fff; width: 100%; display: flex; justify-content: center; padding: 10px 0;}
+        .logo img{width: 250px;}
+        .stepper{display: flex; width: 100%; background: #00b2ee; padding: 20px 0; justify-content: center;}
+        .stepper .step {font-family: sldsFont !important; font-size: 16px; font-weight: bold; text-align: center; color: #5f666f; cursor: default; margin: 0 3px; padding: 14px 10px 15px 30px; min-width: 5%; float: left; position: relative; background-color: #f5f5f9; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; transition: background-color 0.2s ease;}
+        .stepper .step:after,
+        .stepper .step:before {content: " "; position: absolute; top: 0; right: -17px; width: 0; height: 0; border-top: 25px solid transparent; border-bottom: 25px solid transparent; border-left: 17px solid #f5f5f9; z-index: 2; transition: border-color 0.2s ease; }
+        .stepper .step:before {right: auto; left: 0; border-left: 17px solid #00b2ee; z-index: 0;}
+        .stepper .step:first-child:before {border: none;}
+        .stepper .step:first-child {border-top-left-radius: 4px; border-bottom-left-radius: 4px;}
+        .stepper .step span {position: relative;}
+        /*.stepper .step span:before {opacity: 0; content: "✔"; position: absolute; top: -2px; left: -20px;}*/
+        .stepper .step.done {color: #fff; background-color: #66cc33;}
+        .stepper .step.done i{font-size: 20px;}
+        .stepper .step.done:after {border-left: 17px solid #66cc33;}
+        .stepper .step.done span:before {opacity: 1; -webkit-transition: opacity 0.3s ease 0.5s; -moz-transition: opacity 0.3s ease 0.5s; -ms-transition: opacity 0.3s ease 0.5s; transition: opacity 0.3s ease 0.5s;}
+        .stepper .step.current {color: #fff; background-color: #ff9900;}
+        .stepper .step.current:after {border-left: 17px solid #ff9900;}
+        .content-section{padding: 40px;}
+        .content-section-inner{background: #fff;}
+        .content-heading{background: #7e8793; display: flex; justify-content: center; padding: 16px;}
+        .content-heading h2{font-family: sldsFont !important; font-size: 24px; font-weight: bold; color: #fff;margin: 0; line-height: 36px;}
+        .content-body{padding: 40px;}
+        .content-body .content-steps{margin: 25px 0; display: flex; align-items: center;}
+        .content-body .content-body-inner{padding-bottom: 100px; padding-left: 20px;}
+        .content-body h4{font-family: sldsFont !important; font-size: 18px; font-weight: bold; color: #5f666f;}
+        .content-steps p{font-family: sldsFont !important; font-size: 18px; color: #5f666f; margin: 0; display: flex; width: 100%;}
+        .content-steps p .count{font-size: 18px; color: #ff9900; font-weight: bold; margin: 0 10px 0 0;}
+        .content-steps input[type=date]{border: none; border-bottom: 2px solid #7e8793; font-size: 18px; color: #5f666f; font-family: sldsFont !important;}
+        .content-steps input[type=text]{border: none; border-bottom: 2px solid #7e8793; width: 100%; min-width: auto; font-size: 18px; color: #5f666f; font-family: sldsFont !important; text-align: left !important; padding: 4.5px 2px;}
+        .content-steps input[type=number]{border: none; border-bottom: 2px solid #7e8793; width: 65px; min-width: auto; font-size: 18px; color: #5f666f; font-family: sldsFont !important;}
+        
+        .content-steps input:focus-visible{outline: none;}
+        .content-steps .inputbig-block-outer{width: 100%;}
+        .content-steps .inputbig-block{flex: 1;}
+        .content-steps .inputbig-block input{width: 100% !important;}
+        .content-button{display: flex; justify-content: center;}
+        .content-button button{background: #ff9900; border-radius: 30px; border: none; color: #fff; font-size: 20px; padding: 14px 40px; margin: 0 10px; cursor: pointer; font-family: sldsFont !important;}
+        
+        .content-button a{font-weight: bold;text-decoration: none !important;background: #ff9900; border-radius: 30px; border: none; color: #fff !important; font-size: 20px; padding: 14px 40px; margin: 0 10px; cursor: pointer; font-family: sldsFont !important;}
+        .content-button a.back{font-weight: bold;background: #7e8793;text-decoration: none !important;}
+        
+        .content-button button.back{background: #7e8793;}
+        .content-steps select{background: url('{!URLFOR($Resource.OrangeArrow )}') no-repeat right 8px center #fff !important; -moz-appearance: none; -webkit-appearance: none; border: none; border-bottom: 2px solid #7e8793; font-size: 18px; color: #5f666f; font-family: sldsFont !important; padding: 0 30px 5px 5px; border-radius: 0; width: 100%;}
+        .content-steps select:focus-visible{outline: none;}
+        .content-steps .slds-form-element__label{font-size: 18px; color: #5f666f;}
+        .ml5{margin-left: 5px;}
+        .ml10{margin-left: 10px;}
+        /*.content-steps input[type=checkbox] {display:none;}
+        .content-steps input[type=checkbox] + label{background: #999; height: 16px; width: 16px; display:inline-block; padding: 0 0 0 0px;}
+        .content-steps input[type=checkbox]:checked + label{background: #0080FF; height: 16px; width: 16px; display:inline-block; padding: 0 0 0 0px;}*/
+        
+         
+        /* Add this attribute to the element that needs a tooltip */
+        [data-tooltip] {
+          position: relative;
+          z-index: 2;
+          cursor: pointer;
+        }
+        
+        /* Hide the tooltip content by default */
+        [data-tooltip]:before,
+        [data-tooltip]:after {
+          visibility: hidden;
+          -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+          filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=0);
+          opacity: 0;
+          pointer-events: none;
+        }
+        
+        /* Position tooltip above the element */
+        [data-tooltip]:before {
+          position: absolute;
+          bottom: 100%;
+          left: 0;
+          margin-bottom: 5px;
+          margin-left: -100px;
+          padding: 7px;
+          width: 200px; 
+          -webkit-border-radius: 0;
+          -moz-border-radius: 0;
+          border-radius: 5px;
+          background-color: #66cc33;
+          /*background-color: hsla(0, 0%, 20%, 0.9);*/
+          color: #fff;
+          content: attr(data-tooltip);
+          text-align: center;
+          font-size: 14px;
+          line-height: 18px;
+          border: 2px solid #66cc33;
+        }
+        
+        /* Triangle hack to make tooltip look like a speech bubble */
+        [data-tooltip]:after {
+          position: absolute;
+          bottom: 100%;
+          left: 40%;
+          margin-left: -5px;
+          width: 0;
+          border-top: 5px solid #66cc33;
+          /*border-top: 5px solid hsla(0, 0%, 20%, 0.9);*/
+          border-right: 5px solid transparent;
+          border-left: 5px solid transparent;
+          content: " ";
+          font-size: 0;
+          line-height: 0;
+        }
+        
+        /* Show tooltip content on hover */
+        [data-tooltip]:hover:before,
+        [data-tooltip]:hover:after {
+          visibility: visible;
+          -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+          filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=100);
+          opacity: 1;
+        }
+        
+        
+      input[type="date"] {
+        position: relative;
+    }
+    
+    /* create a new arrow, because we are going to mess up the native one
+    see "List of symbols" below if you want another, you could also try to add a font-awesome icon.. */
+    input[type="date"]:after {
+        font-family: "Font Awesome 5 Free";
+        font-weight: 100; 
+        content: "\f073";
+        color: #ff9900;
+        padding: 0 5px;
+    }
+    
+    /* change color of symbol on hover */
+    input[type="date"]:hover:after {
+        color: #ff9900;
+    }
+    
+    /* make the native arrow invisible and stretch it over the whole field so you can click anywhere in the input field to trigger the native datepicker*/
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: auto;
+        height: auto;
+        color: transparent;
+        background: transparent;
+    }
+    
+    /* adjust increase/decrease button */
+    input[type="date"]::-webkit-inner-spin-button {
+        z-index: 1;
+    }
+    
+     /* adjust clear button */
+     input[type="date"]::-webkit-clear-button {
+         z-index: 1;
+     }
+     .slds-checkbox [type=checkbox]:checked + .slds-checkbox_faux:after, .slds-checkbox [type=checkbox]:checked + .slds-checkbox--faux:after, .slds-checkbox [type=checkbox]:checked ~ .slds-checkbox_faux:after, .slds-checkbox [type=checkbox]:checked ~ .slds-checkbox--faux:after, .slds-checkbox [type=checkbox]:checked + .slds-checkbox__label .slds-checkbox_faux:after, .slds-checkbox [type=checkbox]:checked + .slds-checkbox__label .slds-checkbox--faux:after{border-bottom: 2px solid #ff9900; border-left: 2px solid #ff9900;}
+    
+    textarea{width: 100%; padding: 2px 1px; border: none; border-bottom: 2px solid #7e8793; font-size: 18px; color: #5f666f; font-family: sldsFont !important; resize: none;overflow: hidden;}
+    .content-steps textarea:focus-visible{outline: none;}
+    
+    /*table css*/
+    .content-steps .sales-profile-table{margin: 0 0 0 60px; font-size: 18px; color: #5f666f; font-family: sldsFont !important;}
+    .content-steps .sales-profile-table th{border-bottom: 1px solid #7e8793; padding: 15px 10px; font-family: sldsFont !important;}
+    .content-steps .sales-profile-table td{border-bottom: 1px solid #7e8793; padding: 10px; font-family: sldsFont !important; vertical-align: middle;}
+    .content-steps .sales-profile-table th.name{font-weight: 700;}
+    .content-steps .sales-profile-table th.username{font-weight: 700;}
+    .content-steps .sales-profile-table th.date{font-weight: 700;}
+    .content-steps .sales-profile-table th.role{font-weight: 700;}
+    .content-steps .sales-profile-table th.manager{font-weight: 700;}
+    .content-steps .sales-profile-table th.onboarded{width: 5%;font-weight: 700;}
+    .content-steps .sales-profile-table .name{width: 20%; padding-right: 10px; position: relative; font-weight: 400;}
+    .content-steps .sales-profile-table .name p{width: auto; position: absolute; left: -60px; font-weight: 400; color: #ff9900;}
+    .content-steps .sales-profile-table td.name p{width: auto; position: absolute; left: -40px;}
+    .content-steps .sales-profile-table .username{width: 20%; font-weight: 400;}
+    .content-steps .sales-profile-table .date{width: 13%; font-weight: 400;}
+    .content-steps .sales-profile-table .role{width: 20%; font-weight: 400;}
+    .content-steps .sales-profile-table .manager{width: 20%; font-weight: 400;}
+    .content-steps .sales-profile-table .onboarded{width: 8%; font-weight: 400;}
+    .content-steps .sales-profile-table .manager .lookupInput{display: flex; flex-direction: row-reverse;border: 1px solid #7e8793; border-radius: 25px; overflow: hidden;}
+    .content-steps .sales-profile-table .manager .lookupInput a img{background: url('{!URLFOR($Resource.FMSearchIcon)}') no-repeat left center #fff !important; margin-left: 9px;    margin-top: 5px;}
+    .content-steps .sales-profile-table .manager .lookupInput input{border: none;}
+    
+    .content-body-inner.tabledesign{padding: 0;}
+    .content-body-inner.tabledesign .sales-profile-table{margin: 0;}
+    
+    .button-block{display: flex; justify-content: flex-end; margin-top: 20px;}
+    .importbtnblock{display: inline-flex; position: relative;}
+    .importbtnblock .importbtnerrormsg{color: red; font-size: 12px; position: absolute; bottom: -25px; right: 10px; width: 300px; font-weight: 700; text-align: right;}
+    .importbtn{font-weight: bold; text-decoration: none !important; background: #ff9900; border-radius: 30px; border: none; color: #fff !important; font-size: 20px; padding: 14px 40px; cursor: pointer; font-family: sldsFont !important; position: relative; margin: 0 10px;}
+    .importbtn input{position: absolute; left: 0; top: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;}
+    .exportbtn{font-weight: bold; text-decoration: none !important; background: #ff9900; border-radius: 30px; border: none; color: #fff !important; font-size: 20px; padding: 14px 40px; cursor: pointer; font-family: sldsFont !important; margin: 0 10px;}
+    </style>
+    <!--Navigation -->
+    <apex:stylesheet value="{!URLFOR($Resource.FunnelScriptFolder,'Design/css/v5.0.8-fontawesome.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.FunnelScriptFolder,'Design/css/v5.0.8-solid.css')}"/> 
+     
+    <html   lang="en">
+    <apex:stylesheet value="{!URLFOR($Resource.SldsCss,'SldsResources/styles/salesforce-lightning-design-system.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.SldsCss,'SldsResources/styles/salesforce-lightning-design-system.min')}"/>
+    <div class="outer">
+        <c:FunnelInstallationSteps /> 
+        
+        <div class="content-section">
+            <apex:pageMessages id="messaAge"></apex:pageMessages>
+            <div class="content-section-inner">
+                <div class="content-heading">
+                    <h2>Step 5 - Sales Profiles continued</h2>
+                </div>
+                <div class="content-body">
+                    <h4>Give us a bit more information about your Funnelocity users so we can set them up.</h4> 
+                    <apex:form styleClass="button-block">
+                        <apex:actionFunction action="{!uploadSrp}" name="uploadFile"/>
+                              <a class="exportbtn" href="/apex/FunnelInstallationStep5bexport" target="_blank"> Export</a>
+                            <apex:actionRegion >
+                                 <span class="importbtnblock">
+                                    <a class="importbtn">
+                                        Upload
+                                        <apex:inputFile value="{!contentFile}" filename="{!nameFile}" onchange="check(this);" styleclass="inputfil"/>
+                                    </a>
+                                    <apex:outputText styleClass="importbtnerrormsg" Style="display:none;" id="myPlaceholder" value="In order to import, the file type should be CSV."/> 
+                                    </span>
+                                                                                                                              
+                                
+                            </apex:actionRegion>
+                           
+                         
+                        
+                     
+                                                
+    </apex:form>
+                     
+                     <apex:form >
+                    <div class="content-body-inner tabledesign">
+                        <div class="content-steps">
+                            <table class="sales-profile-table">
+                                <tr>
+                                    <th class="name">
+                                         
+                                        Name
+                                    </th>
+                                    
+                                    <th class="date">Start Date</th>
+                                    <th class="onboarded">Onboarded </th>
+                                    <th class="role">Role</th>
+                                    <th class="onboarded">Profile Type</th>
+                                    <th class="manager">Manager</th>
+                                    
+                                </tr>
+                                
+                                <apex:repeat value="{!srpList}" var="s">
+                                    <tr>
+                                        <td class="name">
+                                            
+                                           {!s.name}
+                                        </td>
+                                        
+                                         
+                                        <td class="date">
+                                            <div class="hideCurrDate">
+                                                <apex:inputField id="dt" value=" {!s.Rep_Start_Date__c}" html-data-lpignore="true" style="width: 112px; text-align: center;{!IF(s.Rep_Start_Date__c == null,'border-bottom: 2px solid red','')}">
+                                                    <apex:actionSupport event="onchange" reRender="dt"/>
+                                                </apex:inputField>
+                                            </div> 
+                                        </td>
+                                        <td class="onboarded"><apex:inputField value="{!s.Rep_Staus__c}"  /></td>
+                                        <td class="role">
+                                            <apex:inputField style="{!IF(s.Role__c == null,'border-bottom: 2px solid red','')}" value="{!s.Role__c}" id="rt">
+                                                <apex:actionSupport event="onchange" reRender="rt"/>
+                                            </apex:inputField>
+                                        </td>
+                                        <td class="onboarded"> <apex:inputField value="{!s.Profile_Type__c}" id="pt" /> </td>
+                                        <td class="manager"> <apex:inputField html-data-lpignore="true"  value="{!s.Sales_Manager__c }" id="mt" /> </td>
+                                       
+                                    </tr>
+                                </apex:repeat> 
+                                  
+                            </table>
+                        </div>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                    </div> 
+                    <div class="content-button">
+                        <apex:commandLink StyleClass="back" action="{!navigateToStep5a}"><i class="fa fa-chevron-left" aria-hidden="true"></i> Back</apex:commandLink> 
+                        <apex:commandLink action="{!saveAndExit}">Save &#38; Exit</apex:commandLink>
+                        <!--<apex:commandLink action="{!navigateToStep6}" >Next <i class="fa fa-chevron-right" aria-hidden="true"></i> </apex:commandLink> -->
+                        <a onclick="warnm();">Next <i class="fa fa-chevron-right" aria-hidden="true"></i> </a> 
+                    </div>
+                    <div class="modal fade " id="warnmsg" role="dialog">
+                    <div class="modal-dialog modal-lg">
+                        
+                        
+                        <!-- Modal content-->
+                        <apex:actionFunction action="{!navigateToStep6}" name="navigateToStep6"/>
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" >&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="delete-content-block" style=" margin: 23px;font-size: 21px;color: #777;text-align: center;">
+                                    <apex:outputText id="modalidconfirm"></apex:outputText><br/>
+                                      Please fill the details or go to previous step and uncheck the Sales rep.<br/>
+                                      <apex:outputText id="modalidconfirmMng"></apex:outputText>
+                                </div>
+                            </div>
+                             <div class="modal-footer">
+                                <div class="btn-block">
+                                    
+                                    
+                                    <a style="font-size: 18px; padding: 12px 50px;" data-dismiss="modal"  class="cancel" >  Close</a>
+                                  <!--  <a onclick="navigateToStep6();" data-dismiss="modal" style="background-color: #ff9900; color: #fff; padding: 12px 50px; border-radius: 30px; font-size: 18px; border: none;margin-left: 25px;">
+                                    YES
+                                    </a > -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>  
+                
+                <!-- Modal --  autosave -- end -->
+                     </apex:form>
+                     <!-- Modal --  autosave -- end -->
+                
+                </div>
+            </div>
+        </div>
+    </div>
+    </html>
+   
+    <script>
+    window.onload = function() {
+        jQuery('input[type=text]').blur();
+        
+    };
+    
+    $(document).ready(function () {
+        // $('option[value= ""]').remove();
+        // $('.grow').autogrow({vertical: true, horizontal: false});
+                  
+          });
+</script>
+<script>    
+        function check(obj_inpf){
+        
+            fullPath = obj_inpf.value;
+            var filename = fullPath.replace(/^.*[\\\/]/, '')
+            console.log(filename );
+            if(filename.includes(".csv")){
+                uploadFile();
+               // jQuery('#delete').modal('show'); 
+             
+            }else{
+                jQuery('[id$=myPlaceholder]').css("display", "block");
+                //jQuery('[id$=csvfile]').css("top", "23.1%");
+            }
+
+        }
+        
+        function warnm(){
+        var displaymodal = false;
+        var msg = 'Please note some of the';
+        var mngMsg = false;
+    
+        $(" [id$= dt ]").each(function( index ) {
+            if($( this ).val() == ''){
+                msg += ' Start Dates' ;
+                displaymodal = true;
+                return false;
+            }
+            
+        });
+    
+        $(" [id$= rt ]").each(function( index ) {
+          if($( this ).val() == ''){
+                if(displaymodal){
+                    msg += ' and Roles' ;
+                }else{
+                    msg += ' Roles' ;
+                }
+                
+                displaymodal = true;
+                 return false;
+            }
+          
+        });
+    
+        var count = 0;
+        $(" [id$= mt ]").each(function( index ) {
+            if($( this ).val() == ''){
+                count++;
+                if(count > 1){
+                    if(displaymodal){
+                        msg += ' and Managers' ;
+                    }else{
+                        msg += ' Managers' ;
+                    }
+                    mngMsg = true;
+                    displaymodal = true;
+                     return false;
+                }
+            }
+          
+        });
+    
+        if(displaymodal){
+            msg += ' are blank' ;
+            $(" [id$= modalidconfirm ]").text(msg); 
+            if(mngMsg ){
+                $(" [id$= modalidconfirmMng ]").text('Note: Managers can only have 1 blank');
+            }else{
+                $(" [id$= modalidconfirmMng ]").text('');
+            }
+            $('#warnmsg').modal('show');
+        }else{
+            navigateToStep6();
+        }
+    }
+    </script>
+     
+    
+    
+    
+ 
+</apex:page>

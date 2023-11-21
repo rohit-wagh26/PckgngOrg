@@ -1,0 +1,480 @@
+<apex:page controller="SalesRepScorecardController" docType="html-5.0" title="Bar chart">
+        <style>
+            .highcharts-figure,
+.highcharts-data-table table {
+  min-width: 310px;
+  max-width: 800px;
+  margin: 1em auto;
+}
+
+#container {
+  height: 400px;
+  width: 700px;
+}
+#container3 {
+  height: 400px;
+  width: 700px;
+}
+
+.highcharts-tooltip h3 {
+  margin: 0.3em 0;
+}
+
+.highcharts-data-table table {
+  font-family: Verdana, sans-serif;
+  border-collapse: collapse;
+  border: 1px solid #ebebeb;
+  margin: 10px auto;
+  text-align: center;
+  width: 100%;
+  max-width: 500px;
+}
+
+.highcharts-data-table caption {
+  padding: 1em 0;
+  font-size: 1.2em;
+  color: #555;
+}
+
+.highcharts-data-table th {
+  font-weight: 600;
+  padding: 0.5em;
+}
+
+.highcharts-data-table td,
+.highcharts-data-table th,
+.highcharts-data-table caption {
+  padding: 0.5em;
+}
+
+.highcharts-data-table thead tr,
+.highcharts-data-table tr:nth-child(even) {
+  background: #f8f8f8;
+}
+
+.highcharts-data-table tr:hover {
+  background: #f1f7ff;
+}
+    </style>
+<head>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/highcharts-more.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+    <apex:outputPanel >
+        <br/>
+ <div class="slds-scope" >
+
+        <div class="slds-grid">
+            <div class="slds-col slds-size_1-of-2">
+             <figure class="highcharts-figure">
+            <div id="container"></div>
+        </figure>
+            </div>
+            <div class="slds-col slds-size_1-of-2">
+                <div id="container11" style="min-width: 310px; height: 200px; margin: 0 auto"></div>
+<div id="container1" style="min-width: 310px; max-width: 800px; height: 400px; margin: 0 auto"></div>
+            </div>
+        </div>
+    </div>
+</apex:outputPanel>
+    <apex:outputPanel >
+        <br/>
+ <div class="slds-scope" >
+
+        <div class="slds-grid">
+            <div class="slds-col slds-size_1-of-2">
+             <figure class="highcharts-figure">
+            <div id="container3"></div>
+        </figure>
+            </div>
+            <div class="slds-col slds-size_1-of-2">
+            <div id="container2" style="min-width: 310px; max-width: 800px; height: 400px; margin: 0 auto"></div>
+            </div>
+        </div>
+    </div>
+</apex:outputPanel>
+</head>
+<script>
+                        var bdataYTD = [];
+                            var bdataYTD1 = [];
+                        var bdataYTD2 = [];
+    var bdataYTD3 = [];
+        var bdataYTD4 = [];
+        var bdataYTD5 = [];
+    var bdataYTD6 = [];
+    var bdataYTD7 = [];
+         <apex:repeat var="v" value="{!data1}">
+              bdataYTD.push({ x: Math.round({!v.data12 }), y: Math.round({!v.data13 }), z:  Math.round({!v.data14 }),name: '{!v.Name}',  QS:'{!v.name}'});     
+          
+          </apex:repeat>
+         <apex:repeat var="v" value="{!data2}">
+              bdataYTD3.push('{!v.salesrep}');
+            bdataYTD4.push({!v.data12 });
+            bdataYTD5.push({!v.data13 });
+             
+          </apex:repeat>
+         <apex:repeat var="v" value="{!data}">
+              bdataYTD2.push('{!v.Name}');
+    bdataYTD1.push({!v.data13});
+          
+          </apex:repeat>
+          // bdataYTD2.sort();
+    bdataYTD1.sort();
+    bdataYTD5.sort();
+    Highcharts.setOptions({
+  colors: ["#000000","#404040","#606060", "#888888","#C0C0C0" ]
+});
+Highcharts.chart('container', {
+
+    chart: {
+        type: 'bubble',
+        plotBorderWidth: 1,
+        zoomType: 'xy'
+    },
+
+    legend: {
+        enabled: false
+    },
+
+    title: {
+        text: 'US EAST SALES EXECUTIVE'
+    },
+
+    subtitle: {
+        text: 'Performance Distribution - Quota Rating vs. Number of Meeting Rating'
+    },
+
+    xAxis: {
+              min:-2,
+              max:12,
+        gridLineWidth: 1,
+        title: {
+            text: 'Number Of Meetings Rating'
+        },
+        labels: {
+            format: '{value}'
+        },
+        plotLines: [{
+            color: 'black',
+            dashStyle: 'dot',
+            width: 2,
+            zIndex: 3
+        }],
+    },
+
+    yAxis: {
+                      min:-2,
+              max:12,
+        startOnTick: false,
+        endOnTick: false,
+        title: {
+            text: 'Quota Rating'
+        },
+        labels: {
+            format: '{value}'
+        },
+        maxPadding: 0.2,
+        plotLines: [{
+            color: 'black',
+            dashStyle: 'dot',
+            width: 2,
+            zIndex: 3
+        }],
+    },
+
+    plotOptions: {
+        series: {
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            },
+            
+        },
+    },
+
+    series: [{
+        data: bdataYTD,
+        colorByPoint: true,
+    }]
+
+});
+Highcharts.chart('container3', {
+
+    chart: {
+        type: 'bubble',
+        plotBorderWidth: 1,
+        zoomType: 'xy'
+    },
+
+    legend: {
+        enabled: false
+    },
+
+    title: {
+        text: 'US EAST SALES EXECUTIVE'
+    },
+
+    subtitle: {
+        text: 'Performance Distribution - Quota Rating vs. Number of Meeting Rating'
+    },
+
+    accessibility: {
+        point: {
+            valueDescriptionFormat: '{index}. {point.name}, fat: {point.x}g, sugar: {point.y}g, obesity: {point.z}%.'
+        }
+    },
+
+    xAxis: {
+              min:-2,
+              max:11,
+        gridLineWidth: 1,
+        title: {
+            text: 'Number Of Meetings Rating'
+        },
+        labels: {
+            format: '{value}'
+        },
+        plotLines: [{
+            color: 'black',
+            dashStyle: 'dot',
+            width: 2,
+            label: {
+                rotation: 0,
+                y: 15,
+                style: {
+                    fontStyle: 'italic'
+                },
+                text: 'Safe fat intake 65g/day'
+            },
+            zIndex: 3
+        }],
+    },
+
+    yAxis: {
+                      min:-2,
+              max:11,
+        startOnTick: false,
+        endOnTick: false,
+        title: {
+            text: 'Quota Rating'
+        },
+        labels: {
+            format: '{value}'
+        },
+        maxPadding: 0.2,
+        plotLines: [{
+            color: 'black',
+            dashStyle: 'dot',
+            width: 2,
+            label: {
+                align: 'right',
+                style: {
+                    fontStyle: 'italic'
+                },
+                text: 'Invastigate other matrics',
+                x: 0
+            },
+            zIndex: 3
+        }],
+        accessibility: {
+            rangeDescription: 'Range: 0 to 160 grams.'
+        }
+    },
+
+    plotOptions: {
+        series: {
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            },
+            
+        },
+              minSize: 1,
+      maxSize: 100
+    },
+
+    series: [{
+        data: bdataYTD,
+        colorByPoint: true,
+    }]
+
+});
+                             
+Highcharts.chart("container2", {
+  chart: {
+    type: "bar",
+    zoomType: "y"
+  },
+    title: {
+        text: "US EAST SALES EXECUTIVE"
+    },
+    subtitle: {
+        text: "Employees Ranked by Quota Rating"
+    },
+  xAxis: {
+    categories: bdataYTD2,
+    title: {
+      text: 'Discovery Rating'
+    }
+  },
+  yAxis: { 
+    min: 0,
+    max: 12,
+    tickInterval: 2,
+    title: {
+      text: "Number of Meetings Rating"
+    },
+    labels: {
+      overflow: "justify",
+      format: "{value}"
+    }
+  },
+  plotOptions: {
+    bar: {
+      dataLabels: {
+        enabled: true,
+        format: "{y}"
+      }
+    }
+  },
+  tooltip: {
+    valueSuffix: "{value}"
+  },
+  legend: {
+    enabled: false
+  },
+  series: [
+    {
+        dataSorting: {
+            enabled: true
+        },
+      name: "Number of meeting rating",
+      data: bdataYTD1
+    }
+  ]
+});
+var mychart = Highcharts.chart("container1", {
+  chart: {
+    type: "bar",
+    zoomType: "y"
+  },
+    title: {
+        text: "US EAST SALES EXECUTIVE"
+    },
+    subtitle: {
+        text: "Employees Ranked by Quota Rating"
+    },
+  xAxis: {
+    categories: bdataYTD3,
+    title: {
+      text: 'Discovery Rating'
+    },
+  },
+  yAxis: { 
+    min: 0,
+    max: 12,
+    tickInterval: 2,
+	plotLines: [{
+            color: '#FF0000',
+        value: 5//bdataYTD4
+        }],
+    title: {
+      text: "Number of Meetings Rating"
+    },
+    labels: {
+      overflow: "justify",
+      format: "{value}"
+    }
+  },
+  plotOptions: {
+    bar: {
+      dataLabels: {
+        enabled: true,
+        format: "{y}"
+      }
+    }
+  },
+  tooltip: {
+    valueSuffix: "{value}"
+  },
+  legend: {
+    enabled: false
+  },
+  series: [
+    {
+        dataSorting: {
+            enabled: true
+        },
+      name: "Number of meeting rating",
+      colors: ["#000000","#404040","#606060", "#888888","#C0C0C0" ],
+      borderColor: '#5b5b5b',
+      data: bdataYTD5
+    }
+  ]
+});
+mychart.addSeries({ type: 'line', name: 'Number of Meeting', lineWidth: 0,  
+data: bdataYTD4, stack : 0, pointPlacement: 0.3, showInLegend: true, 
+marker: { symbol: 'line', fillColor: '#ff0000' }, 
+states: { hover: { enabled: false }, }
+});
+Highcharts.chart("container11", {
+  chart: {
+    type: "bar"
+  },
+  subtitle: {
+    text: 'US East Number of Meeting Rating'
+  },
+  xAxis: {
+    categories: ["Honey composition"],
+    visible: false
+  },
+  yAxis: {
+    labels: {
+      enabled: false
+    },
+    visible: false,
+    reversed: true,
+    min: 0,
+    title: {
+      text: null
+    }
+  },
+  plotOptions: {
+    bar: {
+      stacking: "percent",
+      dataLabels: {
+        enabled: true,
+        format: "{series.name}: {y}%",
+        color: "black",
+        y: -80
+      }
+    }
+  },
+  series: [
+    {
+      name: "10 - OutStanding",
+      data: [30.2]
+    },
+    {
+      name: "8 - Strong",
+      data: [31.3]
+    },
+    {
+      name: "5 - Average",
+      data: [17.2]
+    },
+    {
+      name: "2 - Marginal",
+      data: [7.1]
+    },
+    { name: "0 - Needs Improvement", data: [14.2] }
+  ]
+});
+</script>
+
+    <apex:slds />  
+
+</apex:page>

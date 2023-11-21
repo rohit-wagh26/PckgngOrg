@@ -1,0 +1,34 @@
+<apex:page sidebar="false"  controller="FunnelInstallationStep5bController" contentType="application/vnd.ms-csv#SalesRepsDetails.xls" cache="true">
+  
+   
+<table border="1">
+    <tr>
+        <td>ID</td>
+        <td>Name</td>
+        <td>User Name</td>
+        <td>Start Date <br/>(MM/DD/YYYY) or (MM-DD-YYYY)</td>
+        <td>Onboarded</td>
+        <td>Role</td>
+        <td>Profile Type</td>
+        <td>Manager</td>
+        
+        <!--<td>Managerid</td>-->
+    </tr>
+    <apex:repeat value="{!srpwrapperlist}" var="s">
+         <tr>
+            <td>{!s.id}</td> 
+            <td>{!s.name}</td>
+            <td>{!s.User_Record_Name}</td>
+            
+            <td>{!s.Rep_Start_Date}</td>
+            <td>{!s.Onboarded }</td>
+            <td>{!s.Role}</td>
+            <td>{!s.ProfileType}</td>
+            <td>{!s.Sales_Manager}</td>
+            
+            <!--<td>{!s.Sales_Managerid}</td>-->
+             
+        </tr>
+    </apex:repeat>
+</table>
+</apex:page>

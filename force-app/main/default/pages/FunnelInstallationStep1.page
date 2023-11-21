@@ -1,0 +1,344 @@
+<apex:page docType="html-5.0" sidebar="false"  controller="FunnelInstallationStep1Controller">
+    <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/jquery-1.12.4.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/jquery-ui.js')}"/>
+     <style>
+        div.hideCurrDate span.dateInput span.dateFormat{
+           display:none;
+        }
+    </style>   
+    <style>
+        body { font-size: 75%; }
+        .noSidebarCell, .sidebarCell .fixed { padding: 10px; font-family: sldsFont; }
+        .bPageHeader .phHeader td.left{display: block;}
+        @font-face {
+         font-family: sldsFont;
+             src: url({!URLFOR($Resource.SldsCss,'SldsResources/fonts/SalesforceSans-Light.ttf')});
+         }  
+        
+        .outer{background: #f5f5f9;}
+        .header{display: flex; flex-direction: column;}
+        .logo{background: #fff; width: 100%; display: flex; justify-content: center; padding: 10px 0;}
+        .logo img{width: 250px;}
+        .stepper{display: flex; width: 100%; background: #00b2ee; padding: 20px 0; justify-content: center;}
+        .stepper .step {font-family: sldsFont !important; font-size: 16px; font-weight: bold; text-align: center; color: #5f666f; cursor: default; margin: 0 3px; padding: 14px 10px 15px 30px; min-width: 5%; float: left; position: relative; background-color: #f5f5f9; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; transition: background-color 0.2s ease;}
+        .stepper .step:after,
+        .stepper .step:before {content: " "; position: absolute; top: 0; right: -17px; width: 0; height: 0; border-top: 25px solid transparent; border-bottom: 25px solid transparent; border-left: 17px solid #f5f5f9; z-index: 2; transition: border-color 0.2s ease; }
+        .stepper .step:before {right: auto; left: 0; border-left: 17px solid #00b2ee; z-index: 0;}
+        .stepper .step:first-child:before {border: none;}
+        .stepper .step:first-child {border-top-left-radius: 4px; border-bottom-left-radius: 4px;}
+        .stepper .step span {position: relative;}
+        /*.stepper .step span:before {opacity: 0; content: "✔"; position: absolute; top: -2px; left: -20px;}*/
+        .stepper .step.done {color: #fff; background-color: #66cc33;}
+        .stepper .step.done i{font-size: 20px;}
+        .stepper .step.done:after {border-left: 17px solid #66cc33;}
+        .stepper .step.done span:before {opacity: 1; -webkit-transition: opacity 0.3s ease 0.5s; -moz-transition: opacity 0.3s ease 0.5s; -ms-transition: opacity 0.3s ease 0.5s; transition: opacity 0.3s ease 0.5s;}
+        .stepper .step.current {color: #fff; background-color: #ff9900;}
+        .stepper .step.current:after {border-left: 17px solid #ff9900;}
+        .content-section{padding: 40px;}
+        .content-section-inner{background: #fff;}
+        .content-heading{background: #7e8793; display: flex; justify-content: center; padding: 16px;}
+        .content-heading h2{font-family: sldsFont !important; font-size: 24px; font-weight: bold; color: #fff;}
+        .content-body{padding: 40px;}
+        .content-body .content-steps{margin: 25px 0; display: flex; align-items: center;}
+        .content-body .content-body-inner{padding-bottom: 100px; padding-left: 20px;}
+        .content-body h4{font-family: sldsFont !important; font-size: 18px; font-weight: bold; color: #5f666f;}
+        .content-steps p{font-family: sldsFont !important; font-size: 18px; color: #5f666f; margin: 0; display: flex;}
+        .content-steps p .count{font-size: 18px; color: #ff9900; font-weight: bold; margin: 0 10px 0 0;}
+        .content-steps input[type=date]{border: none; border-bottom: 2px solid #7e8793; font-size: 18px; color: #5f666f; font-family: sldsFont !important;}
+        .content-steps input[type=text]{border: none; border-bottom: 2px solid #7e8793; width: 74px; min-width: auto; font-size: 18px; color: #5f666f; font-family: sldsFont !important;}
+        .content-steps input[type=number]{border: none; border-bottom: 2px solid #7e8793; width: 74px; min-width: auto; font-size: 18px; color: #5f666f; font-family: sldsFont !important;}
+        
+        .content-steps input:focus-visible{outline: none;}
+        .content-steps .inputbig-block-outer{width: 100%;}
+        .content-steps .inputbig-block{flex: 1;}
+        .content-steps .inputbig-block input{width: 100% !important;}
+        .content-button{display: flex; justify-content: center;}
+        .content-button button{font-weight: bold;background: #ff9900; border-radius: 30px; border: none; color: #fff; font-size: 20px; padding: 14px 40px; margin: 0 10px; cursor: pointer; font-family: sldsFont !important;}
+        .content-button button.back{font-weight: bold;background: #7e8793;}
+        
+        .content-button a{font-weight: bold;text-decoration: none !important;background: #ff9900; border-radius: 30px; border: none; color: #fff !important; font-size: 20px; padding: 14px 40px; margin: 0 10px; cursor: pointer; font-family: sldsFont !important;}
+        .content-button a.back{font-weight: bold;background: #7e8793;text-decoration: none !important;}
+        
+        .content-steps select{background: url('{!URLFOR($Resource.OrangeArrow )}') no-repeat right 8px center #fff !important; -moz-appearance: none; -webkit-appearance: none; border: none; border-bottom: 2px solid #7e8793; font-size: 18px; color: #5f666f; font-family: sldsFont !important; padding: 0 30px 5px 5px; border-radius: 0;}
+        .content-steps select:focus-visible{outline: none;}
+        .content-steps .slds-form-element__label{font-size: 18px; color: #5f666f;}
+        .ml5{margin-left: 5px;}
+        .ml10{margin-left: 10px;}
+        /*.content-steps input[type=checkbox] {display:none;}
+        .content-steps input[type=checkbox] + label{background: #999; height: 16px; width: 16px; display:inline-block; padding: 0 0 0 0px;}
+        .content-steps input[type=checkbox]:checked + label{background: #0080FF; height: 16px; width: 16px; display:inline-block; padding: 0 0 0 0px;}*/
+        
+         
+        /* Add this attribute to the element that needs a tooltip */
+        [data-tooltip] {
+          position: relative;
+          z-index: 2;
+          cursor: pointer;
+        }
+        
+        /* Hide the tooltip content by default */
+        [data-tooltip]:before,
+        [data-tooltip]:after {
+          visibility: hidden;
+          -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+          filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=0);
+          opacity: 0;
+          pointer-events: none;
+        }
+        
+        /* Position tooltip above the element */
+        [data-tooltip]:before {
+          position: absolute;
+          bottom: 100%;
+          left: 0;
+          margin-bottom: 5px;
+          margin-left: -100px;
+          padding: 7px;
+          width: 200px; 
+          -webkit-border-radius: 0;
+          -moz-border-radius: 0;
+          border-radius: 5px;
+          background-color: #66cc33;
+          /*background-color: hsla(0, 0%, 20%, 0.9);*/
+          color: #fff;
+          content: attr(data-tooltip);
+          text-align: center;
+          font-size: 14px;
+          line-height: 18px;
+          border: 2px solid #66cc33;
+        }
+        
+        /* Triangle hack to make tooltip look like a speech bubble */
+        [data-tooltip]:after {
+          position: absolute;
+          bottom: 100%;
+          left: 40%;
+          margin-left: -5px;
+          width: 0;
+          border-top: 5px solid #66cc33;
+          /*border-top: 5px solid hsla(0, 0%, 20%, 0.9);*/
+          border-right: 5px solid transparent;
+          border-left: 5px solid transparent;
+          content: " ";
+          font-size: 0;
+          line-height: 0;
+        }
+        
+        /* Show tooltip content on hover */
+        [data-tooltip]:hover:before,
+        [data-tooltip]:hover:after {
+          visibility: visible;
+          -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+          filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=100);
+          opacity: 1;
+        }
+        
+        
+        input[type="date"] {
+        position: relative;
+    }
+    
+    /* create a new arrow, because we are going to mess up the native one
+    see "List of symbols" below if you want another, you could also try to add a font-awesome icon.. */
+    input[type="date"]:after {
+        font-family: "Font Awesome 5 Free";
+        font-weight: 100; 
+        content: "\f073";
+        color: #ff9900;
+        padding: 0 5px;
+    }
+    
+    /* change color of symbol on hover */
+    input[type="date"]:hover:after {
+        color: #ff9900;
+    }
+    
+    /* make the native arrow invisible and stretch it over the whole field so you can click anywhere in the input field to trigger the native datepicker*/
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: auto;
+        height: auto;
+        color: transparent;
+        background: transparent;
+    }
+    
+    /* adjust increase/decrease button */
+    input[type="date"]::-webkit-inner-spin-button {
+        z-index: 1;
+    }
+    
+     /* adjust clear button */
+     input[type="date"]::-webkit-clear-button {
+         z-index: 1;
+     }
+     .slds-checkbox [type=checkbox]:checked + .slds-checkbox_faux:after, .slds-checkbox [type=checkbox]:checked + .slds-checkbox--faux:after, .slds-checkbox [type=checkbox]:checked ~ .slds-checkbox_faux:after, .slds-checkbox [type=checkbox]:checked ~ .slds-checkbox--faux:after, .slds-checkbox [type=checkbox]:checked + .slds-checkbox__label .slds-checkbox_faux:after, .slds-checkbox [type=checkbox]:checked + .slds-checkbox__label .slds-checkbox--faux:after{border-bottom: 2px solid #ff9900; border-left: 2px solid #ff9900;}
+    
+     
+    </style>
+    <!--Navigation -->
+    <apex:stylesheet value="{!URLFOR($Resource.FunnelScriptFolder,'Design/css/v5.0.8-fontawesome.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.FunnelScriptFolder,'Design/css/v5.0.8-solid.css')}"/>
+     
+    <apex:form > 
+    <html  lang="en">
+    <apex:stylesheet value="{!URLFOR($Resource.SldsCss,'SldsResources/styles/salesforce-lightning-design-system.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.SldsCss,'SldsResources/styles/salesforce-lightning-design-system.min')}"/>
+    <div class="outer">
+        <c:FunnelInstallationSteps /> 
+        <div class="content-section">
+            <div class="content-section-inner">
+                <div class="content-heading">
+                    <h2>Step 1 - General Settings</h2>
+                </div>
+                <div class="content-body">
+                    <h4>Let&apos;s start with some basic information about your organization.</h4>
+                    <div class="content-body-inner">
+                        <div class="content-steps"> 
+                            <p>
+                                <span class="count">1.</span> 
+                                    Fiscal Year Start: 
+                                <span class="ml10">
+                                    <div class="hideCurrDate">
+                                  <!--  <apex:input type="date" html-format="mm-dd-yyyy" value="{!FiscalYearDate}"  id="fsYear"> 
+                                        <apex:actionSupport event="onchange" action="{!ChangeDate}" reRender="fsYear"/> 
+                                          
+                                    </apex:input>
+                                    </div>-->
+                                    
+                                    <apex:inputfield html-data-lpignore="true" Style="width: 112px; text-align: center; " value="{!fsdate.Implementation_Date__c }"  id="fsYear"> 
+                                        <apex:actionSupport event="onchange" action="{!ChangeDate}" reRender="fsYear"/> 
+                                    </apex:inputfield>
+                                    </div>
+                                </span>
+                            </p>
+                        </div>
+                        <div class="content-steps">
+                            <p>
+                                <span class="count">2.</span> 
+                                Do you use Leads? 
+                                <span class="ml10">
+                                    <div class="slds-form-element">
+                                        <label class="slds-checkbox">
+                                            <apex:inputCheckbox styleClass="slds-input" value="{!leadUsed}"/>
+                                            <span class="slds-checkbox--faux"></span>             
+                                            <span class="slds-form-element__label">Yes</span>    
+                                        </label>
+                                    </div>
+                                </span>
+                            </p>
+                        </div>
+                        <div class="content-steps">
+                            <p>
+                                <span class="count">3.</span> 
+                                Do you use Meetings? 
+                                <span class="ml10">
+                                    <div class="slds-form-element">
+                                        <label class="slds-checkbox">
+                                            <apex:inputCheckbox styleClass="slds-input" value="{!meetingUsed}"/>
+                                            <span class="slds-checkbox--faux"></span>             
+                                            <span class="slds-form-element__label">Yes</span>    
+                                        </label>
+                                    </div>
+                                </span>
+                            </p>
+                        </div>
+                        <div class="content-steps">
+                            <p class="inputbig-block-outer">
+                                <span class="count">4.</span> 
+                                Meeting Values 
+                                <span class="slds-icon_container slds-icon-utility-info ml5" style="" data-tooltip="Enter the values separated by semicolon.">
+                                    <i style="color:#66cc33; font-size: 14px;" class="fa fa-info-circle" aria-hidden="true" ></i>
+                                </span>
+                                 <span class="inputbig-block ml10"><apex:input type="text" value="{!meetingvalue}" styleClass="big"/></span>
+                            </p>
+                        </div>
+                        <div class="content-steps">
+                            <p>
+                                <span class="count">5.</span> 
+                                Which object should be taken into account for the Meeting?
+                                
+                                <span class="ml11">
+                                    <apex:selectList size="1"  value="{!selectedObj}" Styleclass="slds-select slds-p-around_x-small" id="select-04" style="text-align: center;">
+                                      <apex:selectOptions value="{!ObjForMeetings}"/> 
+                                         
+                                     </apex:selectList>
+                                </span>
+                            </p>
+                        </div>
+                        <div class="content-steps">
+                            <p>
+                                <span class="count">6.</span> 
+                                At what probability are your opportunities considered qualified?
+                                <span class="ml10"><apex:input style="text-align: center;" type="number" value="{!qualifiedPercentage}" styleClass="pc"/></span>
+                            </p>
+                        </div>
+                        <div class="content-steps">
+                            <p>
+                                <span class="count">7.</span> 
+                                For your historical data, what percentage of opportunities should we consider as qualified?
+                                <span class="ml10"><apex:input style="text-align: center;" type="number" value="{!historicPercentage}" styleClass="pc"/></span>
+                            </p>
+                        </div>
+                        <div class="content-steps">
+                            <p>
+                                <span class="count">8.</span> 
+                                Stretch percentage to be used for goal automation
+                                <span class="ml10"><apex:input style="text-align: center;" type="number" value="{!stretchPercentage}" styleClass="pc"/></span>
+                            </p>
+                        </div>
+                        <div class="content-steps">
+                            <p>
+                                <span class="count">9.</span> 
+                                What month do you want to start using Funnelocity?
+                                
+                                <span class="ml10">
+                                    <apex:selectList size="1"  value="{!selectedMonth}" Styleclass="slds-select slds-p-around_x-small" id="select-03">
+                                      <apex:selectOptions value="{!Months}"/> 
+                                         
+                                     </apex:selectList>
+                                </span>
+                            </p>
+                        </div>
+                        <div class="content-steps">
+                            <p>
+                                <span class="count">10.</span> 
+                                Please add FMEndpoint -  ht{!tps}://{!instanceName}.salesforce.com  in Remote site setting.
+                                 
+                            </p>
+                        </div>
+                     
+                    </div>
+                    
+                    <div class="content-button">
+                       
+                        <apex:commandLink StyleClass="back" action="{!navigateToIntro}"><i class="fa fa-chevron-left" aria-hidden="true"></i> Back</apex:commandLink>
+                        <apex:commandLink action="{!saveAndExit}">Save &#38; Exit</apex:commandLink>
+                        <apex:commandLink action="{!navigateToStep2}">Next <i class="fa fa-chevron-right" aria-hidden="true"></i> </apex:commandLink>
+                         
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </html>
+    </apex:form>
+    <script>
+    window.onload = function() {
+        jQuery('input[type=text]').blur();
+        
+    };
+</script>
+<apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/js/kendo.js')}"/>
+<script>
+    $(".pc").kendoNumericTextBox({
+        format: "#.## \\%",
+        step:0.0001,
+        decimals: 4,
+    });
+     
+</script>
+</apex:page>

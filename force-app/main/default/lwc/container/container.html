@@ -1,0 +1,18 @@
+<template>
+  <lightning-card hide-header>
+    <!-- <div class="container slds-truncate"> -->
+      <c-navigation
+        class="navigation"
+        current-page-id={currentPageId}
+        menu-items={menuItems}
+        current-page-reference={currentPageReference}
+      ></c-navigation>
+      <c-banner class="content"></c-banner>
+      <c-pages
+        class="content"
+        current-page-id={currentPageId}
+        current-page-reference={currentPageReference}
+      ></c-pages>
+    <!-- </div> -->
+  </lightning-card>
+</template>

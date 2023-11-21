@@ -1,0 +1,9 @@
+<apex:page sidebar="true" >
+        
+  <wave:dashboard dashboardId="02uf2000000RQ7L" 
+        showTitle="true" 
+        height="800px" 
+        openLinksInNewWindow="true" 
+        />
+      <!--  filter="{'datasets' : {'opportunity': [ {'fields':['Id'], 'selection': ['{!Opportunity.Id}']}]}}"-->
+</apex:page>

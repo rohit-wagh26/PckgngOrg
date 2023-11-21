@@ -1,0 +1,32 @@
+/* h1{
+    font-size: 12px;
+    font-family: 'inter';
+    color : #1E1E1E;
+    font-weight: bold;
+    
+}
+
+h2{
+    
+    font-size: 12px;
+    font-family: inter;
+    color: #757575;
+}
+
+.banner{
+    display: flex;
+    flex-direction: row;
+    text-align: center;
+    border: 2px solid #B8B8B8;
+    border-radius: 5px;
+    padding: 10px;
+    width: 99%;
+    margin-left: 4px;
+    background-color: #e6e5e5;
+}
+
+.messages{
+    text-align: left;
+    padding: 5px;
+    padding-left: 10px;
+} */

@@ -1,0 +1,1294 @@
+<apex:page controller="FunnelCertificationReportsController" docType="html-5.0" sidebar="false" extensions="FunnelInstallation">
+
+    <html  lang="en">
+     
+    <apex:stylesheet value="{!URLFOR($Resource.SldsCss,'SldsResources/styles/salesforce-lightning-design-system.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.SldsCss,'SldsResources/styles/salesforce-lightning-design-system.min')}"/>
+    
+    <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/jquery-1.12.3.min.js')}"/>
+     
+    
+    <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/jquery.tablesorter.min.js')}"/>
+     
+    
+    <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/jquery.tablesorter.widgets.js')}"/>
+    
+    
+    <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/widget-staticRow.min.js')}"/>
+     
+    
+    <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/highcharts.js')}"/>
+     
+    
+    <apex:includeScript value="{!URLFOR($Resource.FunnelScriptFolder,'Design/exporting.js')}"/>
+     
+ 
+    <!--Navigation-->
+    
+    
+    <apex:stylesheet value="{!URLFOR($Resource.FunnelScriptFolder,'Design/css/v5.0.8-fontawesome.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.FunnelScriptFolder,'Design/css/v5.0.8-solid.css')}"/>
+
+    
+    <!--<apex:slds />-->
+    <!--Navigation-->
+    <style>
+        body { font-size: 75%; }
+        .noSidebarCell, .sidebarCell .fixed { padding: 10px; font-family: sldsFont; }
+        
+         @font-face {
+         font-family: sldsFont;
+             src: url({!URLFOR($Resource.SldsCss,'SldsResources/fonts/SalesforceSans-Light.ttf')});
+         }
+         
+         
+         .bPageHeader .phHeader td.left{display: block;}
+        .navigation{display: table; width: 100%; text-align: center;}
+    
+        .navigation{display: table; width: 100%;}
+        .navigation ul{margin: 0; padding: 0;}
+        .navigation ul li{display: inline-block; padding: 0 8px; border-left: 2px solid #7e8793; line-height: 17px;; margin-left: 0;}
+        .navigation ul li a{color: #7e8793; font-size: 17px; font-weight: bold;}
+        .navigation ul li {color: #7e8793; font-size: 17px; font-weight: bold;}
+        .navigation ul li:hover{color: #66cc33; text-decoration: none;}
+        .navigation ul li a:hover{color: #66cc33; text-decoration: none;}
+        .navigation ul li a:focus{outline: none; text-decoration: none;}
+        .navigation ul li.selected {color: #66cc33;}
+        .navigation ul li.home{border: none; padding-left: 0; margin-bottom: 10px;}
+        .navigation ul li.home a{color: #00b2ee;}
+        .navigation ul li.help{border-left: 2px solid #7e8793; padding-left: 5px; margin-left: 5px; margin-bottom: 10px;}
+        .navigation ul li.help a{color: #00b2ee;}
+        .navigation ul li:last-child{padding-right: 0;}
+        
+        .navigation ul li.scorenav a{background: url({!$Resource.CertificationNavigationIcon}) no-repeat; padding: 0 0 0 25px; background-position: 0 0; height: 19px; width: 20px;}
+        .navigation ul li.scorenav a:hover {background-position: 0 -23px;}
+        
+        .navigation ul li.funnelanalyticsnav > a{background: url({!$Resource.AnalyticsNavigationIcon}) no-repeat; padding: 0 0 0 25px; background-position: 0 5px; height: 19px; width: 20px; color: #7e8793;}
+        .navigation ul li.funnelanalyticsnav > a:hover{background-position: 0 -17px; color: #66cc33;}
+
+        .myapp{min-width: 500px; font-family: sldsFont;background-color: #fff; }
+                
+        .navigation ul li.reportnav{position: relative; display: inline-block; cursor: pointer;}
+        .navigation ul li.reportnav ul.subnav{position: absolute; z-index: 1; width: 240px; background: #fff; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); display: none;}
+        .navigation ul li.reportnav ul.subnav li{display: block; text-align: left; border: none; padding: 0;}
+        .navigation ul li.reportnav ul.subnav li a {color: #7e8793; padding: 10px; display: block; width: 100%;}
+        .navigation ul li.reportnav ul.subnav li a:hover{background: #66cc33; color: #fff;}
+        .navigation ul li.reportnav:hover ul.subnav {display: block;}
+        
+        .navigation ul li.reportnav ul.subnavlast{right:0; position: absolute; z-index: 1; width: 240px; background: #fff; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); display: none;}
+        .navigation ul li.reportnav ul.subnavlast li{display: block; text-align: left; border: none; padding: 0;}
+        .navigation ul li.reportnav ul.subnavlast li a {color: #7e8793; padding: 10px; display: block; width: 100%;}
+        .navigation ul li.reportnav ul.subnavlast li a:hover{background: #66cc33; color: #fff;}
+        .navigation ul li.reportnav:hover ul.subnavlast{display: block;}
+        
+        
+        .navigation ul li.checklisticon{border-right: 2px solid #7e8793; color: #00b2ee; border-left: 0; margin-right: 5px; cursor: pointer;}
+
+        .navigation ul li.checklisticon a{color: #00b2ee;}
+
+        button a:hover{text-decoration: none;}
+        button a:focus{text-decoration: none; outline: none;}
+        select{background: url('{!URLFOR($Resource.Selectarrow )}') no-repeat right -20px center #fff !important; -moz-appearance: none; -webkit-appearance: none;}
+       .slds-select[disabled], .slds-select.slds-is-disabled {background-color: #ecebea !important;border-color: #c9c7c5;cursor: not-allowed;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;}
+        
+         /* Add this attribute to the element that needs a tooltip */
+        [data-tooltip] {
+          position: relative;
+          z-index: 2;
+          cursor: pointer;
+        }
+        
+        /* Hide the tooltip content by default */
+        [data-tooltip]:before,
+        [data-tooltip]:after {
+          visibility: hidden;
+          -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+          filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=0);
+          opacity: 0;
+          pointer-events: none;
+        }
+        
+        /* Position tooltip above the element */
+        [data-tooltip]:before {
+          position: absolute;
+          bottom: 100%;
+          right: 0;
+          margin-bottom: 5px;
+          margin-left: 0;
+          padding: 10px;
+          width: 250px; 
+          -webkit-border-radius: 0;
+          -moz-border-radius: 0;
+          border-radius: 5px;
+          background-color: #66cc33;
+          /*background-color: hsla(0, 0%, 20%, 0.9);*/
+          color: #fff;
+          content: attr(data-tooltip);
+          text-align: center;
+          font-size: 14px;
+          line-height: 18px;
+          border: 2px solid #66cc33;
+        }
+        
+        /* Triangle hack to make tooltip look like a speech bubble */
+        [data-tooltip]:after {
+          position: absolute;
+          bottom: 100%;
+          left: 50%;
+          margin-left: -5px;
+          width: 0;
+          border-top: 5px solid #66cc33;
+          /*border-top: 5px solid hsla(0, 0%, 20%, 0.9);*/
+          border-right: 5px solid transparent;
+          border-left: 5px solid transparent;
+          content: " ";
+          font-size: 0;
+          line-height: 0;
+        }
+        
+        /* Show tooltip content on hover */
+        [data-tooltip]:hover:before,
+        [data-tooltip]:hover:after {
+          visibility: visible;
+          -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+          filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=100);
+          opacity: 1;
+        }
+        .help{font-weight: bold; cursor: pointer;}
+        .help i{color: #66cc33;}
+    </style>
+          
+<apex:outputPanel id="charts" >
+
+      <script type="text/javascript">   
+           
+                  clabels = JSON.parse('{!JSENCODE(charLabels)}');
+                  clabelsbelow = JSON.parse('{!JSENCODE(CharLabelsbelow)}');
+                  clabelsArr = [];
+                  
+                  for ( let i=0; i < clabels.length ; i++)
+                  {
+                      
+                      clabelsArr[i] = clabels[i];
+                  }
+                  
+                   
+                  
+                  console.log(clabelsArr);
+                  console.log(clabelsArrbelow);
+                    
+            /*Charts */
+           function showChart(){
+          
+                 GenerateChart();
+             }
+                         
+             function GenerateChart(){
+              Highcharts.setOptions({
+                    lang: {
+                        thousandsSep: ','
+                    }
+                });
+                
+                var fs = {!FScores};
+                var qs ={!QualitativeScores};
+                var fsrevenue = {!revenue};
+                var fsquota =  {!Quotas};
+                
+                var fsb = {!FScoresbelow};
+                var qsb ={!QualitativeScoresbelow};
+                var fsrevenueb = {!revenuebelow};
+                var fsquotab =  {!Quotasbelow};
+                
+              $('#certScore').highcharts({
+                
+                 credits: {
+                  enabled: false
+                  },
+                
+                 tooltip: {
+                        formatter: function () {
+                        //console.log('this',this);
+                       
+                        if(this.color == "#74cd59"){
+                             return '<span style="font-size: 10px">'+this.x+'</span><br/> <span style="color:#74cd59">\u25CF</span> Quantitative Score: <b> '+(this.y).toFixed(2)+'</b>' ;
+                        }else if(this.color == "#9b54f1"){
+                           return '<span style="font-size: 10px">'+this.x+'</span><br/> <span style="color:#9b54f1">\u25CF</span> YTD Sales: <b> '+ (this.y).toLocaleString("ja-JP", { style: "currency", currency: "USD", minimumFractionDigits: 2 })+'</b>' ;
+                        }else if(this.color == "#ff9900"){
+                           return '<span style="font-size: 10px">'+this.x+'</span><br/> <span style="color:#ff9900">\u25CF</span> YTD Quota: <b> '+ (this.y).toLocaleString("ja-JP", { style: "currency", currency: "USD", minimumFractionDigits: 2 })
+                                   +'</b> <br/> <span style="color:#666666">\u25CF</span> Percentage: <b>'+(fsrevenue[this.series.xAxis.categories.indexOf(this.key)]*100/this.y).toFixed(2)+'%</b>' ;  
+                        }
+                        
+                    
+                       }
+                    },
+                chart: {
+                        type: 'column'
+                    },
+                    title: {
+                        text: '',
+                        x: 0 //center
+                    },
+                    subtitle: {
+                       
+                        x: -20
+                    },
+                    xAxis: {
+                            categories: clabelsArr,
+                            labels:{
+                             style:{
+                                 fontSize:'13px',
+                                 color: '#333333'
+                              }  
+                            }
+                    },
+                    
+                   yAxis: [{ // Primary yAxis
+                                min:0,
+                                max:10,
+                                plotLines: [{
+                                    value: 0+'%',
+                                    width: 1,
+                                    color: '#333333'
+                                }],
+                                labels: {
+                                   
+                                    style: {
+                                        color: '#333333'
+                                    }
+                                },
+                                title: {
+                                    text: 'Funnelocity Quantitative Score',
+                                    style: {
+                                        color: '#333333'
+                                    }
+                                },
+                               
+                        
+                            }, { // Secondary yAxis
+                                gridLineWidth: 0,
+                                title: {
+                                    text: 'Sales',
+                                    style: {
+                                        color: '#9b54f1'
+                                    }
+                                },
+                                 
+                                 opposite: true,
+                                labels: {
+                                    
+                                    style: {
+                                        color: '#9b54f1'
+                                    }
+                                }
+                        
+                            }],
+                      
+                   
+                     colors: [
+                         '#74cd59',
+                        '#9b54f1',
+                        '#ff9900',
+                        
+                    ],
+                    
+                    legend: {
+                            align: 'center',
+                            verticalAlign: 'bottom',
+                            x: 0,
+                            y: 0
+                    },
+                    
+                    
+                    
+                    series: [{
+                        name: 'Quantitative Score',
+                        data: fs,
+                         tooltip: {
+                          
+                            valueDecimals: 2
+                        }
+                        
+                    },
+                    { 
+                        // type: 'line',
+                         name: 'YTD Sales',
+                         data: fsrevenue ,
+                         yAxis: 1,
+                         tooltip: {
+                            valuePrefix: '$',
+                            valueDecimals: 2
+                         }
+                     },
+                     { 
+                         name: 'YTD Quota',
+                         data:fsquota ,
+                         yAxis: 1,
+                          tooltip: {
+                            valuePrefix: '$',
+                            valueDecimals: 2
+                        }
+                        
+                    }
+                    ]
+                });
+                
+                
+                
+                 $('#certQaunQaul').highcharts({
+                
+                 credits: {
+                  enabled: false
+                  },
+                
+                tooltip: {
+                        formatter: function () {
+                    //    console.log('this',this);
+                       
+                        if(this.color == "#00b2ee"){
+                             return '<span style="font-size: 10px">'+this.x+'</span><br/> <span style="color:#00b2ee">\u25CF</span>Qualitative Score: <b> '+(this.y).toFixed(2)+'</b>' ;
+                        }else if(this.color == "#9b54f1"){
+                           return '<span style="font-size: 10px">'+this.x+'</span><br/> <span style="color:#9b54f1">\u25CF</span> YTD Sales: <b> '+ (this.y).toLocaleString("ja-JP", { style: "currency", currency: "USD", minimumFractionDigits: 2 })+'</b>' ;
+                        }else if(this.color == "#ff9900"){
+                           return '<span style="font-size: 10px">'+this.x+'</span><br/> <span style="color:#ff9900">\u25CF</span> YTD Quota: <b> '+ (this.y).toLocaleString("ja-JP", { style: "currency", currency: "USD", minimumFractionDigits: 2 })
+                                   +'</b> <br/> <span style="color:#666666">\u25CF</span> Percentage: <b>'+(fsrevenue[this.series.xAxis.categories.indexOf(this.key)]*100/this.y).toFixed(2)+'%</b>' ;  
+                        }
+                        
+                    
+                       }
+                    },
+                    
+                chart: {
+                        type: 'column'
+                    },
+                    title: {
+                        text: '',
+                        x: 0 //center
+                    },
+                    subtitle: {
+                       
+                        x: -20
+                    },
+                    xAxis: {
+                           categories: clabelsArr,
+                           labels:{
+                             style:{
+                                 color: '#333333',
+                                 fontSize:'13px'
+                              }  
+                            }
+                    },
+                    yAxis:[{ // Primary yAxis
+                                min:0,
+                                max:10,
+                                plotLines: [{
+                                    value: 0+'%',
+                                    width: 1,
+                                    color: '#333333'
+                                }],
+                                labels: {
+                                   
+                                    style: {
+                                        color: Highcharts.getOptions().colors[0]
+                                    }
+                                },
+                                title: {
+                                    text: 'Funnelocity Qualitative Score',
+                                    style: {
+                                        color: Highcharts.getOptions().colors[0]
+                                    }
+                                },
+                               
+                        
+                            }, { // Secondary yAxis
+                                gridLineWidth: 0,
+                                title: {
+                                    text: 'Sales',
+                                    style: {
+                                        color: '#9b54f1'
+                                    }
+                                },
+                                 
+                                 opposite: true,
+                                labels: {
+                                    
+                                    style: {
+                                        color: '#9b54f1'
+                                    }
+                                }
+                        
+                            }],
+                    
+                    /*tooltip: {
+                           
+                            valueDecimals: 2
+                        },*/
+                   
+                    
+                    legend: {
+                            align: 'center',
+                            verticalAlign: 'bottom',
+                            x: 0,
+                            y: 0
+                    },
+                    
+                     colors: [
+                        '#00b2ee',
+                        '#9b54f1',
+                        '#ff9900',
+                    ],
+                    
+                     
+                    series: [{
+                        name: 'Qualitative Score',
+                        data: qs,
+                         tooltip: {
+                          
+                            valueDecimals: 2
+                        } 
+                        
+                    },
+                    { 
+                        // type: 'line',
+                         name: 'YTD Sales',
+                         data: fsrevenue,
+                         yAxis: 1,
+                         tooltip: {
+                            valuePrefix: '$',
+                            valueDecimals: 2
+                         }
+                     },
+                     { 
+                         name: 'YTD Quota',
+                         data: fsquota,
+                         yAxis: 1,
+                          tooltip: {
+                            valuePrefix: '$',
+                            valueDecimals: 2
+                        }
+                        
+                    }
+                    ]
+                });
+                
+                 $('#certRolling').highcharts({
+                
+                 credits: {
+                  enabled: false
+                  },
+                
+                chart: {
+                        type: 'line'
+                    },
+                    title: {
+                        text: '',
+                        x: 0 //center
+                    },
+                    subtitle: {
+                       
+                        x: -20
+                    },
+                    xAxis: {
+                           categories:{!Monthss},
+                           labels:{
+                             style:{
+                                 color: '#333333',
+                                 fontSize:'13px'
+                              }  
+                            },
+                            reversed: true
+                    },
+                    yAxis: {
+                         min:0,
+                         max:10,
+                         labels: {
+                                   
+                                    style: {
+                                        color: '#333333'
+                                    }
+                                },
+                         title: {
+                            text: 'Scores',
+                            style: {
+                                        color: '#333333'
+                                    }
+                             },
+                        plotLines: [{
+                            value: 0+'%',
+                            width: 1,
+                            color: '#333333'
+                        }]
+                    },
+                   
+                    
+                    legend: {
+                            align: 'center',
+                            verticalAlign: 'bottom',
+                            x: 0,
+                            y: 0
+                    },
+                    
+                     colors: [
+                       
+                        '#66CC33',
+                        '#00b2ee'
+                       
+                    ],
+                    
+                    series:  [{
+                        name: 'Quantitative Score',
+                        data: {!MonthsValuess},
+                         tooltip: {
+                          
+                            valueDecimals: 2
+                        }
+                        
+                    },
+                    {
+                        name: 'Qualitative Score',
+                        data: {!monthsValuesqualitatives},
+                        marker:{"symbol":"circle"},
+                         tooltip: {
+                          
+                            valueDecimals: 2
+                        }
+                        
+                    }
+                   ]
+                });
+                
+                  $('#certScorebelow').highcharts({
+                
+                 credits: {
+                  enabled: false
+                  },
+                  tooltip: {
+                        formatter: function () {
+                        //console.log('this',this);
+                       
+                        if(this.color == "#74cd59"){
+                             return '<span style="font-size: 10px">'+this.x+'</span><br/> <span style="color:#74cd59">\u25CF</span> Quantitative Score: <b> '+(this.y).toFixed(2)+'</b>' ;
+                        }else if(this.color == "#9b54f1"){
+                           return '<span style="font-size: 10px">'+this.x+'</span><br/> <span style="color:#9b54f1">\u25CF</span> YTD Sales: <b> '+ (this.y).toLocaleString("ja-JP", { style: "currency", currency: "USD", minimumFractionDigits: 2 })+'</b>' ;
+                        }else if(this.color == "#ff9900"){
+                           return '<span style="font-size: 10px">'+this.x+'</span><br/> <span style="color:#ff9900">\u25CF</span> YTD Quota: <b> '+ (this.y).toLocaleString("ja-JP", { style: "currency", currency: "USD", minimumFractionDigits: 2 })
+                                   +'</b> <br/> <span style="color:#666666">\u25CF</span> Percentage: <b>'+(fsrevenueb[this.series.xAxis.categories.indexOf(this.key)]*100/this.y).toFixed(2)+'%</b>' ;  
+                        }
+                        
+                    
+                       }
+                    },
+                chart: {
+                        type: 'column'
+                    },
+                    title: {
+                        text: '',
+                        x: 0 //center
+                    },
+                    subtitle: {
+                       
+                        x: -20
+                    },
+                    xAxis: {
+                            categories: clabelsbelow ,
+                            labels:{
+                             style:{
+                                 color: '#333333',
+                                 fontSize:'13px'
+                              }  
+                            }
+                    },
+                     yAxis: [{ // Primary yAxis
+                                min:0,
+                                max:10,
+                                plotLines: [{
+                                value: 0+'%',
+                                width: 1,
+                                color: '#333333'
+                                }], 
+                                labels: {
+                                   
+                                    style: {
+                                        color: '#333333'
+                                    }
+                                },
+                                title: {
+                                    text: 'Funnelocity Quantitative Score',
+                                    style: {
+                                        color: '#333333'
+                                    }
+                                },
+                               
+                        
+                            }, { // Secondary yAxis
+                                gridLineWidth: 0,
+                                title: {
+                                    text: 'Sales',
+                                    style: {
+                                        color:'#9b54f1'
+                                    }
+                                },
+                                 
+                                 opposite: true,
+                                labels: {
+                                    
+                                    style: {
+                                        color: '#9b54f1'
+                                    }
+                                }
+                        
+                            }],
+                    
+                   
+                    
+                    legend: {
+                            align: 'center',
+                            verticalAlign: 'bottom',
+                            x: 0,
+                            y: 0
+                    },
+                    
+                     colors: [
+                         '#74cd59',
+                        '#9b54f1',
+                        '#ff9900',
+                        
+                    ],
+                    
+                     
+                    series: [{
+                        name: 'Quantitative Scores',
+                        data: fsb ,
+                         tooltip: {
+                          
+                            valueDecimals: 2
+                        }
+                        
+                    },
+                    { 
+                         name: 'YTD Sales',
+                         data: fsrevenueb ,
+                         yAxis: 1,
+                          tooltip: {
+                            valuePrefix: '$',
+                            valueDecimals: 2
+                        }
+                        
+                    },
+                         
+                    { 
+                        name: 'YTD Quota',
+                         data: fsquotab ,
+                         yAxis: 1,
+                          tooltip: {
+                            valuePrefix: '$',
+                            valueDecimals: 2
+                        
+                         }
+                     }
+                    
+                    ]
+                });
+                
+                
+                
+                 $('#certQaunQaulbelow').highcharts({
+                
+                 credits: {
+                  enabled: false
+                  },
+                
+                tooltip: {
+                        formatter: function () {
+                    //    console.log('this',this);
+                       
+                        if(this.color == "#00b2ee"){
+                             return '<span style="font-size: 10px">'+this.x+'</span><br/> <span style="color:#00b2ee">\u25CF</span>Qualitative Score: <b> '+(this.y).toFixed(2)+'</b>' ;
+                        }else if(this.color == "#9b54f1"){
+                           return '<span style="font-size: 10px">'+this.x+'</span><br/> <span style="color:#9b54f1">\u25CF</span> YTD Sales: <b> '+ (this.y).toLocaleString("ja-JP", { style: "currency", currency: "USD", minimumFractionDigits: 2 })+'</b>' ;
+                        }else if(this.color == "#ff9900"){
+                           return '<span style="font-size: 10px">'+this.x+'</span><br/> <span style="color:#ff9900">\u25CF</span> YTD Quota: <b> '+ (this.y).toLocaleString("ja-JP", { style: "currency", currency: "USD", minimumFractionDigits: 2 })
+                                   +'</b> <br/> <span style="color:#666666">\u25CF</span> Percentage: <b>'+(fsrevenueb[this.series.xAxis.categories.indexOf(this.key)]*100/this.y).toFixed(2)+'%</b>' ;  
+                        }
+                        
+                    
+                       }
+                    },
+                    
+                chart: {
+                        type: 'column'
+                    },
+                    title: {
+                        text: '',
+                        x: 0 //center
+                    },
+                    subtitle: {
+                       
+                        x: -20
+                    },
+                    xAxis: {
+                           categories: clabelsbelow ,
+                           labels:{
+                             style:{
+                                 color: '#333333',
+                                 fontSize:'13px'
+                              }  
+                            }
+                    },
+                   yAxis: [{ // Primary yAxis
+                                min:0,
+                                max:10,
+                                plotLines: [{
+                                value: 0+'%',
+                                width: 1,
+                                color: '#333333'
+                                }], 
+                                labels: {
+                                   
+                                    style: {
+                                        color: Highcharts.getOptions().colors[0]
+                                    }
+                                },
+                                title: {
+                                    text: 'Funnelocity Qualitative Score',
+                                    style: {
+                                        color: Highcharts.getOptions().colors[0]
+                                    }
+                                },
+                               
+                        
+                            }, { // Secondary yAxis
+                                gridLineWidth: 0,
+                                title: {
+                                    text: 'Sales',
+                                    style: {
+                                        color: '#9b54f1'
+                                    }
+                                },
+                                 
+                                 opposite: true,
+                                labels: {
+                                    
+                                    style: {
+                                        color: '#9b54f1'
+                                    }
+                                }
+                        
+                            }],
+                    
+                    
+                    
+                   
+                    
+                    legend: {
+                            align: 'center',
+                            verticalAlign: 'bottom',
+                            x: 0,
+                            y: 0
+                    },
+                    
+                     colors: [
+                        '#00b2ee',
+                        '#9b54f1',
+                        '#ff9900',
+                        
+                    ],
+                    
+                     
+                    series: [{
+                        name: 'Qualitative Scores',
+                        data: qsb ,
+                         tooltip: {
+                          
+                            valueDecimals: 2
+                        }
+                        
+                    },
+                    { 
+                         name: 'YTD Sales',
+                         data: fsrevenueb ,
+                         yAxis: 1,
+                          tooltip: {
+                            valuePrefix: '$',
+                            valueDecimals: 2
+                        }
+                        
+                    },
+                         
+                    { 
+                        name: 'YTD Quota',
+                         data: fsquotab ,
+                         yAxis: 1,
+                          tooltip: {
+                            valuePrefix: '$',
+                            valueDecimals: 2
+                        
+                         }
+                     }
+                    
+                    ]
+                });
+             }
+          
+      
+    </script>
+   </apex:outputPanel>
+    <!--Navigation-->    
+    <apex:form >
+    <!-- <apex:actionFunction action="{!statusFilter}" reRender="pg,av,av1,av2,av3" name="sf">
+        <apex:param name="status" value="" assignTo="{!repStatus}"/>
+    </apex:actionFunction> !-->
+        <div class="slds-scope">
+            <div class="myapp">
+                <c:Help_popup helpContent="{!help}"/> 
+                <!--Navigation-->
+                <div class="slds-grid slds-wrap slds-form-element slds-p-around_small">
+                    <div class="slds-size_1-of-1">
+                        <div class="navigation">
+                           <ul>
+                                <li class="checklisticon" >
+                                    <apex:outputPanel rendered="{!(admin && wizardComp && (!checkListComp))}">
+                                        <apex:commandLink action="{!navigateToChecklistPage}"><i class="fa fa-check-circle" aria-hidden="true"></i></apex:commandLink>
+                                    </apex:outputPanel>
+                                </li>
+                                <li class="home"><apex:commandLink action="{!navigateToHomePage}"><i class="fas fa-home"></i></apex:commandLink></li>
+                                <li class="scorenav"><apex:commandLink action="{!navigateToCertification}"> FUNNELOCITY SCORING</apex:commandLink></li>
+                                <li><apex:commandLink action="{!navigateToDashboard}"><span><i class="fas fa-tachometer-alt"></i></span> PERFORMANCE DASHBOARD</apex:commandLink></li>
+                                 
+                                <li class="selected reportnav"> <i class="fas fa-chart-bar"></i> REPORTING 
+                                    <ul class="subnav">
+                                        <li><a  >Funnelocity Reports</a></li>
+                                        <li><apex:commandLink action="{!navigateToReportsPage}">Sales Management Reports</apex:commandLink></li>
+                                        <li><apex:commandLink action="{!navigateToAnnualizationDashboard}">Tenured and New Hire Performance Dashboard</apex:commandLink></li>
+                                    </ul>
+                                </li>
+                                 
+                                 <li class="reportnav funnelanalyticsnav " >   <a> FUNNELOCITY ANALYTICS </a>  
+                                    <ul class="subnav">
+                                        <li><apex:commandLink action="{!navigateToFunnelAnalytic}">Funnelocity Quantitative Scoring</apex:commandLink></li>
+                                        <li><apex:commandLink action="{!navigateToFunnelAnalyticQualitative}">Funnelocity Qualitative Scoring</apex:commandLink></li>
+                                    </ul>
+                               </li>                                                             
+                                <li style="display:none"><apex:commandLink ><i class="fas fa-star"></i> TERRITORY PLAN</apex:commandLink></li>
+                                <apex:outputPanel rendered="{!displayMetricCalculator}">
+                                    <li><apex:commandLink action="{!navigateToCalculator}"><i class="fas fa-calculator"></i> METRICS CALCULATOR</apex:commandLink></li>
+                                </apex:outputPanel>
+                                <apex:outputPanel rendered="{!appSetup = ''}">
+                                    <li class=" reportnav"> <i class="fas fa-chart-bar"></i> ADMIN 
+                                        <ul class="subnavlast">
+                                            <li><apex:commandLink action="{!navigateToFunnelAddEditSRP}" rendered="{!adminUser}">Sales Rep Profiles and Hierarchy</apex:commandLink></li>
+                                            <li><apex:commandLink action="{!navigateToAppSetup}" rendered="{!adminUser}">Metrics and Skills</apex:commandLink></li>
+                                            <li><apex:commandLink action="{!navigateToGoals}">Goal Management</apex:commandLink></li>
+                                            <li><apex:commandLink action="{!navigateToFunnelSetup}" rendered="{!adminUser}">Custom Updates</apex:commandLink></li>                                        
+                                        </ul>
+                                    </li>
+                                </apex:outputPanel>
+                                <!--Added for Help Menu - Rohit-->
+                                <li class="help">
+                                    <apex:commandLink target="_blank" action="{!navigateToHelpMenu}"><i class="fas fa-question-circle" style="color: #00b2ee"></i></apex:commandLink>
+                                </li>
+                            </ul>  
+                        </div>
+                    </div>
+                </div> 
+                <!--Navigation-->
+                <apex:actionFunction id="breadCrumClick" name="breadCrumClick" action="{!breadCrumClick}" rerender="roleList,levels,levelList" oncomplete="validateSave();">
+                    <apex:param value="" name="crumValue" assignTo="{!crumValue}" />
+                    <apex:param value="" name="levelValue" assignTo="{!levelValue}" />
+                </apex:actionFunction>
+                <div class="slds-grid slds-wrap slds-form-element" style="background: #f5f5f9;padding-bottom: 10px;padding-top: 10px; padding-bottom: 0;">
+                    <div class="slds-p-around_small" style="color: #333333; font-size: 16px; position: absolute; right: 0; top: 0;">
+                        <span class="help" onclick="popup('pop')" style="float: left; line-height: 18px;">Help <i style="font-size: 18px; margin: 0 0 0 5px; float: right;" class="fa fa-question-circle" aria-hidden="true"></i></span>
+                    </div>
+                    <div class="slds-col">
+                    
+                        <script type="text/javascript">
+                                 var repVal ;
+                                 var repupdate = false;
+                                 var crumb = '{!defaultBreadCrumb}'; 
+                                 
+                                    $(document).ready(function(){                                       
+                                        var option;
+                                        $(".crumbClass").html(crumb);                                    
+                                        
+                                    });
+                                
+                                function addCrumb(obj,levelValue){
+                                     
+                                    option = $(obj).find('option:selected').text();
+                                    if(option != '--Select--' && option != 'All'){
+                                        if(crumb == ''){
+                                            crumb = option;                                                            
+                                        }else if(repVal =='Rep' && !repupdate ){
+                                            crumb = crumb + '&nbsp> ' +option;
+                                            repupdate = true;
+                                        }else if(repVal =='Rep' && repupdate ){
+                                             
+                                            crumb = crumb.slice(0, crumb.lastIndexOf('>')) +'> ' + option;
+                                            
+                                        }else { 
+                                            crumb = crumb + '&nbsp>&nbsp '+`   <a onclick="breadCrumClick1('${option}','${levelValue}')">`+ option+ '</a>' ;
+                                            
+                                        }
+                                        }else if(option == 'All'){
+                                        crumb = crumb.slice(0, crumb.lastIndexOf('>'));
+                                    }
+                                    $(".crumbClass").html(crumb);
+                                    
+                                }
+                                
+                                function repva(rv){
+                                    repVal = rv;
+                                     
+                                }
+                                
+                                function breadCrumClick1(v,l){
+                                    repupdate = false;
+                                    breadCrumClick(v,l);
+                                    crumb = crumb.slice(0, crumb.lastIndexOf(v+'</a>'))+v+'</a>';
+                                    $(".crumbClass").html(crumb);
+                                 
+                               }
+                                                                                               
+                            </script> 
+                        
+                        <apex:outputPanel id="crumbText">
+                        
+                            <script type="text/javascript">
+                                    function reloadCrumb(){
+                                        crumb = '{!defaultBreadCrumb}';
+                                        $(".crumbClass").html(crumb);
+                                        repupdate = false;
+                                    }
+                            </script>
+                            <apex:outputText styleClass="crumbClass slds-p-around_small slds-grid" style="color: #333333; font-size: 18px; font-weight: 300;padding-top: 0;padding-bottom: 10px;">                                
+                            </apex:outputText>
+                        </apex:outputPanel>
+                        <apex:outputPanel id="filtersPanel">
+                            <apex:actionStatus id="filterStatus">                                
+                                <apex:facet name="stop">
+                                    <apex:outputPanel >
+                                        <div class="slds-grid slds-wrap">                                
+                                            <div class="slds-large-size_8-of-8 slds-small-size_1-of-1">
+                                                
+                                                <div class="slds-grid"> 
+                                                    <apex:outputPanel id="levels" styleclass="slds-col slds-size_1-of-3"> 
+                                                        <label class="slds-form-element__label slds-text-heading_medium slds-p-left_small" style="font-size: 21px; font-weight: bold; color: #7e8793;" for="select-01">{!fw.labelOne}</label>                              
+                                                        <div class="slds-form-element__control slds-p-around_small" style="margin: -10px 0 0 0;">
+                                                            <div style="position: relative;">
+                                                                <!--  <apex:actionRegion > -->
+                                                                    <apex:selectList size="1" disabled="{!IF(NOT(fw.isRep),false,true)}" value="{!fw.selectedLevelOne}" styleClass="slds-select slds-text-heading_medium slds-p-around_x-small" id="select-01" style="color: #7e8793; font-size: 21px; border-radius: 0; height: auto; padding: 8px 30px 8px 8px;">
+                                                                        <apex:actionSupport status="filterStatus" event="onchange" onComplete="reloadCrumb();validateSave();"  action="{!levelOneAction}" rerender="levelList,roleList,crumbText,pg"/>
+                                                                        <apex:selectoptions value="{!fw.levelOne}"> 
+                                                                        </apex:selectoptions>                                                
+                                                                    </apex:selectList> 
+                                                                <!--  </apex:actionRegion > -->
+                                                                
+                                                            </div>
+                                                        </div>
+                                                        <apex:outputText style="color:red; display:none;margin: 0px 0px 0px 75px; font-size: 15px;" value="Please select a value" id="validlevel"></apex:outputText>
+                                                    </apex:outputPanel> 
+                                                    <apex:outputPanel id="levelList" styleclass="slds-col slds-size_1-of-3">
+                                                        <label class="slds-form-element__label slds-text-heading_medium slds-p-left_small" style="font-size: 21px; font-weight: bold; color: #7e8793;" for="select-02">{!fw.labelTwo}{!IF(fw.labelTwo =='Rep','  Name','')}</label><apex:outputPanel id="repol"><apex:image url="{!URLFOR($Resource.Overlay,'Overlay/overlay.png')}" style="margin: -10px 0 0 0;" rendered="{!IF(AND(RepOverlay,!RoleOverlay) ,true,false)}"/></apex:outputPanel> 
+                                                        <div class="slds-form-element__control slds-p-around_small" style="margin: -10px 0 0 0;">
+                                                            <div style="position: relative;">
+                                                                <apex:actionRegion >
+                                                                    <apex:selectList disabled="{!IF(AND(NOT(ISNULL(fw.selectedLevelOne)),NOT(fw.selectedLevelOne='--Select--'),NOT(ISBLANK(fw.selectedLevelOne)),NOT(fw.isRep)),false,true)}" size="1" value="{!fw.selectedLevelTwo}" styleClass="slds-select slds-text-heading_medium slds-p-around_x-small" id="select-02" style="color: #7e8793; font-size: 21px; border-radius: 0; height: auto; padding: 8px 30px 8px 8px;">
+                                                                        <apex:actionSupport status="filterStatus" event="onchange" onComplete="addCrumb(this,'{!fw.labelOne}');validateSave();" action="{!levelTwoAction}" onbeforedomupdate="repva('{!fw.labelTwo}')"  rerender="roleList,levels,levelList,crumbText,pg" />
+                                                                        <apex:selectoptions value="{!fw.levelTwo}"> 
+                                                                        </apex:selectoptions>                                                        
+                                                                    </apex:selectList> 
+                                                                </apex:actionRegion>
+                                                                
+                                                            </div>
+                                                        </div>
+                                                        <apex:outputText style="color:red; display:none;margin: 0px 0px 0px 75px; font-size: 15px;" value="Please select a value" id="validname"></apex:outputText>
+                                                    </apex:outputPanel>
+                                                    
+                                                    <apex:outputPanel id="roleList" styleclass="slds-col slds-size_1-of-3">
+                                                        <label class="slds-form-element__label slds-text-heading_medium slds-p-left_small" style="font-size: 21px; font-weight: bold; color: #7e8793;" for="select-03">{!fw.labelThree}</label><apex:outputPanel id="roleOl"><apex:image url="{!URLFOR($Resource.Overlay,'Overlay/overlay.png')}" style="margin: -10px 0 0 0;" rendered="{!IF(RoleOverlay ,true,false)}"/></apex:outputPanel> 
+                                                        
+                                                        <div class="slds-form-element__control slds-p-around_small" style="margin: -10px 0 0 0;">
+                                                            <div style="position: relative;">
+                                                            <apex:actionRegion >
+                                                                <apex:selectList disabled="{!IF(AND(NOT(ISNULL(fw.selectedLevelOne)),NOT(ISNULL(fw.selectedLevelTwo)),NOT(ISBLANK(fw.selectedLevelOne)),NOT(ISBLANK(fw.selectedLevelTwo)),NOT(fw.disableLevelThree),NOT(fw.isRep)),false,true)}" size="1" value="{!fw.SelectedLevelThree}" styleClass="slds-select slds-text-heading_medium slds-p-around_x-small" id="select-03" style="color: #7e8793; font-size: 21px; border-radius: 0; height: auto; padding: 6px 30px 6px 8px;">
+                                                                    <apex:actionSupport status="filterStatus" event="onchange" rerender="" oncomplete="validateSave();"/>
+                                                                    <apex:selectoptions value="{!fw.levelThree}"> 
+                                                                    </apex:selectoptions>                                                        
+                                                                </apex:selectList>
+                                                            </apex:actionRegion>  
+                                                                                                                      
+                                                            </div>
+                                                        </div>
+                                                        <apex:outputText style="color:red; display:none;margin: 0px 0px 0px 75px; font-size: 15px;" value="Please select a value" id="validmgr"></apex:outputText>
+                                                    </apex:outputPanel>                                                                                                                                              
+                                                </div>
+                                            </div>
+                                            
+                                            <apex:actionFunction name="show" action="{!showUpdated}" rerender="roleOl,repol,charts,gr" oncomplete="showChart();"/>     
+                                                
+                                  
+                                                                                        
+                                        </div>
+                                    </apex:outputPanel>
+                                </apex:facet>
+                                                                                                
+                                <apex:facet name="start">
+                                    <apex:outputPanel >
+                                        <div class="slds-grid slds-wrap">                                
+                                            <div class="slds-large-size_8-of-8 slds-small-size_1-of-1">
+                                                <div class="slds-grid">                                                 
+                                                    <apex:outputPanel styleclass="slds-col slds-size_1-of-3"> 
+                                                        <label class="slds-form-element__label slds-text-heading_medium slds-p-left_small" style="font-size: 21px; font-weight: bold; color: #7e8793;" for="select-01">Select Level</label>                              
+                                                        <div class="slds-form-element__control slds-p-around_small" style="margin: -10px 0 0 0;">
+                                                            <div style="position: relative;">
+                                                                <apex:selectList size="1" disabled="true" styleClass="slds-select slds-text-heading_medium slds-p-around_x-small" style="color: #7e8793; font-size: 21px; border-radius: 0; height: auto; padding: 6px 30px 6px 8px;">
+                                                                    <apex:selectoption itemValue="Level" itemLabel="Level"> 
+                                                                    </apex:selectoption>                                               
+                                                                </apex:selectList>   
+                                                                                                                                      
+                                                            </div>
+                                                        </div>
+                                                    </apex:outputPanel> 
+                                                    <apex:outputPanel styleclass="slds-col slds-size_1-of-3"> 
+                                                        <label class="slds-form-element__label slds-text-heading_medium slds-p-left_small" style="font-size: 21px; font-weight: bold; color: #7e8793;" for="select-01">Select Level</label>                              
+                                                        <div class="slds-form-element__control slds-p-around_small" style="margin: -10px 0 0 0;">
+                                                            <div style="position: relative;">
+                                                                <apex:selectList size="1" disabled="true" styleClass="slds-select slds-text-heading_medium slds-p-around_x-small" style="color: #7e8793; font-size: 21px; border-radius: 0; height: auto; padding: 6px 30px 6px 8px;">
+                                                                    <apex:selectoption itemValue="Level" itemLabel="Level"> 
+                                                                    </apex:selectoption>                                               
+                                                                </apex:selectList>     
+                                                                                                                                    
+                                                            </div>
+                                                        </div>
+                                                    </apex:outputPanel>
+                                                    
+                                                    <apex:outputPanel styleclass="slds-col slds-size_1-of-3"> 
+                                                        <label class="slds-form-element__label slds-text-heading_medium slds-p-left_small" style="font-size: 21px; font-weight: bold; color: #7e8793;" for="select-01">Select Role</label>                              
+                                                        <div class="slds-form-element__control slds-p-around_small" style="margin: -10px 0 0 0;">
+                                                            <div style="position: relative;">
+                                                                <apex:selectList size="1" disabled="true" styleClass="slds-select slds-text-heading_medium slds-p-around_x-small" style="color: #7e8793; font-size: 21px; border-radius: 0; height: auto; padding: 6px 30px 6px 8px;">
+                                                                    <apex:selectoption itemValue="Role" itemLabel="Role"> 
+                                                                    </apex:selectoption>                                               
+                                                                </apex:selectList>            
+                                                                                                                             
+                                                            </div>
+                                                        </div>
+                                                    </apex:outputPanel>                                                                                                                                                                                                                                             
+                                                </div>
+                                            </div>
+                                            
+                                             
+                                             
+                                   
+                                             
+                                             
+                                                                                                                                          
+                                        </div>
+                                    </apex:outputPanel>
+                                </apex:facet>                                                                                                
+                                
+                            </apex:actionStatus>
+                        </apex:outputPanel>
+                    </div>
+                </div>
+                <apex:outputPanel id="detailsPanel">
+                  
+                    <apex:outputPanel rendered="{!!isReset}"> 
+                        <div class="slds-wrap slds-form-element" style="background: #f5f5f9;">
+                             
+                           <div class="slds-grid slds-wrap">
+                                <div class="slds-large-size_1-of-3 slds-small-size_8-of-8 slds-p-around_small">
+                                    <div class="slds-text-align_left slds-p-around_medium" style="background: #7e8793;">
+                                        <div class="slds-text-body_regular" style="color:#ffffff; font-size: 22px; line-height:22px;">Funnelocity Quantitative Score</div>
+                                    </div>
+                                    <div id='certScore' class="slds-grid slds-size_1-of-1 slds-p-around_medium" style="background: #fff; border: 1px solid #d8dde6;">
+                                        
+                                    </div>
+                                </div>
+                                <div class="slds-large-size_1-of-3 slds-small-size_8-of-8 slds-p-around_small">
+                                    <div class="slds-text-align_left slds-p-around_medium" style="background: #7e8793;">
+                                        <div class="slds-text-body_regular" style="color:#ffffff; font-size: 22px; line-height:22px;">Funnelocity Qualitative Score</div>
+                                    </div>
+                                    <div id='certQaunQaul' class="slds-grid slds-size_1-of-1 slds-p-around_medium" style="background: #fff; border: 1px solid #d8dde6;">
+                                        
+                                    </div>
+                                </div>
+                                <div class="slds-large-size_1-of-3 slds-small-size_8-of-8 slds-p-around_small">
+                                    <div class="slds-text-align_left slds-p-around_medium" style="background: #7e8793;">
+                                        <div class="slds-text-body_regular" style="color:#ffffff; font-size: 22px; line-height:22px;">12 Month Scoring Trend</div>
+                                    </div>
+                                    <div id='certRolling' class="slds-grid  slds-size_1-of-1 slds-p-around_medium" style="background: #fff; border: 1px solid #d8dde6;">
+                                        
+                                    </div>
+                                </div>
+                            
+                            </div>
+                            <apex:outputPanel id="gr" style="width:100%">  
+                            <div class="slds-grid slds-wrap slds-p-around_xx-small" >
+                                <div class="slds-large-size_1-of-3 slds-small-size_8-of-8 slds-p-around_small" style="visibility:{!IF(isMgr,'','hidden')};height:{!IF(isMgr,'','0px')};padding:{!IF(isMgr,'','0px')}">
+                                    <div class="slds-text-align_left slds-p-around_medium" style="background: #7e8793;">
+                                        <div class="slds-text-body_regular" style="color:#ffffff; font-size: 22px; line-height:22px;">Funnelocity Quantitative Score</div>
+                                    </div>
+                                    <div id='certScorebelow' class="slds-grid slds-size_1-of-1 slds-p-around_medium" style="background: #fff; border: 1px solid #d8dde6;">
+                                        
+                                    </div>
+                                </div>
+                                <div class="slds-large-size_1-of-3 slds-small-size_8-of-8 slds-p-around_small" style="visibility:{!IF(isMgr,'','hidden')};height:{!IF(isMgr,'','0px')};padding:{!IF(isMgr,'','0px')}">
+                                    <div class="slds-text-align_left slds-p-around_medium" style="background: #7e8793;">
+                                        <div class="slds-text-body_regular" style="color:#ffffff; font-size: 22px; line-height:22px;">Funnelocity Qualitative Score</div>
+                                    </div>
+                                    <div id='certQaunQaulbelow' class="slds-grid slds-size_1-of-1 slds-p-around_medium" style="background: #fff; border: 1px solid #d8dde6;">
+                                        
+                                    </div>
+                                </div>
+                                <div class="slds-large-size_1-of-3 slds-small-size_8-of-8 slds-p-around_small">
+                                    <div class="slds-text-align_left slds-p-around_medium" style="background: #7e8793;">
+                                        <div class="slds-text-body_regular" style="color:#ffffff; font-size: 21px; line-height:22px;">Funnelocity Dashboards</div>
+                                    </div>
+                                    <div style="background: #fff;">
+                                        <div class="slds-grid slds-p-around_small slds-border_bottom">
+                                            <div class="slds-col slds-size_7-of-8" style="color:#333333; font-size:18px;"> <apex:outputLink value="{!managemenetReports['Funnelocity Scoring Dashboard']}" target="_blank" style="color:#333333;">Funnelocity Scoring Dashboard</apex:outputLink></div>
+                                            <div class="slds-col slds-size_1-of-8" style="color:#333333; font-size:18px; text-align: right;">
+                                                <span class="slds-icon_container null slds-icon__svg--default" style="" data-tooltip="  Funnelocity Scores and YTD Sales by Company Level">
+                                                    <svg class="slds-icon slds-icon-text-default" aria-hidden="true" style="fill: #66cc33;height: 25px;">
+                                                        <svg   viewBox="0 0 24 24" id="info" width="100%" height="100%"><path d="M12 .9C5.9.9.9 5.9.9 12s5 11.1 11.1 11.1 11.1-5 11.1-11.1S18.1.9 12 .9zm0 5.6c.8 0 1.4.6 1.4 1.4s-.6 1.4-1.4 1.4-1.4-.6-1.4-1.4.6-1.4 1.4-1.4zm2.3 9.7c0 .2-.2.4-.5.4h-3.6c-.3 0-.5-.1-.5-.4v-.9c0-.3.2-.5.5-.5.2 0 .4-.2.4-.4v-1.9c0-.2-.2-.5-.4-.5-.3 0-.5-.1-.5-.4v-.9c0-.3.2-.5.5-.5h2.7c.3 0 .5.2.5.5v3.7c0 .2.2.4.4.4.3 0 .5.2.5.5v.9z">
+                                                        
+                                                         </path>
+                                                        </svg>
+                                                       
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="slds-grid slds-p-around_small slds-border_bottom">
+                                            <div class="slds-col slds-size_7-of-8" style="color:#333333; font-size:18px;"> <apex:outputLink value="{!managemenetReports['Quantitative Scoring Dashboard']}" target="_blank" style="color:#333333;">Quantitative Scoring Dashboard</apex:outputLink></div>
+                                            <div class="slds-col slds-size_1-of-8" style="color:#333333; font-size:18px; text-align: right;">
+                                                <span class="slds-icon_container null slds-icon__svg--default" style="" data-tooltip=" Key Metrics, Goals and Certification Scores by Company Level">
+                                                    <svg class="slds-icon slds-icon-text-default" aria-hidden="true" style="fill: #66cc33;height: 25px;">
+                                                        <svg   viewBox="0 0 24 24" id="info" width="100%" height="100%"><path d="M12 .9C5.9.9.9 5.9.9 12s5 11.1 11.1 11.1 11.1-5 11.1-11.1S18.1.9 12 .9zm0 5.6c.8 0 1.4.6 1.4 1.4s-.6 1.4-1.4 1.4-1.4-.6-1.4-1.4.6-1.4 1.4-1.4zm2.3 9.7c0 .2-.2.4-.5.4h-3.6c-.3 0-.5-.1-.5-.4v-.9c0-.3.2-.5.5-.5.2 0 .4-.2.4-.4v-1.9c0-.2-.2-.5-.4-.5-.3 0-.5-.1-.5-.4v-.9c0-.3.2-.5.5-.5h2.7c.3 0 .5.2.5.5v3.7c0 .2.2.4.4.4.3 0 .5.2.5.5v.9z">
+                                                        
+                                                         </path>
+                                                        </svg>
+                                                       
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="slds-grid slds-p-around_small slds-border_bottom">
+                                            <div class="slds-col slds-size_7-of-8" style="color:#333333; font-size:18px;"> <apex:outputLink value="{!managemenetReports['Funnelocity Individual Metric & Measure Scoring Dashboard']}" target="_blank" style="color:#333333;"><apex:outputText value="Funnelocity Individual Metric & Measure Scoring Dashboard"/></apex:outputLink></div>
+                                            <div class="slds-col slds-size_1-of-8" style="color:#333333; font-size:18px; text-align: right;">
+                                                <span class="slds-icon_container null slds-icon__svg--default" style="" data-tooltip="  Key Scores and trends by Co Level and Rep">
+                                                    <svg class="slds-icon slds-icon-text-default" aria-hidden="true" style="fill: #66cc33;height: 25px;">
+                                                        <svg   viewBox="0 0 24 24" id="info" width="100%" height="100%"><path d="M12 .9C5.9.9.9 5.9.9 12s5 11.1 11.1 11.1 11.1-5 11.1-11.1S18.1.9 12 .9zm0 5.6c.8 0 1.4.6 1.4 1.4s-.6 1.4-1.4 1.4-1.4-.6-1.4-1.4.6-1.4 1.4-1.4zm2.3 9.7c0 .2-.2.4-.5.4h-3.6c-.3 0-.5-.1-.5-.4v-.9c0-.3.2-.5.5-.5.2 0 .4-.2.4-.4v-1.9c0-.2-.2-.5-.4-.5-.3 0-.5-.1-.5-.4v-.9c0-.3.2-.5.5-.5h2.7c.3 0 .5.2.5.5v3.7c0 .2.2.4.4.4.3 0 .5.2.5.5v.9z">
+                                                        
+                                                         </path>
+                                                        </svg>
+                                                       
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="slds-grid slds-p-around_small slds-border_bottom">
+                                            <div class="slds-col slds-size_7-of-8" style="color:#333333; font-size:18px;"> <apex:outputLink value="{!managemenetReports['Individual Metric & Measure Trending by Quartile']}" target="_blank" style="color:#333333;"><apex:outputText value="Individual Metric & Measure Trending by Quartile"/></apex:outputLink></div>
+                                            <div class="slds-col slds-size_1-of-8" style="color:#333333; font-size:18px; text-align: right;">
+                                                <span class="slds-icon_container null slds-icon__svg--default" style="" data-tooltip=" Analyze Quota and scores by Quartile and Co Level">
+                                                    <svg class="slds-icon slds-icon-text-default" aria-hidden="true" style="fill: #66cc33;height: 25px;">
+                                                        <svg   viewBox="0 0 24 24" id="info" width="100%" height="100%"><path d="M12 .9C5.9.9.9 5.9.9 12s5 11.1 11.1 11.1 11.1-5 11.1-11.1S18.1.9 12 .9zm0 5.6c.8 0 1.4.6 1.4 1.4s-.6 1.4-1.4 1.4-1.4-.6-1.4-1.4.6-1.4 1.4-1.4zm2.3 9.7c0 .2-.2.4-.5.4h-3.6c-.3 0-.5-.1-.5-.4v-.9c0-.3.2-.5.5-.5.2 0 .4-.2.4-.4v-1.9c0-.2-.2-.5-.4-.5-.3 0-.5-.1-.5-.4v-.9c0-.3.2-.5.5-.5h2.7c.3 0 .5.2.5.5v3.7c0 .2.2.4.4.4.3 0 .5.2.5.5v.9z">
+                                                        
+                                                         </path>
+                                                        </svg>
+                                                       
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="slds-grid slds-p-around_small slds-border_bottom">
+                                            <div class="slds-col slds-size_7-of-8" style="color:#333333; font-size:18px;"> <apex:outputLink value="{!managemenetReports['All Individual Metrics & Measures by Rep']}" target="_blank" style="color:#333333;"><apex:outputText value="All Individual Metrics & Measures by Rep"/></apex:outputLink></div>
+                                            <div class="slds-col slds-size_1-of-8" style="color:#333333; font-size:18px; text-align: right;">
+                                                <span class="slds-icon_container null slds-icon__svg--default" style="" data-tooltip="  All metrics and measures for a single rep">
+                                                    <svg class="slds-icon slds-icon-text-default" aria-hidden="true" style="fill: #66cc33;height: 25px;">
+                                                        <svg   viewBox="0 0 24 24" id="info" width="100%" height="100%"><path d="M12 .9C5.9.9.9 5.9.9 12s5 11.1 11.1 11.1 11.1-5 11.1-11.1S18.1.9 12 .9zm0 5.6c.8 0 1.4.6 1.4 1.4s-.6 1.4-1.4 1.4-1.4-.6-1.4-1.4.6-1.4 1.4-1.4zm2.3 9.7c0 .2-.2.4-.5.4h-3.6c-.3 0-.5-.1-.5-.4v-.9c0-.3.2-.5.5-.5.2 0 .4-.2.4-.4v-1.9c0-.2-.2-.5-.4-.5-.3 0-.5-.1-.5-.4v-.9c0-.3.2-.5.5-.5h2.7c.3 0 .5.2.5.5v3.7c0 .2.2.4.4.4.3 0 .5.2.5.5v.9z">
+                                                        
+                                                         </path>
+                                                        </svg>
+                                                       
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="slds-grid slds-p-around_small slds-border_bottom">
+                                            <div class="slds-col slds-size_7-of-8" style="color:#333333; font-size:18px;"> <apex:outputLink value="{!managemenetReports['Most Important Metrics & Measures']}" target="_blank" style="color:#333333;"><apex:outputText value="Most Important Metrics & Measures"/></apex:outputLink></div>
+                                            <div class="slds-col slds-size_1-of-8" style="color:#333333; font-size:18px; text-align: right;">
+                                                <span class="slds-icon_container null slds-icon__svg--default" style="" data-tooltip=" Most important metrics/measures by Co Level and Rep">
+                                                    <svg class="slds-icon slds-icon-text-default" aria-hidden="true" style="fill: #66cc33;height: 25px;">
+                                                        <svg   viewBox="0 0 24 24" id="info" width="100%" height="100%"><path d="M12 .9C5.9.9.9 5.9.9 12s5 11.1 11.1 11.1 11.1-5 11.1-11.1S18.1.9 12 .9zm0 5.6c.8 0 1.4.6 1.4 1.4s-.6 1.4-1.4 1.4-1.4-.6-1.4-1.4.6-1.4 1.4-1.4zm2.3 9.7c0 .2-.2.4-.5.4h-3.6c-.3 0-.5-.1-.5-.4v-.9c0-.3.2-.5.5-.5.2 0 .4-.2.4-.4v-1.9c0-.2-.2-.5-.4-.5-.3 0-.5-.1-.5-.4v-.9c0-.3.2-.5.5-.5h2.7c.3 0 .5.2.5.5v3.7c0 .2.2.4.4.4.3 0 .5.2.5.5v.9z">
+                                                        
+                                                         </path>
+                                                        </svg>
+                                                       
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                        </div>
+                                         
+                                        
+                                    </div>
+                                </div>
+                            
+                            </div> 
+                            </apex:outputPanel> 
+                        </div>
+                       
+                    </apex:outputPanel> 
+                </apex:outputPanel>
+            </div>
+        </div>
+    </apex:form>
+    
+   
+   
+    <script type="text/javascript">            
+       
+         showChart();           
+         
+        function validateSave(){
+            var inp1 = $('[id$=select-01]').val();
+            var inp2 = $('[id$=select-02]').val();
+            var inp3 = $('[id$=select-03]').val();
+            
+            var validSave = 'true';
+            
+            console.log(inp1 );
+            console.log(inp2 );
+            console.log(inp3 );
+            if(inp1 == '--Select--'){
+                $('[id$=validlevel]').css("display","block");
+                validSave = 'false';
+            }
+            if(inp2 == '--Select--'){
+                $('[id$=validname]').css("display","block");
+                validSave = 'false';
+            }
+            if(inp3 == '--Select--'){
+               $('[id$=validmgr]').css("display","block");
+                validSave = 'false';
+            }
+           
+            console.log(validSave);
+            if(validSave == 'true'){
+                console.log(validSave); 
+                $('[id$=validlevel]').css("display","none");
+                $('[id$=validname]').css("display","none");
+                $('[id$=validmgr]').css("display","none");
+                
+                show();
+            }
+         //   setTimeout(function() { showChart(); }, 2200);
+        }
+    </script> 
+    
+    
+    
+    </html>
+</apex:page>
